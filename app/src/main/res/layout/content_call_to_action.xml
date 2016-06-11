@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="co.allza.mararewards.CallToActionActivity"
+    tools:showIn="@layout/activity_call_to_action">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/frameCallToActionLogo"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:background="@android:color/transparent"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="20dp"
+            >
+            <ImageView
+                android:id="@+id/callToActionLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/firma_red"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="45dp"
+                android:paddingRight="45dp"
+                android:paddingBottom="20dp"
+                android:paddingTop="65dp"
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textViewCallToAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/callToActionText"
+            android:textSize="15sp"
+            android:textAlignment="center"
+            android:textColor="@color/rectanguloSplash"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
+            android:layout_alignBottom="@+id/callToActionLogo"/>
+    </LinearLayout>
+
+
+    <ListView
+        android:id="@+id/listViewCallToAction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@color/listViewDividerCallToAction"
+        android:layout_alignParentBottom="true">
+
+    </ListView>
+
+
+</RelativeLayout>

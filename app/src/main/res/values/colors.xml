@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FF2751</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#FF2751</color>
+    <color name="rectanguloSplash">#FF2751</color>
+    <color name="StatusBarColorCallToAction">#FF2751</color>
+    <color name="backGroundAlphaNegro">#33000000</color>
+    <color name="loginButton">#FF486B</color>
+    <color name="textoLoginCodigo">#7f000000</color>
+    <color name="listViewDividerCallToAction">#1a000000</color>
+</resources>
