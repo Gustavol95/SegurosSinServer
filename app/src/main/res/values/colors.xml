@@ -6,6 +6,10 @@
     <color name="rectanguloSplash">#FF2751</color>
     <color name="StatusBarColorCallToAction">#FF2751</color>
     <color name="backGroundAlphaNegro">#33000000</color>
+    <color name="statusBarSeguros">#7F142E</color>
+    <color name="grisCard">#9f000000</color>
+
+
     <color name="loginButton">#FF486B</color>
     <color name="textoLoginCodigo">#7f000000</color>
     <color name="listViewDividerCallToAction">#1a000000</color>

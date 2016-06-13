@@ -12,19 +12,21 @@ public static final int ROBOTO_REGULAR =   1;
 public static final int RUBIK_LIGHT =   2;
 public static final int RUBIK_REGULAR =   3;
 public static final int RUBIK_MEDIUM =   4;
+    public static final int RUBIK_BOLD =   5;
 
-private static final int NUM_OF_CUSTOM_FONTS = 5;
+private static final int NUM_OF_CUSTOM_FONTS = 6;
 
 private static boolean fontsLoaded = false;
 
-private static Typeface[] fonts = new Typeface[5];
+private static Typeface[] fonts = new Typeface[6];
 
 private static String[] fontPath = {
         "fonts/Roboto-Medium.ttf",
         "fonts/Roboto-Regular.ttf",
         "fonts/Rubik-Light.ttf",
         "fonts/Rubik-Regular.ttf",
-        "fonts/Rubik-Medium.ttf"
+        "fonts/Rubik-Medium.ttf",
+        "fonts/Rubik-Bold.ttf"
 };
 
 

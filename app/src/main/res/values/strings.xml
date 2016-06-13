@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Estas Seguro</string>
     <string name="action_settings">Settings</string>
+    <string name="action_favorite">Settings2</string>
+
     <string name="alpha_Splash">Settings</string>
     <string name="textViewLogin">QUIERO ADQUIRIR UN SEGURO</string>
     <string name="comenzar">COMENZAR</string>
@@ -8,4 +10,5 @@
     <string name="footerLoginCodigo">© Seguros De Verdad 2016</string>
     <string name="entrar">  ENTRAR  </string>
     <string name="callToActionText">  De Verdad te ofrece una variedad de seguros a la medida de tus necesidades para que siempre estés seguro.  </string>
+    <string name="title_activity_seguros">SegurosActivity</string>
 </resources>

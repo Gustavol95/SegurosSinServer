@@ -53,6 +53,7 @@ public class CallToActionActivity extends Activity {
         adapter.add(new LoginItem("Seguro de Gastos Médicos", R.drawable.heart));
         adapter.add(new LoginItem("Seguro de Inversión", R.drawable.trending_up));
         adapter.add(new LoginItem("Seguro de Viaje", R.drawable.briefcase));
+
         lista.setAdapter(adapter);
         texto.setTypeface(CargarFuentes.getTypeface(getApplicationContext(), CargarFuentes.RUBIK_REGULAR));
 
