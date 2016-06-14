@@ -30,9 +30,11 @@ public class SegurosActivity extends AppCompatActivity {
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("");
-        tituloToolbar=(TextView)findViewById(R.id.textViewTituloToolbar);
-        tituloToolbar.setTypeface(CargarFuentes.getTypeface(getApplicationContext(), CargarFuentes.RUBIK_MEDIUM));
+        toolbar.setTitle("Seguros");
+        toolbar.setNavigationIcon(R.drawable.ic_notifications_active_white_24dp);
+        setSupportActionBar(toolbar);
+
+
 
         listaSeguros=(ListView)findViewById(R.id.listViewSeguros);
         adapter = new SegurosAdapter(getApplicationContext(), R.layout.listview_seguros);

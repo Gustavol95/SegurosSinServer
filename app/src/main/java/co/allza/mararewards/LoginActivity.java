@@ -1,7 +1,9 @@
 package co.allza.mararewards;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
@@ -14,7 +16,7 @@ import co.allza.mararewards.items.LoginItem;
 /**
  * Created by Tavo on 07/06/2016.
  */
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity implements View.OnClickListener {
     private static final String TAG = "LoginAcivity";
     private ListView lista;
     private LoginListAdapter adapter;
@@ -41,8 +43,18 @@ public class LoginActivity extends Activity {
         adquirir.setTypeface(CargarFuentes.getTypeface(getApplicationContext(), CargarFuentes.ROBOTO_MEDIUM));
 
 
+        comenzar.setOnClickListener(this);
 
 
+    }
 
+    @Override
+    public void onClick(View v) {
+        if(v.getId()==R.id.buttonLogin)
+        {
+            Intent i = new Intent(LoginActivity.this, LoginCodigoActivity.class);
+            startActivity(i);
+            finish();
+        }
     }
 }

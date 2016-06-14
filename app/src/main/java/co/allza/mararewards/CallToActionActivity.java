@@ -1,11 +1,14 @@
 package co.allza.mararewards;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -16,7 +19,7 @@ import co.allza.mararewards.items.LoginItem;
 /**
  * Created by Tavo on 10/06/2016.
  */
-public class CallToActionActivity extends Activity {
+public class CallToActionActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener {
     private TextView texto;
     private ListView lista;
     private FloatingActionButton fab;
@@ -57,7 +60,30 @@ public class CallToActionActivity extends Activity {
         lista.setAdapter(adapter);
         texto.setTypeface(CargarFuentes.getTypeface(getApplicationContext(), CargarFuentes.RUBIK_REGULAR));
 
+        lista.setOnItemClickListener(this);
+        fab.setOnClickListener(this);
 
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        switch (position)
+        {
+            case 0:
+                Intent i = new Intent(CallToActionActivity.this, SegurosActivity.class);
+                startActivity(i);
+                finish();
+                break;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.fab:
+                Intent i = new Intent(CallToActionActivity.this, NotificacionesActivity.class);
+                startActivity(i);
+
+        }
+    }
 }
