@@ -6,7 +6,10 @@
     <color name="rectanguloSplash">#FF2751</color>
     <color name="StatusBarColorCallToAction">#FF2751</color>
     <color name="backGroundAlphaNegro">#33000000</color>
-    <color name="statusBarSeguros">#7F142E</color>
+    <color name="divisorCardSeguro">#fafafa</color>
+    <color name="textoCardSeguro">#616161</color>
+    <color name="toolbarSeguros">#C42947</color>
+    <color name="statusbarSeguros">#FF9C2038</color>
     <color name="grisCard">#9f000000</color>
     <color name="loginButton">#FF486B</color>
     <color name="textoLoginCodigo">#7f000000</color>

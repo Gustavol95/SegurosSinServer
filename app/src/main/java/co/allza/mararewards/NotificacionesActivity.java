@@ -1,10 +1,14 @@
 package co.allza.mararewards;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,7 +28,7 @@ public class NotificacionesActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.statusBarSeguros));
+            getWindow().setStatusBarColor(getResources().getColor(R.color.statusbarSeguros));
         }
         setContentView(R.layout.activity_notificaciones);
         toolbar=(Toolbar)findViewById(R.id.toolbar);
@@ -35,7 +39,6 @@ public class NotificacionesActivity extends AppCompatActivity {
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
         adapter = new NotificacionesAdapter(getApplicationContext(), R.layout.listview_notificaciones);
         adapter.add(new NotificacionItem(R.drawable.verified,"Seguro de vida - 123467890","Ha sido renovado exitosamente.",

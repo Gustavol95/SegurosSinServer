@@ -26,14 +26,9 @@ public class SegurosAdapter  extends ArrayAdapter<SeguroItem>
     private List<SeguroItem> lista = new ArrayList<SeguroItem>();
     private Context contexto;
     static class CardViewHolder3 {
-        TextView titulo;
-        TextView poliza;
-        TextView polizaTexto;
-        TextView aseguradora;
-        TextView aseguradoraTexto;
-        TextView cobertura;
-        TextView coberturaTexto;
-        Button boton;
+        TextView poliza,aseguradora,seguro,beneficiario,renovacion,emergencia;
+        ImageView info,aseguradoraIcono,seguroIcono,beneficiarioIcono,renovacionIcono,emergenciaIcono;
+
 
     }
     public SegurosAdapter(Context context, int textViewResourceId) {
@@ -64,34 +59,41 @@ public class SegurosAdapter  extends ArrayAdapter<SeguroItem>
             LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(R.layout.listview_seguros, parent, false);
             viewHolder = new CardViewHolder3();
-            viewHolder.titulo=(TextView)row.findViewById(R.id.cardTitulo);
             viewHolder.poliza=(TextView)row.findViewById(R.id.cardPoliza);
-            viewHolder.polizaTexto=(TextView)row.findViewById(R.id.cardPolizaTexto);
             viewHolder.aseguradora=(TextView)row.findViewById(R.id.cardAseguradora);
-            viewHolder.aseguradoraTexto=(TextView)row.findViewById(R.id.cardAseguradoraTexto);
-            viewHolder.cobertura=(TextView)row.findViewById(R.id.cardCobertura);
-            viewHolder.coberturaTexto=(TextView)row.findViewById(R.id.cardCoberturaTexto);
-            viewHolder.boton=(Button)row.findViewById(R.id.cardBoton);
+            viewHolder.seguro=(TextView)row.findViewById(R.id.cardNombreSeguro);
+            viewHolder.beneficiario=(TextView)row.findViewById(R.id.cardBeneficiario);
+            viewHolder.renovacion=(TextView)row.findViewById(R.id.cardRenovacion);
+            viewHolder.emergencia=(TextView)row.findViewById(R.id.cardEmergencia);
+            viewHolder.info=(ImageView)row.findViewById(R.id.cardInfoIcono);
+            viewHolder.aseguradoraIcono=(ImageView)row.findViewById(R.id.cardAseguradoraIcono);
+            viewHolder.seguroIcono=(ImageView)row.findViewById(R.id.cardNombreSeguroIcono);
+            viewHolder.beneficiarioIcono=(ImageView)row.findViewById(R.id.cardBeneficiarioIcono);
+            viewHolder.renovacionIcono=(ImageView)row.findViewById(R.id.cardRenovacionIcono);
+            viewHolder.emergenciaIcono=(ImageView)row.findViewById(R.id.cardEmergenciaIcono);
+
             row.setTag(viewHolder);
 
         } else {
             viewHolder = (CardViewHolder3)row.getTag();
         }
         SeguroItem item = getItem(position);
-        viewHolder.titulo.setText(item.getNombre());
-        viewHolder.polizaTexto.setText(item.getPoliza());
-        viewHolder.aseguradoraTexto.setText(item.getAseguradora());
-        viewHolder.coberturaTexto.setText(item.getCobertura());
+        viewHolder.poliza.setText("Póliza: "+item.getPoliza());
+        viewHolder.aseguradora.setText(item.getAseguradora());
+        viewHolder.seguro.setText(item.getSeguro());
+        viewHolder.beneficiario.setText(item.getBeneficiario());
+        viewHolder.renovacion.setText("Renovación el "+item.getRenovacion());
+        viewHolder.emergencia.setText("Emergencia al "+item.getEmergencia());
 
-        viewHolder.titulo.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_MEDIUM));
-        viewHolder.poliza.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_MEDIUM));
-        viewHolder.polizaTexto.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_MEDIUM));
-        viewHolder.aseguradora.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_MEDIUM));
-        viewHolder.aseguradoraTexto.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_MEDIUM));
-        viewHolder.cobertura.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_MEDIUM));
-        viewHolder.coberturaTexto.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_MEDIUM));
-        viewHolder.boton.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_MEDIUM));
 
+
+        viewHolder.poliza.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_REGULAR));
+        viewHolder.aseguradora.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_REGULAR));
+        viewHolder.seguro.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_REGULAR));
+        viewHolder.beneficiario.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_REGULAR));
+        viewHolder.renovacion.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_REGULAR));
+        viewHolder.emergencia.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_MEDIUM));
         return row;
+
     }
 }

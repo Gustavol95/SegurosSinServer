@@ -20,6 +20,7 @@
         app:rippleColor="@android:color/black"
         android:background="@android:color/black"
         android:src="@drawable/ic_call_white_36dp"
+
         />
 
 </android.support.design.widget.CoordinatorLayout>

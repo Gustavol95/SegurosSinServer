@@ -55,6 +55,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             Intent i = new Intent(LoginActivity.this, LoginCodigoActivity.class);
             startActivity(i);
             finish();
+
         }
     }
 }

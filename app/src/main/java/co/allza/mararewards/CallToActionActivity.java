@@ -1,16 +1,22 @@
 package co.allza.mararewards;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.NotificationCompat;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import co.allza.mararewards.adapter.CallToActionAdapter;
@@ -63,6 +69,7 @@ public class CallToActionActivity extends Activity implements AdapterView.OnItem
         lista.setOnItemClickListener(this);
         fab.setOnClickListener(this);
 
+
     }
 
     @Override
@@ -70,9 +77,10 @@ public class CallToActionActivity extends Activity implements AdapterView.OnItem
         switch (position)
         {
             case 0:
-                Intent i = new Intent(CallToActionActivity.this, SegurosActivity.class);
-                startActivity(i);
-                finish();
+                Intent jota=new Intent(CallToActionActivity.this,SegurosActivity.class);
+                startActivity(jota);
+
+
                 break;
         }
     }
@@ -81,8 +89,23 @@ public class CallToActionActivity extends Activity implements AdapterView.OnItem
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.fab:
-                Intent i = new Intent(CallToActionActivity.this, NotificacionesActivity.class);
-                startActivity(i);
+                ScaleAnimation scale=new ScaleAnimation(1.0f,20.0f,1.0f,20.0f,100,100);
+                scale.setDuration(500);
+                scale.setFillEnabled(true);
+                scale.setFillAfter(true);
+                fab.startAnimation(scale);
+               Handler elHandler=new Handler();
+                elHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent i = new Intent(CallToActionActivity.this, NotificacionesActivity.class);
+                        startActivity(i);
+                        Intent intent = new Intent(Intent.ACTION_DIAL);
+                        intent.setData(Uri.parse("tel:018001010145"));
+                        startActivity(intent);
+                    }},500);
+
+
 
         }
     }
