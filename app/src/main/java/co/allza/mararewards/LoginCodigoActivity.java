@@ -40,7 +40,7 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.buttonLoginCodigo:
-                Intent i = new Intent(LoginCodigoActivity.this, CallToActionActivity.class);
+                Intent i = new Intent(LoginCodigoActivity.this, SegurosActivity.class);
                 startActivity(i);
                 finish();
                 break;

@@ -9,29 +9,29 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import co.allza.mararewards.adapter.NotificacionesAdapter;
 import co.allza.mararewards.items.NotificacionItem;
 
-/**
- * Created by Tavo on 14/06/2016.
- */
 public class NotificacionesActivity extends AppCompatActivity {
     ListView lista;
     Toolbar toolbar;
-    TextView tituloToolbar;
     NotificacionesAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.statusbarSeguros));
+           // getWindow().setStatusBarColor(getResources().getColor(R.color.statusbarSeguros));
         }
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setContentView(R.layout.activity_notificaciones);
         toolbar=(Toolbar)findViewById(R.id.toolbar);
+        int anchoViejo=toolbar.getLayoutParams().height;
+        toolbar.getLayoutParams().height=getStatusBarHeight()+anchoViejo;
         toolbar.setTitle("Notificaciones");
         setSupportActionBar(toolbar);
         lista=(ListView)findViewById(R.id.listViewNotificaciones);
@@ -137,5 +137,14 @@ public class NotificacionesActivity extends AppCompatActivity {
 
 
 
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }

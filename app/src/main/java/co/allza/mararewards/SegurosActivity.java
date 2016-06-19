@@ -52,19 +52,22 @@ public class SegurosActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seguros);
         //para Lollipop
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.statusbarSeguros));
+            //getWindow().setStatusBarColor(getResources().getColor(R.color.statusbarSeguros));
         }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        int anchoViejo=toolbar.getLayoutParams().height;
+        toolbar.getLayoutParams().height=getStatusBarHeight()+anchoViejo;
         toolbar.setTitle("Seguros");
         toolbar.setNavigationIcon(R.drawable.ic_notifications_active_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavUtils.navigateUpFromSameTask(SegurosActivity.this);
-                Toast t= Toast.makeText(getApplicationContext(),"fgas",Toast.LENGTH_LONG);
+               Intent i=new Intent(SegurosActivity.this,NotificacionesActivity.class);
+                SegurosActivity.this.startActivity(i);
             }
         });
 
@@ -153,5 +156,13 @@ public class SegurosActivity extends AppCompatActivity  {
 
       
         return super.onOptionsItemSelected(item);
+    }
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }

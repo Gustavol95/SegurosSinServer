@@ -8,7 +8,7 @@
     <color name="backGroundAlphaNegro">#33000000</color>
     <color name="divisorCardSeguro">#fafafa</color>
     <color name="textoCardSeguro">#616161</color>
-    <color name="toolbarSeguros">#C42947</color>
+    <color name="toolbarSeguros">#33000000</color>
     <color name="statusbarSeguros">#FF9C2038</color>
     <color name="grisCard">#9f000000</color>
     <color name="loginButton">#FF486B</color>

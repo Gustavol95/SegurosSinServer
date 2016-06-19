@@ -89,21 +89,12 @@ public class CallToActionActivity extends Activity implements AdapterView.OnItem
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.fab:
-                ScaleAnimation scale=new ScaleAnimation(1.0f,20.0f,1.0f,20.0f,100,100);
-                scale.setDuration(500);
-                scale.setFillEnabled(true);
-                scale.setFillAfter(true);
-                fab.startAnimation(scale);
-               Handler elHandler=new Handler();
-                elHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
                         Intent i = new Intent(CallToActionActivity.this, NotificacionesActivity.class);
                         startActivity(i);
                         Intent intent = new Intent(Intent.ACTION_DIAL);
                         intent.setData(Uri.parse("tel:018001010145"));
                         startActivity(intent);
-                    }},500);
+
 
 
 
