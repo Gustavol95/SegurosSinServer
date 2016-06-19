@@ -12,7 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import co.allza.mararewards.CallToActionActivity;
 import co.allza.mararewards.CargarFuentes;
@@ -31,12 +35,19 @@ public class SegurosPagerAdapter extends PagerAdapter
     ArrayList<SeguroItem> pages = new ArrayList<>();
     TextView poliza,aseguradora,seguro,beneficiario,renovacion,emergencia;
     ImageView info,aseguradoraIcono,seguroIcono,beneficiarioIcono,renovacionIcono,emergenciaIcono;
+    Calendar calendar;
+    Date fechaActual;
+    Date fechaSeguro;
+    SimpleDateFormat parserFecha;
 
     public SegurosPagerAdapter(Context context, ArrayList<SeguroItem> list)
     {
         this.context=context;
         inflater=LayoutInflater.from(context);
         this.pages=list;
+        parserFecha=new SimpleDateFormat("dd/MMM/yyyy");
+        calendar=Calendar.getInstance();
+        fechaActual=calendar.getTime();
     }
     @Override
     public int getCount() {
@@ -92,8 +103,34 @@ public class SegurosPagerAdapter extends PagerAdapter
         });
 
         container.addView(row);
+        try {
+            fechaSeguro= parserFecha.parse(item.getRenovacion());
+            if(fechaActual.after(fechaSeguro))
+            {
+                poliza.setTextColor(context.getResources().getColor(R.color.grisVencido));
+                aseguradora.setTextColor(context.getResources().getColor(R.color.grisVencido));
+                seguro.setTextColor(context.getResources().getColor(R.color.grisVencido));
+                beneficiario.setTextColor(context.getResources().getColor(R.color.grisVencido));
+                emergencia.setTextColor(context.getResources().getColor(R.color.grisVencido));
+                renovacion.setText("Venció el "+item.getRenovacion());
+                renovacion.setTypeface(CargarFuentes.getTypeface(context,CargarFuentes.RUBIK_MEDIUM));
+                renovacion.setTextColor(context.getResources().getColor(R.color.rectanguloSplash));
+                info.setImageResource(R.drawable.info_vencido);
+                aseguradoraIcono.setImageResource(R.drawable.briefcase_vencido);
+                seguroIcono.setImageResource(R.drawable.verified_vencido);
+                beneficiarioIcono.setImageResource(R.drawable.account_vencido);
+                renovacionIcono.setImageResource(R.drawable.history_vencido);
+                emergenciaIcono.setImageResource(R.drawable.ring_vencido);
+
+                return row;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         return row;
     }
+
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {

@@ -89,8 +89,6 @@ public class CallToActionActivity extends Activity implements AdapterView.OnItem
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.fab:
-                        Intent i = new Intent(CallToActionActivity.this, NotificacionesActivity.class);
-                        startActivity(i);
                         Intent intent = new Intent(Intent.ACTION_DIAL);
                         intent.setData(Uri.parse("tel:018001010145"));
                         startActivity(intent);

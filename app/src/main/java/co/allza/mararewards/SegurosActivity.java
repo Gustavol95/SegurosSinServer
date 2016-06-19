@@ -1,6 +1,7 @@
 package co.allza.mararewards;
 
 import android.content.Intent;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,7 +15,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +40,7 @@ import co.allza.mararewards.items.SeguroItem;
 
 public class SegurosActivity extends AppCompatActivity  {
 
+    LinearLayout linear;
     ViewPager pagerSeguros;
     SegurosPagerAdapter adapter;
     ArrayList<SeguroItem> arraySeguros = new ArrayList<>();
@@ -46,6 +51,8 @@ public class SegurosActivity extends AppCompatActivity  {
     Date fechaActual;
     Date fechaSeguro;
     InkPageIndicator inkPageIndicator;
+    boolean estaVencido=false;
+    TransitionDrawable fondo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +63,13 @@ public class SegurosActivity extends AppCompatActivity  {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //getWindow().setStatusBarColor(getResources().getColor(R.color.statusbarSeguros));
         }
-
+        linear=(LinearLayout)findViewById(R.id.linearSeguros);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         int anchoViejo=toolbar.getLayoutParams().height;
         toolbar.getLayoutParams().height=getStatusBarHeight()+anchoViejo;
         toolbar.setTitle("Seguros");
+        toolbar.setBackgroundColor(getResources().getColor(R.color.toolbarSeguros));
         toolbar.setNavigationIcon(R.drawable.ic_notifications_active_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +79,8 @@ public class SegurosActivity extends AppCompatActivity  {
             }
         });
 
+        fondo=(TransitionDrawable)getResources().getDrawable(R.drawable.fondo_seguros);
+        linear.setBackground(fondo);
 
         pagerSeguros=(ViewPager) findViewById(R.id.viewPagerSeguros);
         arraySeguros.add(new SeguroItem("0123423356789","MAPFRE Tepeyac","Plan Educacional Superación",
@@ -80,7 +90,7 @@ public class SegurosActivity extends AppCompatActivity  {
         arraySeguros.add(new SeguroItem("0123456789","MAPFRE Tepeyac"," Educacional Superación",
                 "José Eduardo Quintana Rodriguez","24/Ago/2016","01 800 062 7373"));
         arraySeguros.add(new SeguroItem("0123456789","MAPFRE Tepeyac","Plan Educacional Superación",
-                "José Eduardo Quintana Rodriguez","24/Jan/2016","01 800 062 7373"));
+                "José Eduardo Quintana Rodriguez","24/Oct/2016","01 800 062 7373"));
         arraySeguros.add(new SeguroItem("0123456789","MAPFRE Tepeyac","Plan Educacional ",
                 "José Eduardo Quintana Rodriguez","24/Ene/2016","7450982"));
         adapter = new SegurosPagerAdapter(getApplicationContext(), arraySeguros);
@@ -97,10 +107,18 @@ public class SegurosActivity extends AppCompatActivity  {
             public void onPageSelected(int position) {
                 try {
                     fechaSeguro= parserFecha.parse(arraySeguros.get(position).getRenovacion());
-                    if(fechaActual.after(fechaSeguro))
-                    Toast.makeText(SegurosActivity.this, "ESTA ANTES", Toast.LENGTH_SHORT).show();
-                    if(fechaActual.before(fechaSeguro))
-                    Toast.makeText(SegurosActivity.this, "ESTA DESPUES", Toast.LENGTH_SHORT).show();
+                    if(fechaActual.after(fechaSeguro) && !estaVencido){
+                        estaVencido=!estaVencido;
+                        fondo.startTransition(500);
+
+                    }
+                    if(fechaActual.before(fechaSeguro) && estaVencido){
+                        estaVencido=!estaVencido;
+                        fondo.reverseTransition(500);
+                    }
+
+
+
                 } catch (ParseException e) {
                     e.printStackTrace();
                     Toast.makeText(SegurosActivity.this, ""+e.toString(), Toast.LENGTH_SHORT).show();
@@ -147,7 +165,6 @@ public class SegurosActivity extends AppCompatActivity  {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.desactivarNotif) {
             Toast.makeText(SegurosActivity.this, "", Toast.LENGTH_SHORT).show();
