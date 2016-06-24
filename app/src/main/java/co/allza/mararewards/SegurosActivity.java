@@ -198,6 +198,21 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
         pagerSeguros.setPageTransformer(true,new DepthPageTransformer());
 
         inkPageIndicator.setViewPager(pagerSeguros);
+       if(pagerAdapter.getCount()>0)
+       {
+           parserFecha=new SimpleDateFormat("dd/MMM/yyyy");
+           calendar=Calendar.getInstance();
+           fechaActual=calendar.getTime();
+           try {
+               fechaSeguro= parserFecha.parse(pagerAdapter.getArrayList().get(0).getExpiration());
+               if(fechaActual.after(fechaSeguro) && !estaVencido){
+                   estaVencido=!estaVencido;
+                   fondo.startTransition(1500);}
+           } catch (ParseException e) {
+               e.printStackTrace();
+           }
+       }
+
     }
 
     @Override

@@ -48,8 +48,6 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.buttonLoginCodigo:
-                Toast.makeText(LoginCodigoActivity.this, "si entra", Toast.LENGTH_SHORT).show();
-                Toast.makeText(LoginCodigoActivity.this, editTextCodigo.getText().toString(), Toast.LENGTH_SHORT).show();
                 CargarDatos.getTokenFromServer(getApplicationContext(),editTextCodigo.getText().toString(),this);
 
         }

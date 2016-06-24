@@ -35,38 +35,48 @@ public class CargarDatos {
     private static boolean segurosCargados;
     private static Context context;
 
-
-    public static ArrayList<SeguroItem> getSegurosFromDatabase(Context ctx, String usuario, VolleyCallback callback)
+    public static void getTokenFromServer(Context ctx,String usertoken, final VolleyCallback callback)
     {
         context=ctx;
-        RealmConfiguration config = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(config);
-        Realm realm = Realm.getDefaultInstance();
-        ArrayList<SeguroItem> items=new ArrayList<>();
-        CustomerItem cliente=realm.where(CustomerItem.class)
-                .findFirst();
+        if(queue==null)
+            queue=Volley.newRequestQueue(ctx);
+        String url=getToken+usertoken;
+        stringRequest = new StringRequest(Request.Method.GET,
+                url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject resp=new JSONObject(response);
+                    JSONObject data=resp.getJSONObject("data");
+                    callback.onTokenReceived(data.getString("token"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    //  Toast.makeText(context, ""+e.toString(), Toast.LENGTH_SHORT).show();
+                    callback.onFailure(e.toString());
+                }
 
-        RealmResults<SeguroItem> result = realm.where(SeguroItem.class)
-                .equalTo("customer_id",cliente.getId())
-                .findAll();
-        for (int i=0; i<result.size(); i++){
-            items.add(result.get(i));
             }
-         adapter=new SegurosPagerAdapter(context,items);
-        callback.onSuccess(adapter);
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                callback.onFailure(error.toString());
+                //Toast.makeText(context, ""+error.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
 
-        return items;
     }
 
     public static void pullSeguros(final Context ctx, String usuario, String usertoken, final VolleyCallback callback)
     {
         context=ctx;
-         final ArrayList<SeguroItem> items=new ArrayList<>();
+        final ArrayList<SeguroItem> items=new ArrayList<>();
         if(queue==null)
             queue=Volley.newRequestQueue(ctx);
 
         String url=getCustomer+usuario+accessToken+usertoken;
-        Toast.makeText(context, usuario + usertoken, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, usuario + usertoken, Toast.LENGTH_SHORT).show();
 
         stringRequest = new StringRequest(Request.Method.GET,
                 url,
@@ -81,7 +91,7 @@ public class CargarDatos {
 
 
                         } catch (Exception e) {
-                            Toast.makeText(ctx,e.toString(), Toast.LENGTH_SHORT).show();
+                            //            Toast.makeText(ctx,e.toString(), Toast.LENGTH_SHORT).show();
                             callback.onFailure(e.toString());
                         }
 
@@ -90,22 +100,14 @@ public class CargarDatos {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(ctx,error.toString()+"PUTAMADRE", Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(ctx,error.toString()+"PUTAMADRE", Toast.LENGTH_SHORT).show();
                 callback.onFailure(error.toString());
             }
         });
 
-
-
-// Add the request to the RequestQueue.
         queue.add(stringRequest);
 
-
-
-
     }
-
-
 
     private static ArrayList<SeguroItem> parseSeguros(JSONObject data, VolleyCallback callback)
     {
@@ -158,7 +160,7 @@ public class CargarDatos {
             return items;
         } catch (JSONException e) {
             e.printStackTrace();
-            System.out.println( "VERGA"+e.toString());
+            //System.out.println( "VERGA"+e.toString());
             callback.onFailure(e.toString());
             return null;
         }
@@ -166,37 +168,26 @@ public class CargarDatos {
 
     }
 
-    public static void getTokenFromServer(Context ctx,String usertoken, final VolleyCallback callback)
+    public static ArrayList<SeguroItem> getSegurosFromDatabase(Context ctx, String usuario, VolleyCallback callback)
     {
         context=ctx;
-        if(queue==null)
-            queue=Volley.newRequestQueue(ctx);
-        String url=getToken+usertoken;
-        stringRequest = new StringRequest(Request.Method.GET,
-                url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject resp=new JSONObject(response);
-                    JSONObject data=resp.getJSONObject("data");
-                    callback.onTokenReceived(data.getString("token"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(context, ""+e.toString(), Toast.LENGTH_SHORT).show();
-                    callback.onFailure(e.toString());
-                }
+        RealmConfiguration config = new RealmConfiguration.Builder(context).build();
+        Realm.setDefaultConfiguration(config);
+        Realm realm = Realm.getDefaultInstance();
+        ArrayList<SeguroItem> items=new ArrayList<>();
+        CustomerItem cliente=realm.where(CustomerItem.class)
+                .findFirst();
 
+        RealmResults<SeguroItem> result = realm.where(SeguroItem.class)
+                .equalTo("customer_id",cliente.getId())
+                .findAll();
+        for (int i=0; i<result.size(); i++){
+            items.add(result.get(i));
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                    callback.onFailure(error.toString());
-                Toast.makeText(context, ""+error.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+         adapter=new SegurosPagerAdapter(context,items);
+        callback.onSuccess(adapter);
 
+        return items;
     }
 
     public static boolean adapterIsNull()
@@ -214,10 +205,12 @@ public class CargarDatos {
         return adapter;
     }
 
+
     public interface VolleyCallback{
         void onSuccess(SegurosPagerAdapter result);
         void onFailure(String error);
         void onTokenReceived(String token);
     }
+
 
 }
