@@ -8,15 +8,23 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import co.allza.mararewards.adapter.SegurosPagerAdapter;
+import co.allza.mararewards.items.CustomerItem;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by Tavo on 10/06/2016.
  */
-public class LoginCodigoActivity extends Activity implements View.OnClickListener {
+public class LoginCodigoActivity extends Activity implements View.OnClickListener, CargarDatos.VolleyCallback {
     TextView introducir;
     TextView footer;
     EditText editTextCodigo;
     Button botonEntrar;
+    CustomerItem customer;
+    String token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,11 +48,40 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.buttonLoginCodigo:
-                Intent i = new Intent(LoginCodigoActivity.this, SegurosActivity.class);
-                startActivity(i);
-                finish();
-                break;
+                Toast.makeText(LoginCodigoActivity.this, "si entra", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginCodigoActivity.this, editTextCodigo.getText().toString(), Toast.LENGTH_SHORT).show();
+                CargarDatos.getTokenFromServer(getApplicationContext(),editTextCodigo.getText().toString(),this);
+
         }
+
+    }
+
+    @Override
+    public void onSuccess(SegurosPagerAdapter result) {
+        RealmConfiguration config = new RealmConfiguration.Builder(getApplicationContext()).build();
+        Realm.setDefaultConfiguration(config);
+        Realm realm = Realm.getDefaultInstance();
+        customer=new CustomerItem();
+        customer.setUsertoken(editTextCodigo.getText().toString());
+        customer.setToken(token);
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(customer);
+        realm.commitTransaction();
+        Intent i = new Intent(LoginCodigoActivity.this, SegurosActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    @Override
+    public void onFailure(String error) {
+        Toast.makeText(LoginCodigoActivity.this, "Hubo un error, inténtelo de nuevo", Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onTokenReceived(String token) {
+        this.token=token;
+        CargarDatos.pullSeguros(getApplicationContext(),editTextCodigo.getText().toString(),token,this);
 
     }
 }

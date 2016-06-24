@@ -1,92 +1,115 @@
 package co.allza.mararewards.items;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by Tavo on 13/06/2016.
  */
-public class SeguroItem {
-    private String poliza;
-    private String aseguradora;
-    private String seguro;
-    private String beneficiario;
-    private String renovacion;
-    private String emergencia;
+public class SeguroItem extends RealmObject {
+    @PrimaryKey
+    private int id;
+    private int customer_id;
+    private String policy;
+    private String name;
+    private String Description;
+    private String insured_name;
+    private String expiration;
+    private String emergency;
+    private String updated_at;
     private int polizaIcono;
     private int aseguradoraIcono;
     private int seguroIcono;
     private int beneficiarioIcono;
     private int renovacionIcono;
     private int emergenciaIcono;
+    private int usuario;
 
-    public SeguroItem(String poliza, String aseguradora, String seguro, String beneficiario, String renovacion, String emergencia) {
-        this.poliza = poliza;
-        this.aseguradora = aseguradora;
-        this.seguro = seguro;
-        this.beneficiario = beneficiario;
-        this.renovacion = renovacion;
-        this.emergencia = emergencia;
+
+    public SeguroItem() {
     }
 
-    public SeguroItem(String poliza, String aseguradora, String seguro, String beneficiario, String renovacion, String emergencia, int polizaIcono, int aseguradoraIcono, int seguroIcono, int beneficiarioIcono, int renovacionIcono, int emergenciaIcono) {
-        this.poliza = poliza;
-        this.aseguradora = aseguradora;
-        this.seguro = seguro;
-        this.beneficiario = beneficiario;
-        this.renovacion = renovacion;
-        this.emergencia = emergencia;
-        this.polizaIcono = polizaIcono;
-        this.aseguradoraIcono = aseguradoraIcono;
-        this.seguroIcono = seguroIcono;
-        this.beneficiarioIcono = beneficiarioIcono;
-        this.renovacionIcono = renovacionIcono;
-        this.emergenciaIcono = emergenciaIcono;
+    public SeguroItem(int id, String poliza, String aseguradora, String seguro, String beneficiario, String renovacion, String emergencia, String updated_at) {
+        this.id=id;
+        this.policy = poliza;
+        this.name = aseguradora;
+        this.Description = seguro;
+        this.insured_name = beneficiario;
+        this.expiration = renovacion;
+        this.emergency = emergencia;
+        this.updated_at=updated_at;
     }
 
-    public String getPoliza() {
-        return poliza;
+    public int getId() {
+        return id;
     }
 
-    public void setPoliza(String poliza) {
-        this.poliza = poliza;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getAseguradora() {
-        return aseguradora;
+    public int getCustomer_id() {
+        return customer_id;
     }
 
-    public void setAseguradora(String aseguradora) {
-        this.aseguradora = aseguradora;
+    public void setCustomer_id(int customer_id) {
+        this.customer_id = customer_id;
     }
 
-    public String getSeguro() {
-        return seguro;
+    public String getPolicy() {
+        return policy;
     }
 
-    public void setSeguro(String seguro) {
-        this.seguro = seguro;
+    public void setPolicy(String policy) {
+        this.policy = policy;
     }
 
-    public String getBeneficiario() {
-        return beneficiario;
+    public String getName() {
+        return name;
     }
 
-    public void setBeneficiario(String beneficiario) {
-        this.beneficiario = beneficiario;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getRenovacion() {
-        return renovacion;
+    public String getDescription() {
+        return Description;
     }
 
-    public void setRenovacion(String renovacion) {
-        this.renovacion = renovacion;
+    public void setDescription(String description) {
+        Description = description;
     }
 
-    public String getEmergencia() {
-        return emergencia;
+    public String getInsured_name() {
+        return insured_name;
     }
 
-    public void setEmergencia(String emergencia) {
-        this.emergencia = emergencia;
+    public void setInsured_name(String insured_name) {
+        this.insured_name = insured_name;
+    }
+
+    public String getExpiration() {
+        return expiration;
+    }
+
+    public void setExpiration(String expiration) {
+        this.expiration = expiration;
+    }
+
+    public String getEmergency() {
+        return emergency;
+    }
+
+    public void setEmergency(String emergency) {
+        this.emergency = emergency;
+    }
+
+    public String getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
     }
 
     public int getPolizaIcono() {
@@ -135,5 +158,13 @@ public class SeguroItem {
 
     public void setEmergenciaIcono(int emergenciaIcono) {
         this.emergenciaIcono = emergenciaIcono;
+    }
+
+    public int getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(int usuario) {
+        this.usuario = usuario;
     }
 }

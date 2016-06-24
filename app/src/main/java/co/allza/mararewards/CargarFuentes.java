@@ -7,12 +7,13 @@ import android.graphics.Typeface;
  * Created by Tavo on 07/06/2016.
  */
 public class CargarFuentes {
+
 public static final int ROBOTO_MEDIUM =   0;
 public static final int ROBOTO_REGULAR =   1;
 public static final int RUBIK_LIGHT =   2;
 public static final int RUBIK_REGULAR =   3;
 public static final int RUBIK_MEDIUM =   4;
-    public static final int RUBIK_BOLD =   5;
+public static final int RUBIK_BOLD =   5;
 
 private static final int NUM_OF_CUSTOM_FONTS = 6;
 
@@ -28,8 +29,6 @@ private static String[] fontPath = {
         "fonts/Rubik-Medium.ttf",
         "fonts/Rubik-Bold.ttf"
 };
-
-
         /**
          * Returns a loaded custom font based on it's identifier.
          *

@@ -29,7 +29,7 @@ import co.allza.mararewards.items.SeguroItem;
  */
 public class SegurosPagerAdapter extends PagerAdapter
 {
-
+    private boolean doNotifyDataSetChangedOnce = false;
     Context context;
     LayoutInflater inflater;
     ArrayList<SeguroItem> pages = new ArrayList<>();
@@ -51,6 +51,8 @@ public class SegurosPagerAdapter extends PagerAdapter
     }
     @Override
     public int getCount() {
+
+
         return pages.size();
     }
 
@@ -76,12 +78,12 @@ public class SegurosPagerAdapter extends PagerAdapter
         emergenciaIcono=(ImageView)row.findViewById(R.id.cardEmergenciaIcono);
 
         SeguroItem item = pages.get(position);
-        poliza.setText("Póliza: "+item.getPoliza());
-        aseguradora.setText(item.getAseguradora());
-        seguro.setText(item.getSeguro());
-        beneficiario.setText(item.getBeneficiario());
-        renovacion.setText("Renovación el "+item.getRenovacion());
-        emergencia.setText("Emergencia al "+item.getEmergencia());
+        poliza.setText("Póliza: "+item.getPolicy());
+        aseguradora.setText(item.getName());
+        seguro.setText(item.getDescription());
+        beneficiario.setText(item.getInsured_name());
+        renovacion.setText("Renovación el "+item.getExpiration());
+        emergencia.setText("Emergencia al "+item.getEmergency());
 
         poliza.setTypeface(CargarFuentes.getTypeface(context,CargarFuentes.RUBIK_REGULAR));
         aseguradora.setTypeface(CargarFuentes.getTypeface(context,CargarFuentes.RUBIK_REGULAR));
@@ -96,15 +98,16 @@ public class SegurosPagerAdapter extends PagerAdapter
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setData(Uri.parse("tel:"+pages.get(pos).getEmergencia().toString()));
+                intent.setData(Uri.parse("tel:"+pages.get(pos).getEmergency().toString()));
                 context.startActivity(intent);
 
             }
         });
 
         container.addView(row);
+
         try {
-            fechaSeguro= parserFecha.parse(item.getRenovacion());
+            fechaSeguro= parserFecha.parse(item.getExpiration());
             if(fechaActual.after(fechaSeguro))
             {
                 poliza.setTextColor(context.getResources().getColor(R.color.grisVencido));
@@ -112,7 +115,7 @@ public class SegurosPagerAdapter extends PagerAdapter
                 seguro.setTextColor(context.getResources().getColor(R.color.grisVencido));
                 beneficiario.setTextColor(context.getResources().getColor(R.color.grisVencido));
                 emergencia.setTextColor(context.getResources().getColor(R.color.grisVencido));
-                renovacion.setText("Venció el "+item.getRenovacion());
+                renovacion.setText("Venció el "+item.getExpiration());
                 renovacion.setTypeface(CargarFuentes.getTypeface(context,CargarFuentes.RUBIK_MEDIUM));
                 renovacion.setTextColor(context.getResources().getColor(R.color.rectanguloSplash));
                 info.setImageResource(R.drawable.info_vencido);
@@ -135,5 +138,11 @@ public class SegurosPagerAdapter extends PagerAdapter
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((View) object);
+
+    }
+
+    public ArrayList<SeguroItem> getArrayList()
+    {
+        return pages;
     }
 }

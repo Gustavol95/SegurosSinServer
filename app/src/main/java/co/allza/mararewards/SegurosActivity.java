@@ -35,15 +35,19 @@ import java.util.Date;
 
 import co.allza.mararewards.adapter.SegurosAdapter;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
+import co.allza.mararewards.items.CustomerItem;
 import co.allza.mararewards.items.DepthPageTransformer;
 import co.allza.mararewards.items.SeguroItem;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 
-public class SegurosActivity extends AppCompatActivity  {
+public class SegurosActivity extends AppCompatActivity implements CargarDatos.VolleyCallback {
 
     LinearLayout linear;
     ViewPager pagerSeguros;
     SegurosPagerAdapter adapter;
-    ArrayList<SeguroItem> arraySeguros = new ArrayList<>();
+    ArrayList<SeguroItem> arraySeguros;
     TextView seguroActual;
     Button botonCallToAction;
     SimpleDateFormat parserFecha;
@@ -82,23 +86,84 @@ public class SegurosActivity extends AppCompatActivity  {
         fondo=(TransitionDrawable)getResources().getDrawable(R.drawable.fondo_seguros);
         linear.setBackground(fondo);
 
+
         pagerSeguros=(ViewPager) findViewById(R.id.viewPagerSeguros);
-        arraySeguros.add(new SeguroItem("0123423356789","MAPFRE Tepeyac","Plan Educacional Superación",
-                "José Eduardo Quintana Rodriguez","24/Ago/2016","01 800 062 7373"));
-        arraySeguros.add(new SeguroItem("0123456789"," Tepeyac","Plan Educacional Superación",
-                "José Eduardo Quintana Rodriguez","24/Ago/2016","01 800 062 7373"));
-        arraySeguros.add(new SeguroItem("0123456789","MAPFRE Tepeyac"," Educacional Superación",
-                "José Eduardo Quintana Rodriguez","24/Ago/2016","01 800 062 7373"));
-        arraySeguros.add(new SeguroItem("0123456789","MAPFRE Tepeyac","Plan Educacional Superación",
-                "José Eduardo Quintana Rodriguez","24/Oct/2016","01 800 062 7373"));
-        arraySeguros.add(new SeguroItem("0123456789","MAPFRE Tepeyac","Plan Educacional ",
-                "José Eduardo Quintana Rodriguez","24/Ene/2016","7450982"));
-        adapter = new SegurosPagerAdapter(getApplicationContext(), arraySeguros);
-        pagerSeguros.setAdapter(adapter);
+        inkPageIndicator = (InkPageIndicator) findViewById(R.id.indicator);
+        //CargarDatos.pullSeguros(getApplicationContext(),"","",this);
+        if(!CargarDatos.adapterIsNull()){
+        onSuccess(CargarDatos.getAdapter());}
+        seguroActual=(TextView)findViewById(R.id.tituloSeguroActual);
+        seguroActual.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.RUBIK_MEDIUM));
+        botonCallToAction=(Button)findViewById(R.id.botonCallToAction);
+        botonCallToAction.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.ROBOTO_MEDIUM));
+        botonCallToAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(SegurosActivity.this,CallToActionActivity.class);
+                startActivity(i);
+            }
+        });
+
+        parserFecha=new SimpleDateFormat("dd/MMM/yyyy");
+        calendar=Calendar.getInstance();
+        fechaActual=calendar.getTime();
+
+
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_seguros, menu);
+        return true;
+        
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.desactivarNotif) {
+
+            return true;
+        }
+        if (id == R.id.cerrar) {
+            RealmConfiguration config = new RealmConfiguration.Builder(getApplicationContext()).build();
+            Realm.setDefaultConfiguration(config);
+            Realm realm = Realm.getDefaultInstance();
+            RealmResults<CustomerItem> todo=realm.where(CustomerItem.class).findAll();
+            realm.beginTransaction();
+            todo.deleteAllFromRealm();
+            realm.commitTransaction();
+            Intent i=new Intent(SegurosActivity.this,LoginActivity.class);
+            SegurosActivity.this.startActivity(i);
+            finish();
+
+
+            return true;
+        }
+
+      
+        return super.onOptionsItemSelected(item);
+    }
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
+    public void onSegurosPulled(SegurosPagerAdapter pagerAdapter ){
+
+        pagerSeguros.setAdapter(pagerAdapter);
+        arraySeguros=pagerAdapter.getArrayList();
         pagerSeguros.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                seguroActual.setText(arraySeguros.get(position).getSeguro());
+                seguroActual.setText(arraySeguros.get(position).getDescription());
 
 
             }
@@ -106,7 +171,7 @@ public class SegurosActivity extends AppCompatActivity  {
             @Override
             public void onPageSelected(int position) {
                 try {
-                    fechaSeguro= parserFecha.parse(arraySeguros.get(position).getRenovacion());
+                    fechaSeguro= parserFecha.parse(arraySeguros.get(position).getExpiration());
                     if(fechaActual.after(fechaSeguro) && !estaVencido){
                         estaVencido=!estaVencido;
                         fondo.startTransition(500);
@@ -131,55 +196,22 @@ public class SegurosActivity extends AppCompatActivity  {
             }
         });
         pagerSeguros.setPageTransformer(true,new DepthPageTransformer());
-        seguroActual=(TextView)findViewById(R.id.tituloSeguroActual);
-        seguroActual.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.RUBIK_MEDIUM));
 
-        botonCallToAction=(Button)findViewById(R.id.botonCallToAction);
-        botonCallToAction.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.ROBOTO_MEDIUM));
-        botonCallToAction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i=new Intent(SegurosActivity.this,CallToActionActivity.class);
-                startActivity(i);
-            }
-        });
-
-        parserFecha=new SimpleDateFormat("dd/MMM/yyyy");
-        calendar=Calendar.getInstance();
-        fechaActual=calendar.getTime();
-
-         inkPageIndicator = (InkPageIndicator) findViewById(R.id.indicator);
         inkPageIndicator.setViewPager(pagerSeguros);
-
-
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_seguros, menu);
-        return true;
-        
+    public void onSuccess(SegurosPagerAdapter result) {
+        onSegurosPulled(result);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.desactivarNotif) {
-            Toast.makeText(SegurosActivity.this, "", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-      
-        return super.onOptionsItemSelected(item);
+    public void onFailure(String error) {
+        Toast.makeText(SegurosActivity.this, ""+error, Toast.LENGTH_SHORT).show();
     }
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
+
+    @Override
+    public void onTokenReceived(String token) {
+
     }
 }

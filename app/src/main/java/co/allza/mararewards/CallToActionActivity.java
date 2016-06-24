@@ -92,6 +92,7 @@ public class CallToActionActivity extends Activity implements AdapterView.OnItem
                         Intent intent = new Intent(Intent.ACTION_DIAL);
                         intent.setData(Uri.parse("tel:018001010145"));
                         startActivity(intent);
+                        break;
 
 
 

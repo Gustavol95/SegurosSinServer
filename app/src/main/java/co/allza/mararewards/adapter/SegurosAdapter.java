@@ -78,12 +78,12 @@ public class SegurosAdapter  extends ArrayAdapter<SeguroItem>
             viewHolder = (CardViewHolder3)row.getTag();
         }
         SeguroItem item = getItem(position);
-        viewHolder.poliza.setText("Póliza: "+item.getPoliza());
-        viewHolder.aseguradora.setText(item.getAseguradora());
-        viewHolder.seguro.setText(item.getSeguro());
-        viewHolder.beneficiario.setText(item.getBeneficiario());
-        viewHolder.renovacion.setText("Renovación el "+item.getRenovacion());
-        viewHolder.emergencia.setText("Emergencia al "+item.getEmergencia());
+        viewHolder.poliza.setText("Póliza: "+item.getPolicy());
+        viewHolder.aseguradora.setText(item.getName());
+        viewHolder.seguro.setText(item.getDescription());
+        viewHolder.beneficiario.setText(item.getInsured_name());
+        viewHolder.renovacion.setText("Renovación el "+item.getExpiration());
+        viewHolder.emergencia.setText("Emergencia al "+item.getEmergency());
 
 
 

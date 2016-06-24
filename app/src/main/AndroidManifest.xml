@@ -24,6 +24,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
+
         <activity
             android:name=".LoginCodigoActivity"
             android:label="@string/app_name"
@@ -43,6 +44,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:parentActivityName=".CallToActionActivity">
+
 
 
         </activity>
@@ -68,6 +70,6 @@
     </application>
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
-
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

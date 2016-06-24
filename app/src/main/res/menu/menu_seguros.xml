@@ -6,6 +6,10 @@
         android:id="@+id/desactivarNotif"
         android:title="@string/desactivarNotif"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/cerrar"
+        android:title="@string/cerrarSesion"
+        app:showAsAction="never"/>
 
     <!-- Settings, should always be in the overflow -->
 
