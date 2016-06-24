@@ -37,7 +37,8 @@
         android:layout_margin="20dp"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="25sp" />
+        android:textSize="25sp"
+        android:shadowDy="10"/>
 
     <view
         android:id="@+id/viewPagerSeguros"
@@ -52,7 +53,8 @@
         android:id="@+id/indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="8dp"
+        android:paddingTop="8dp"/>
     <Button
         android:id="@+id/botonCallToAction"
         android:layout_width="match_parent"

@@ -26,8 +26,8 @@ public class CargarDatos {
     private static String getCustomer="http://verdad.herokuapp.com/api/customers/";
     private static String accessToken="?access_token=";
     private static String getToken=" http://verdad.herokuapp.com/api/apikey/new?access_token=";
-    public static String token;
-
+    private static String token;
+    private static Realm realm;
     private static RequestQueue queue;
     private static StringRequest stringRequest;
     private static JSONObject respuesta;
@@ -111,9 +111,8 @@ public class CargarDatos {
 
     private static ArrayList<SeguroItem> parseSeguros(JSONObject data, VolleyCallback callback)
     {
-        RealmConfiguration config = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(config);
-        Realm realm = Realm.getDefaultInstance();
+
+        Realm realm =getRealm(context);
         try {
             JSONObject datos=data.getJSONObject("data");
             JSONObject cliente=datos.getJSONObject("Customer");
@@ -171,9 +170,7 @@ public class CargarDatos {
     public static ArrayList<SeguroItem> getSegurosFromDatabase(Context ctx, String usuario, VolleyCallback callback)
     {
         context=ctx;
-        RealmConfiguration config = new RealmConfiguration.Builder(context).build();
-        Realm.setDefaultConfiguration(config);
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = getRealm(ctx);
         ArrayList<SeguroItem> items=new ArrayList<>();
         CustomerItem cliente=realm.where(CustomerItem.class)
                 .findFirst();
@@ -205,11 +202,25 @@ public class CargarDatos {
         return adapter;
     }
 
-
     public interface VolleyCallback{
         void onSuccess(SegurosPagerAdapter result);
         void onFailure(String error);
         void onTokenReceived(String token);
+    }
+
+    public static Realm getRealm(Context ctx)
+    {
+        context=ctx;
+        if(realm==null ){
+        RealmConfiguration config = new RealmConfiguration
+                .Builder(ctx)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(config);
+        realm = Realm.getDefaultInstance();
+        return realm;
+        }
+        else{return  realm;}
     }
 
 

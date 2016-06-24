@@ -129,9 +129,8 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
             return true;
         }
         if (id == R.id.cerrar) {
-            RealmConfiguration config = new RealmConfiguration.Builder(getApplicationContext()).build();
-            Realm.setDefaultConfiguration(config);
-            Realm realm = Realm.getDefaultInstance();
+
+            Realm realm = CargarDatos.getRealm(getApplicationContext());
             RealmResults<CustomerItem> todo=realm.where(CustomerItem.class).findAll();
             realm.beginTransaction();
             todo.deleteAllFromRealm();

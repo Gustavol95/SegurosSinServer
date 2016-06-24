@@ -56,9 +56,8 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
 
     @Override
     public void onSuccess(SegurosPagerAdapter result) {
-        RealmConfiguration config = new RealmConfiguration.Builder(getApplicationContext()).build();
-        Realm.setDefaultConfiguration(config);
-        Realm realm = Realm.getDefaultInstance();
+
+        Realm realm =CargarDatos.getRealm(getApplicationContext());
         customer=new CustomerItem();
         customer.setUsertoken(editTextCodigo.getText().toString());
         customer.setToken(token);

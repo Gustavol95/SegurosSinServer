@@ -25,9 +25,7 @@ public class SplashActivity extends Activity implements CargarDatos.VolleyCallba
         setContentView(R.layout.activity_splash);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
-        RealmConfiguration config = new RealmConfiguration.Builder(this).build();
-        Realm.setDefaultConfiguration(config);
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = CargarDatos.getRealm(getApplicationContext());
         result = realm.where(CustomerItem.class)
                 .findFirst();
         if(result==null)
