@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import co.allza.mararewards.adapter.NotificacionesAdapter;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
+import co.allza.mararewards.interfaces.DialogCallback;
 import co.allza.mararewards.items.CustomerItem;
 import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
@@ -38,8 +39,14 @@ public class CargarDatos {
     private static NotificacionesAdapter notifAdapter;
     private static boolean segurosCargados;
     private static Context context;
+    private static ArrayList<SeguroItem> arraySeguros;
     private static ArrayList<NotificacionItem> arrayNotif;
+    private static DialogCallback dialogCallback;
 
+    public static void changeContext(Context ctx)
+    {
+        context=ctx;
+    }
     public static void getTokenFromServer(Context ctx,String usertoken, final VolleyCallback callback)
     {
         context=ctx;
@@ -188,8 +195,13 @@ public class CargarDatos {
             }
          adapter=new SegurosPagerAdapter(context,items);
         callback.onSuccess(adapter);
-
+        arraySeguros=new ArrayList<>();
+        arraySeguros.addAll(items);
         return items;
+    }
+    public static ArrayList<SeguroItem> getArraySeguros()
+    {
+        return arraySeguros;
     }
 
     public static boolean adapterIsNull()
@@ -207,11 +219,7 @@ public class CargarDatos {
         return adapter;
     }
 
-    public interface VolleyCallback{
-        void onSuccess(SegurosPagerAdapter result);
-        void onFailure(String error);
-        void onTokenReceived(String token);
-    }
+
 
     public static Realm getRealm(Context ctx)
     {
@@ -259,5 +267,17 @@ public class CargarDatos {
 
     }
 
-
+    public static void setDialogCallback(DialogCallback callback)
+    {
+        dialogCallback=callback;
+    }
+    public static DialogCallback getDialogCallback()
+    {
+         return dialogCallback;
+    }
+    public interface VolleyCallback{
+        void onSuccess(SegurosPagerAdapter result);
+        void onFailure(String error);
+        void onTokenReceived(String token);
+    }
 }

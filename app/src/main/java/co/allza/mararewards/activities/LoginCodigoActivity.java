@@ -85,14 +85,13 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
     public void onFailure(String error) {
         Toast.makeText(LoginCodigoActivity.this, "Algo está mal, intente de nuevo por favor", Toast.LENGTH_SHORT).show();
         botonEntrar.setEnabled(true);
-
         progress.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onTokenReceived(String token) {
         this.token=token;
-        CargarDatos.pullSeguros(getApplicationContext(),editTextCodigo.getText().toString(),token,this);
+        CargarDatos.pullSeguros(LoginCodigoActivity.this,editTextCodigo.getText().toString(),token,this);
 
     }
 }

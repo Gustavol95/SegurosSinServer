@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -33,6 +34,7 @@ import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.CargarFuentes;
 import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
+import co.allza.mararewards.interfaces.DialogCallback;
 import co.allza.mararewards.items.CustomerItem;
 import co.allza.mararewards.items.DepthPageTransformer;
 import co.allza.mararewards.items.NotificacionItem;
@@ -41,7 +43,7 @@ import co.allza.mararewards.services.SegurosService;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class SegurosActivity extends AppCompatActivity implements CargarDatos.VolleyCallback {
+public class SegurosActivity extends AppCompatActivity implements CargarDatos.VolleyCallback, DialogCallback {
 
     LinearLayout linear;
     ViewPager pagerSeguros;
@@ -66,6 +68,7 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //getWindow().setStatusBarColor(getResources().getColor(R.color.statusbarSeguros));
         }
+        CargarDatos.setDialogCallback(this);
         linear=(LinearLayout)findViewById(R.id.linearSeguros);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -264,7 +267,9 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
 
     @Override
     public void onSuccess(SegurosPagerAdapter result) {
-        onSegurosPulled(result);
+
+        adapter=new SegurosPagerAdapter(SegurosActivity.this,CargarDatos.getArraySeguros());
+        onSegurosPulled(adapter);
     }
 
     @Override
@@ -275,5 +280,17 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
     @Override
     public void onTokenReceived(String token) {
 
+    }
+
+    @Override
+    public void onDialogPetition(int id) {
+        SeguroItem temp=adapter.getArrayList().get(id);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.MyAlertDialogStyle);
+        builder.setTitle(temp.getDescription());
+        builder.setMessage("Aqui van las características en forma de lista\n" +
+                "- Caracteristica\n" +
+                "- Característica");
+        builder.setPositiveButton("Cerrar", null);
+        builder.show();
     }
 }

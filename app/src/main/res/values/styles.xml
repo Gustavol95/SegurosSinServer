@@ -26,5 +26,16 @@
         <item name="colorAccent">@color/toolbarSeguros</item>
     </style>
 
+    <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@android:color/white</item>
+        <!-- Used for the title and text -->
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <!-- Used for the background -->
+        <item name="android:background">@color/rectanguloSplash</item>
+        <item name="android:divider">@drawable/fondo_seguros</item>
+    </style>
+
+
 
 </resources>

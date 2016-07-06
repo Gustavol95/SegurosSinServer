@@ -30,7 +30,7 @@ public class SplashActivity extends Activity implements CargarDatos.VolleyCallba
         setContentView(R.layout.activity_splash);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
-        Realm realm = CargarDatos.getRealm(getApplicationContext());
+        Realm realm = CargarDatos.getRealm(SplashActivity.this);
         result = realm.where(CustomerItem.class)
                 .findFirst();
         if(result==null)
@@ -47,7 +47,7 @@ public class SplashActivity extends Activity implements CargarDatos.VolleyCallba
         }
         else
         {
-           CargarDatos.getSegurosFromDatabase(getApplicationContext(),this);
+           CargarDatos.getSegurosFromDatabase(SplashActivity.this,this);
         }
 
 

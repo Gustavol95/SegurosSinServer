@@ -1,31 +1,33 @@
 package co.allza.mararewards.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
+import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.CargarFuentes;
 import co.allza.mararewards.R;
+import co.allza.mararewards.interfaces.DialogCallback;
 import co.allza.mararewards.items.SeguroItem;
 
 /**
  * Created by Tavo on 17/06/2016.
  */
-public class SegurosPagerAdapter extends PagerAdapter
+public class SegurosPagerAdapter extends PagerAdapter implements CargarDatos.VolleyCallback
 {
-    private boolean doNotifyDataSetChangedOnce = false;
+
     Context context;
     LayoutInflater inflater;
     ArrayList<SeguroItem> pages = new ArrayList<>();
@@ -35,6 +37,7 @@ public class SegurosPagerAdapter extends PagerAdapter
     Date fechaActual;
     Date fechaSeguro;
     SimpleDateFormat parserFecha;
+    DialogCallback callback;
 
     public SegurosPagerAdapter(Context context, ArrayList<SeguroItem> list)
     {
@@ -44,6 +47,7 @@ public class SegurosPagerAdapter extends PagerAdapter
         parserFecha=new SimpleDateFormat("dd/MMM/yyyy");
         calendar=Calendar.getInstance();
         fechaActual=calendar.getTime();
+
     }
     @Override
     public int getCount() {
@@ -73,7 +77,7 @@ public class SegurosPagerAdapter extends PagerAdapter
         renovacionIcono=(ImageView)row.findViewById(R.id.cardRenovacionIcono);
         emergenciaIcono=(ImageView)row.findViewById(R.id.cardEmergenciaIcono);
 
-        SeguroItem item = pages.get(position);
+        final SeguroItem item = pages.get(position);
         poliza.setText("Póliza: "+item.getPolicy());
         aseguradora.setText(item.getName());
         seguro.setText(item.getDescription());
@@ -88,6 +92,14 @@ public class SegurosPagerAdapter extends PagerAdapter
         renovacion.setTypeface(CargarFuentes.getTypeface(context,CargarFuentes.RUBIK_REGULAR));
         emergencia.setTypeface(CargarFuentes.getTypeface(context,CargarFuentes.RUBIK_MEDIUM));
 
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               callback=CargarDatos.getDialogCallback();
+                callback.onDialogPetition(position);
+
+            }
+        });
         final int pos=position;
         emergencia.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,5 +152,22 @@ public class SegurosPagerAdapter extends PagerAdapter
     public ArrayList<SeguroItem> getArrayList()
     {
         return pages;
+    }
+
+
+
+    @Override
+    public void onSuccess(SegurosPagerAdapter result) {
+
+    }
+
+    @Override
+    public void onFailure(String error) {
+
+    }
+
+    @Override
+    public void onTokenReceived(String token) {
+
     }
 }
