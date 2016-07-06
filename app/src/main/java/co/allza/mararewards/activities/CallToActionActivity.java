@@ -1,24 +1,20 @@
-package co.allza.mararewards;
+package co.allza.mararewards.activities;
 
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.NotificationCompat;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
+import co.allza.mararewards.CargarFuentes;
+import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.CallToActionAdapter;
 import co.allza.mararewards.items.LoginItem;
 

@@ -1,21 +1,26 @@
-package co.allza.mararewards;
+package co.allza.mararewards.activities;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.WindowManager;
 import android.widget.Toast;
-
+import java.util.Calendar;
+import co.allza.mararewards.CargarDatos;
+import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
 import co.allza.mararewards.items.CustomerItem;
-import co.allza.mararewards.items.SeguroItem;
+import co.allza.mararewards.services.SegurosService;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
 
 
-public class SplashActivity extends Activity implements CargarDatos.VolleyCallback{
+public class SplashActivity extends Activity implements CargarDatos.VolleyCallback {
     Handler elHandler;
     CustomerItem result;
 
@@ -42,13 +47,25 @@ public class SplashActivity extends Activity implements CargarDatos.VolleyCallba
         }
         else
         {
-           CargarDatos.getSegurosFromDatabase(getApplicationContext(),result.getUsertoken(),this);
+           CargarDatos.getSegurosFromDatabase(getApplicationContext(),this);
         }
 
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        elHandler=null;
+        finish();
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        elHandler=null;
+        finish();
+    }
 
     @Override
     public void onSuccess(SegurosPagerAdapter result) {

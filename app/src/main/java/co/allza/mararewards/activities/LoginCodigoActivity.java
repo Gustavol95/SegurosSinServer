@@ -1,19 +1,23 @@
-package co.allza.mararewards;
+package co.allza.mararewards.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import co.allza.mararewards.CargarDatos;
+import co.allza.mararewards.CargarFuentes;
+import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
 import co.allza.mararewards.items.CustomerItem;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 /**
  * Created by Tavo on 10/06/2016.
@@ -24,6 +28,7 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
     EditText editTextCodigo;
     Button botonEntrar;
     CustomerItem customer;
+    ProgressBar progress;
     String token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +40,12 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
         footer=(TextView)findViewById(R.id.textViewFooterLoginCodigo);
         editTextCodigo=(EditText)findViewById(R.id.editTextLoginCodigo);
         botonEntrar=(Button)findViewById(R.id.buttonLoginCodigo);
+        progress=(ProgressBar) findViewById(R.id.progress);
 
         introducir.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.ROBOTO_MEDIUM));
         footer.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.RUBIK_LIGHT));
         editTextCodigo.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.RUBIK_REGULAR));
         botonEntrar.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.ROBOTO_MEDIUM));
-
         botonEntrar.setOnClickListener(this);
     }
 
@@ -49,6 +54,13 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
         switch (v.getId()){
             case R.id.buttonLoginCodigo:
                 CargarDatos.getTokenFromServer(getApplicationContext(),editTextCodigo.getText().toString(),this);
+                botonEntrar.setEnabled(false);
+
+                progress.setVisibility(View.VISIBLE);
+                progress.setProgress(15);
+
+
+                break;
 
         }
 
@@ -71,8 +83,10 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
 
     @Override
     public void onFailure(String error) {
-        Toast.makeText(LoginCodigoActivity.this, "Hubo un error, inténtelo de nuevo", Toast.LENGTH_SHORT).show();
+        Toast.makeText(LoginCodigoActivity.this, "Algo está mal, intente de nuevo por favor", Toast.LENGTH_SHORT).show();
+        botonEntrar.setEnabled(true);
 
+        progress.setVisibility(View.INVISIBLE);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package co.allza.mararewards;
+package co.allza.mararewards.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
+import co.allza.mararewards.CargarFuentes;
+import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.LoginListAdapter;
 import co.allza.mararewards.items.LoginItem;
 

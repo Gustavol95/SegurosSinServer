@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SplashActivity"
+            android:name=".activities.SplashActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" >
@@ -19,41 +19,41 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
-
         <activity
-            android:name=".LoginCodigoActivity"
+            android:name=".activities.LoginCodigoActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
            ></activity>
         <activity
-            android:name=".CallToActionActivity"
+            android:name=".activities.CallToActionActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".activities.SegurosActivity">
 
         </activity>
         <activity
-            android:name=".SegurosActivity"
+            android:name=".activities.SegurosActivity"
             android:label="Estas Seguro"
             android:screenOrientation="portrait"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme"
-            android:parentActivityName=".CallToActionActivity">
+          >
 
 
 
         </activity>
         <activity
-            android:name=".NotificacionesActivity"
+            android:name=".activities.NotificacionesActivity"
             android:label="Estas Seguro"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-            android:parentActivityName=".CallToActionActivity"
+            android:parentActivityName=".activities.SegurosActivity"
             >
 
         </activity>
@@ -66,10 +66,17 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <service android:name=".services.SegurosService"></service>
+        <receiver android:name=".BootReceiver" android:enabled="true" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
 
     </application>
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
 </manifest>

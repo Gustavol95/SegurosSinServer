@@ -12,8 +12,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
+
+import co.allza.mararewards.adapter.NotificacionesAdapter;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
 import co.allza.mararewards.items.CustomerItem;
+import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -32,8 +35,10 @@ public class CargarDatos {
     private static StringRequest stringRequest;
     private static JSONObject respuesta;
     private static SegurosPagerAdapter adapter;
+    private static NotificacionesAdapter notifAdapter;
     private static boolean segurosCargados;
     private static Context context;
+    private static ArrayList<NotificacionItem> arrayNotif;
 
     public static void getTokenFromServer(Context ctx,String usertoken, final VolleyCallback callback)
     {
@@ -167,7 +172,7 @@ public class CargarDatos {
 
     }
 
-    public static ArrayList<SeguroItem> getSegurosFromDatabase(Context ctx, String usuario, VolleyCallback callback)
+    public static ArrayList<SeguroItem> getSegurosFromDatabase(Context ctx,  VolleyCallback callback)
     {
         context=ctx;
         Realm realm = getRealm(ctx);
@@ -221,6 +226,37 @@ public class CargarDatos {
         return realm;
         }
         else{return  realm;}
+    }
+
+
+    //NOTIFICACIONES
+    //Generar Adapter de las notificaciones
+    public static void getNotificacionesFromDatabase(Context ctx)
+    {
+        context=ctx;
+        Realm realm = getRealm(ctx);
+        arrayNotif=new ArrayList<>();
+        RealmResults<NotificacionItem> result = realm.where(NotificacionItem.class)
+                .findAll();
+        for (int i=0; i<result.size(); i++){
+            arrayNotif.add(result.get(i));
+        }
+    }
+    //Get Adapter
+    public static ArrayList<NotificacionItem> getNotifAdapter()
+    {
+        return arrayNotif;
+    }
+
+    //Gererar Realm Object , createOrUpdateToRealm , mandar llamar refresh del adapter
+    public static void pushNotification(Context ctx,NotificacionItem item)
+    {
+        context=ctx;
+        Realm realm = getRealm(ctx);
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(item);
+        realm.commitTransaction();
+
     }
 
 

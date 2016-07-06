@@ -2,22 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:background="@android:color/white">
+    android:background="@android:color/white"
+    android:orientation="horizontal">
 
     <TextView
         android:layout_width="1dp"
         android:layout_height="70dp"
-        android:visibility="invisible"/>
+        android:visibility="invisible" />
+
     <ImageView
         android:id="@+id/listViewNotificacionesIcono"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
-        android:padding="10dp"
         android:layout_marginLeft="7dp"
         android:layout_marginRight="7dp"
-
+        android:padding="10dp"
 
 
         />
@@ -25,34 +25,41 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_gravity="center_vertical"
-        android:background="@android:color/transparent">
+        android:background="@android:color/transparent"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/listViewNotificacionesTitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
             android:textColor="@color/listViewNotificacionTitulo"
-            android:textSize="14dp"
-            android:paddingTop="10dp"/>
+            android:textSize="14dp" />
 
         <TextView
             android:id="@+id/listViewNotificacionesSubtitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
             android:textColor="@color/listViewNotificacionSubtitulo"
-            android:textSize="13sp"
-            android:paddingBottom="10dp"/>
+            android:textSize="13sp" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/listViewNotificacionesFecha"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:layout_gravity="center"
-        android:textColor="@color/listViewNotificacionValor"
-        android:textSize="12sp"
-       />
+        android:layout_gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/listViewNotificacionesFecha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="15dp"
+            android:textColor="@color/listViewNotificacionValor"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
 </LinearLayout>

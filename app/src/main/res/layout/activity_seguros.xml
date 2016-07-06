@@ -38,7 +38,11 @@
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textSize="25sp"
-        android:shadowDy="10"/>
+        android:shadowDy="4"
+        android:shadowDx="0"
+        android:shadowRadius="3"
+        android:textColorHighlight="@color/backGroundAlphaNegro"
+        android:shadowColor="@color/backGroundAlphaNegro"/>
 
     <view
         android:id="@+id/viewPagerSeguros"

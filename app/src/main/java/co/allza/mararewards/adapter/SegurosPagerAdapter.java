@@ -9,18 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import co.allza.mararewards.CallToActionActivity;
 import co.allza.mararewards.CargarFuentes;
-import co.allza.mararewards.NotificacionesActivity;
 import co.allza.mararewards.R;
 import co.allza.mararewards.items.SeguroItem;
 

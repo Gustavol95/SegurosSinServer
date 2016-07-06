@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@drawable/bg_deverdad_blanco"
-    tools:context="co.allza.mararewards.CallToActionActivity">
+    tools:context=".activities.CallToActionActivity">
 
 
     <include layout="@layout/content_call_to_action" />

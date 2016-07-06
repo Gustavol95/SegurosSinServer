@@ -1,31 +1,27 @@
-package co.allza.mararewards;
+package co.allza.mararewards.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.NavUtils;
+import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pixelcan.inkpageindicator.InkPageIndicator;
-
-import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,13 +29,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import co.allza.mararewards.adapter.SegurosAdapter;
+import co.allza.mararewards.CargarDatos;
+import co.allza.mararewards.CargarFuentes;
+import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
 import co.allza.mararewards.items.CustomerItem;
 import co.allza.mararewards.items.DepthPageTransformer;
+import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
+import co.allza.mararewards.services.SegurosService;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 public class SegurosActivity extends AppCompatActivity implements CargarDatos.VolleyCallback {
@@ -75,7 +74,7 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
         toolbar.setTitle("Seguros");
         toolbar.setBackgroundColor(getResources().getColor(R.color.toolbarSeguros));
         toolbar.setNavigationIcon(R.drawable.ic_notifications_active_white_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                Intent i=new Intent(SegurosActivity.this,NotificacionesActivity.class);
@@ -90,6 +89,7 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
         pagerSeguros=(ViewPager) findViewById(R.id.viewPagerSeguros);
         inkPageIndicator = (InkPageIndicator) findViewById(R.id.indicator);
         //CargarDatos.pullSeguros(getApplicationContext(),"","",this);
+        CargarDatos.getNotificacionesFromDatabase(this);
         if(!CargarDatos.adapterIsNull()){
         onSuccess(CargarDatos.getAdapter());}
         seguroActual=(TextView)findViewById(R.id.tituloSeguroActual);
@@ -108,6 +108,8 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
         calendar=Calendar.getInstance();
         fechaActual=calendar.getTime();
 
+        //iniciarServicioSeguros();
+        validarPrimerUso();
 
 
     }
@@ -132,11 +134,13 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
 
             Realm realm = CargarDatos.getRealm(getApplicationContext());
             RealmResults<CustomerItem> todo=realm.where(CustomerItem.class).findAll();
+            RealmResults<NotificacionItem> allNotifications=realm.where(NotificacionItem.class).findAll();
             realm.beginTransaction();
             todo.deleteAllFromRealm();
+            allNotifications.deleteAllFromRealm();
             realm.commitTransaction();
             Intent i=new Intent(SegurosActivity.this,LoginActivity.class);
-            SegurosActivity.this.startActivity(i);
+            startActivity(i);
             finish();
 
 
@@ -214,6 +218,50 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
 
     }
 
+    public void iniciarServicioSeguros()
+    {
+        AlarmManager alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, SegurosService.class);
+        PendingIntent pintent=PendingIntent.getService(this,0,intent,0);
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.set(Calendar.HOUR_OF_DAY, 16);
+        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pintent);
+    }
+
+    public void validarPrimerUso()
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(!prefs.getBoolean("firstTime", false)) {
+            // run your one time code
+            AlarmManager alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(this, SegurosService.class);
+            PendingIntent pintent=PendingIntent.getService(this,0,intent,0);
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(System.currentTimeMillis());
+            cal.set(Calendar.HOUR_OF_DAY, 15);
+            cal.set(Calendar.MINUTE,22);
+            alarmMgr.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, pintent);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("firstTime", true);
+            editor.commit();
+        }
+    }
+    @Override
+    protected void onDestroy() {
+
+        super.onDestroy();
+
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        pagerSeguros.setAdapter(CargarDatos.getAdapter());
+    }
+
     @Override
     public void onSuccess(SegurosPagerAdapter result) {
         onSegurosPulled(result);
@@ -221,7 +269,7 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
 
     @Override
     public void onFailure(String error) {
-        Toast.makeText(SegurosActivity.this, ""+error, Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
