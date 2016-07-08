@@ -35,6 +35,7 @@ import co.allza.mararewards.CargarFuentes;
 import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
 import co.allza.mararewards.interfaces.DialogCallback;
+import co.allza.mararewards.interfaces.VolleyCallback;
 import co.allza.mararewards.items.CustomerItem;
 import co.allza.mararewards.items.DepthPageTransformer;
 import co.allza.mararewards.items.NotificacionItem;
@@ -43,7 +44,7 @@ import co.allza.mararewards.services.SegurosService;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class SegurosActivity extends AppCompatActivity implements CargarDatos.VolleyCallback, DialogCallback {
+public class SegurosActivity extends AppCompatActivity implements VolleyCallback, DialogCallback {
 
     LinearLayout linear;
     ViewPager pagerSeguros;
@@ -58,7 +59,8 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
     InkPageIndicator inkPageIndicator;
     boolean estaVencido=false;
     TransitionDrawable fondo;
-
+    int id=0;
+    int theme=R.style.MyAlertDialogStyle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +70,7 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //getWindow().setStatusBarColor(getResources().getColor(R.color.statusbarSeguros));
         }
+
         CargarDatos.setDialogCallback(this);
         linear=(LinearLayout)findViewById(R.id.linearSeguros);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -165,11 +168,12 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
     public void onSegurosPulled(SegurosPagerAdapter pagerAdapter ){
 
         pagerSeguros.setAdapter(pagerAdapter);
+
         arraySeguros=pagerAdapter.getArrayList();
         pagerSeguros.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                seguroActual.setText(arraySeguros.get(position).getDescription());
+                seguroActual.setText(arraySeguros.get(position).getRefname());
 
 
             }
@@ -181,11 +185,13 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
                     if(fechaActual.after(fechaSeguro) && !estaVencido){
                         estaVencido=!estaVencido;
                         fondo.startTransition(500);
+                        theme=R.style.MyAlertDialogStyleBlanco;
 
                     }
                     if(fechaActual.before(fechaSeguro) && estaVencido){
                         estaVencido=!estaVencido;
                         fondo.reverseTransition(500);
+                        theme=R.style.MyAlertDialogStyle;
                     }
 
 
@@ -285,11 +291,9 @@ public class SegurosActivity extends AppCompatActivity implements CargarDatos.Vo
     @Override
     public void onDialogPetition(int id) {
         SeguroItem temp=adapter.getArrayList().get(id);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this,R.style.MyAlertDialogStyle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,theme);
         builder.setTitle(temp.getDescription());
-        builder.setMessage("Aqui van las características en forma de lista\n" +
-                "- Caracteristica\n" +
-                "- Característica");
+        builder.setMessage(temp.getFeatures());
         builder.setPositiveButton("Cerrar", null);
         builder.show();
     }

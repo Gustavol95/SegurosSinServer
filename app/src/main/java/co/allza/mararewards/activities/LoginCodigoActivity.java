@@ -16,13 +16,14 @@ import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.CargarFuentes;
 import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
+import co.allza.mararewards.interfaces.VolleyCallback;
 import co.allza.mararewards.items.CustomerItem;
 import io.realm.Realm;
 
 /**
  * Created by Tavo on 10/06/2016.
  */
-public class LoginCodigoActivity extends Activity implements View.OnClickListener, CargarDatos.VolleyCallback {
+public class LoginCodigoActivity extends Activity implements View.OnClickListener, VolleyCallback {
     TextView introducir;
     TextView footer;
     EditText editTextCodigo;

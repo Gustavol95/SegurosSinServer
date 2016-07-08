@@ -10,7 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,11 +22,12 @@ import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.NotificacionesAdapter;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
+import co.allza.mararewards.interfaces.VolleyCallback;
 import co.allza.mararewards.items.NotificacionItem;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class NotificacionesActivity extends AppCompatActivity implements CargarDatos.VolleyCallback {
+public class NotificacionesActivity extends AppCompatActivity implements VolleyCallback {
     ListView lista;
     Toolbar toolbar;
     NotificacionesAdapter adapter;
@@ -39,7 +42,18 @@ public class NotificacionesActivity extends AppCompatActivity implements CargarD
         toolbar.getLayoutParams().height=getStatusBarHeight()+anchoViejo;
         toolbar.setTitle("Notificaciones");
         setSupportActionBar(toolbar);
+        adapter = new NotificacionesAdapter(this, R.layout.listview_notificaciones);
+        final ArrayList<NotificacionItem> hola=CargarDatos.getNotifAdapter();
         lista=(ListView)findViewById(R.id.listViewNotificaciones);
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i=new Intent(NotificacionesActivity.this,SegurosActivity.class);
+                i.putExtra("id",hola.get(position).getId());
+                startActivity(i);
+                finish();
+            }
+        });
 
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
@@ -48,8 +62,7 @@ public class NotificacionesActivity extends AppCompatActivity implements CargarD
 
         //Pedir Adapter , meter el swipe layout
 
-        adapter = new NotificacionesAdapter(this, R.layout.listview_notificaciones);
-        ArrayList<NotificacionItem> hola=CargarDatos.getNotifAdapter();
+
         for(int i=0;i<hola.size();i++)
         {
             adapter.add(hola.get(i));

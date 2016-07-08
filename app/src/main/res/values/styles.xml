@@ -36,6 +36,10 @@
         <item name="android:divider">@drawable/fondo_seguros</item>
     </style>
 
+    <style name="MyAlertDialogStyleBlanco" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/rectanguloSplash</item>
+    </style>
+
 
 
 </resources>

@@ -28,6 +28,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
+
+
     <TextView
         android:id="@+id/tituloSeguroActual"
         android:layout_width="match_parent"
@@ -70,7 +72,7 @@
         android:background="@android:color/white"
         android:layout_margin="25dp"/>
 
-
+   
 </LinearLayout>
 
 

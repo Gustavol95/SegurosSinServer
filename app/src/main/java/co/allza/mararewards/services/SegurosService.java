@@ -182,28 +182,25 @@ public class SegurosService extends Service {
                 );
 
         mBuilder.setContentIntent(resultPendingIntent);
-        int mNotificationId = id;
+        int mNotificationId = id+15;
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 
     @Override
     public boolean stopService(Intent name) {
-        int mNotificationId = 001;
-        mNotifyMgr.cancel(mNotificationId);
+        mNotifyMgr.cancelAll();
         return super.stopService(name);
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        int mNotificationId = 001;
-        mNotifyMgr.cancel(mNotificationId);
+        mNotifyMgr.cancelAll();
         return super.onUnbind(intent);
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        int mNotificationId = 001;
-        mNotifyMgr.cancel(mNotificationId);
+        mNotifyMgr.cancelAll();
         super.onTaskRemoved(rootIntent);
     }
 }

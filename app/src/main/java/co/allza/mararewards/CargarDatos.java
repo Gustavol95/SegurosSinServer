@@ -12,10 +12,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
-
 import co.allza.mararewards.adapter.NotificacionesAdapter;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
 import co.allza.mararewards.interfaces.DialogCallback;
+import co.allza.mararewards.interfaces.VolleyCallback;
 import co.allza.mararewards.items.CustomerItem;
 import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
@@ -43,10 +43,6 @@ public class CargarDatos {
     private static ArrayList<NotificacionItem> arrayNotif;
     private static DialogCallback dialogCallback;
 
-    public static void changeContext(Context ctx)
-    {
-        context=ctx;
-    }
     public static void getTokenFromServer(Context ctx,String usertoken, final VolleyCallback callback)
     {
         context=ctx;
@@ -121,7 +117,7 @@ public class CargarDatos {
 
     }
 
-    private static ArrayList<SeguroItem> parseSeguros(JSONObject data, VolleyCallback callback)
+    private static void parseSeguros(JSONObject data, VolleyCallback callback)
     {
 
         Realm realm =getRealm(context);
@@ -129,7 +125,7 @@ public class CargarDatos {
             JSONObject datos=data.getJSONObject("data");
             JSONObject cliente=datos.getJSONObject("Customer");
             JSONArray seguros=datos.getJSONArray("insurance");
-            ArrayList<SeguroItem> items=new ArrayList<>();
+
 
             // Obtener el cliente
             CustomerItem customer=new CustomerItem();
@@ -144,7 +140,7 @@ public class CargarDatos {
             realm.beginTransaction();
             CustomerItem cust=realm.copyToRealmOrUpdate(customer);
             realm.commitTransaction();
-
+            arraySeguros=new ArrayList<>();
             //Obtener los seguros
             for(int i=0;i<seguros.length();i++){
                 JSONObject obj=seguros.getJSONObject(i);
@@ -158,22 +154,24 @@ public class CargarDatos {
                 seg.setInsured_name(obj.getString("insured_name"));
                 seg.setPolicy(obj.getString("policy"));
                 seg.setEmergency(obj.getString("emergency"));
+                seg.setRefname(obj.getString("refname"));
+                seg.setFeatures(obj.getString("features"));
                 realm.beginTransaction();
-                SeguroItem temp=realm.copyToRealmOrUpdate(seg);
+                realm.copyToRealmOrUpdate(seg);
                 realm.commitTransaction();
-                items.add(seg);
+                arraySeguros.add(seg);
 
             }
 
-            adapter=new SegurosPagerAdapter(context,items);
+            adapter=new SegurosPagerAdapter(context,arraySeguros);
             callback.onSuccess(adapter);
 
-            return items;
+
         } catch (JSONException e) {
             e.printStackTrace();
             //System.out.println( "VERGA"+e.toString());
             callback.onFailure(e.toString());
-            return null;
+
         }
 
 
@@ -193,10 +191,12 @@ public class CargarDatos {
         for (int i=0; i<result.size(); i++){
             items.add(result.get(i));
             }
-         adapter=new SegurosPagerAdapter(context,items);
+
         callback.onSuccess(adapter);
         arraySeguros=new ArrayList<>();
         arraySeguros.addAll(items);
+        adapter=new SegurosPagerAdapter(context,items);
+
         return items;
     }
     public static ArrayList<SeguroItem> getArraySeguros()
@@ -214,6 +214,10 @@ public class CargarDatos {
         return false;
     }
 
+    public static ArrayList<SeguroItem> getSegurosArray()
+    {
+        return arraySeguros;
+    }
     public static SegurosPagerAdapter getAdapter()
     {
         return adapter;
@@ -275,9 +279,5 @@ public class CargarDatos {
     {
          return dialogCallback;
     }
-    public interface VolleyCallback{
-        void onSuccess(SegurosPagerAdapter result);
-        void onFailure(String error);
-        void onTokenReceived(String token);
-    }
+
 }

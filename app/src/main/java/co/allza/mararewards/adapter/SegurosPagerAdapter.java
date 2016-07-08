@@ -1,11 +1,10 @@
 package co.allza.mararewards.adapter;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +19,13 @@ import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.CargarFuentes;
 import co.allza.mararewards.R;
 import co.allza.mararewards.interfaces.DialogCallback;
+import co.allza.mararewards.interfaces.VolleyCallback;
 import co.allza.mararewards.items.SeguroItem;
 
 /**
  * Created by Tavo on 17/06/2016.
  */
-public class SegurosPagerAdapter extends PagerAdapter implements CargarDatos.VolleyCallback
+public class SegurosPagerAdapter extends PagerAdapter implements VolleyCallback
 {
 
     Context context;
@@ -38,7 +38,6 @@ public class SegurosPagerAdapter extends PagerAdapter implements CargarDatos.Vol
     Date fechaSeguro;
     SimpleDateFormat parserFecha;
     DialogCallback callback;
-
     public SegurosPagerAdapter(Context context, ArrayList<SeguroItem> list)
     {
         this.context=context;
@@ -53,7 +52,8 @@ public class SegurosPagerAdapter extends PagerAdapter implements CargarDatos.Vol
     public int getCount() {
 
 
-        return pages.size();
+        return CargarDatos.getArraySeguros().size();
+
     }
 
     @Override

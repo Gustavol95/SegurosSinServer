@@ -24,21 +24,13 @@ public class SeguroItem extends RealmObject {
     private int renovacionIcono;
     private int emergenciaIcono;
     private int usuario;
+    private String refname;
+    private String features;
 
 
     public SeguroItem() {
     }
 
-    public SeguroItem(int id, String poliza, String aseguradora, String seguro, String beneficiario, String renovacion, String emergencia, String updated_at) {
-        this.id=id;
-        this.policy = poliza;
-        this.name = aseguradora;
-        this.Description = seguro;
-        this.insured_name = beneficiario;
-        this.expiration = renovacion;
-        this.emergency = emergencia;
-        this.updated_at=updated_at;
-    }
 
     public int getId() {
         return id;
@@ -166,5 +158,21 @@ public class SeguroItem extends RealmObject {
 
     public void setUsuario(int usuario) {
         this.usuario = usuario;
+    }
+
+    public String getRefname() {
+        return refname;
+    }
+
+    public void setRefname(String refname) {
+        this.refname = refname;
+    }
+
+    public String getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(String features) {
+        this.features = features;
     }
 }

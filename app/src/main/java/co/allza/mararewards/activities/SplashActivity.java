@@ -15,12 +15,13 @@ import java.util.Calendar;
 import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
+import co.allza.mararewards.interfaces.VolleyCallback;
 import co.allza.mararewards.items.CustomerItem;
 import co.allza.mararewards.services.SegurosService;
 import io.realm.Realm;
 
 
-public class SplashActivity extends Activity implements CargarDatos.VolleyCallback {
+public class SplashActivity extends Activity implements VolleyCallback {
     Handler elHandler;
     CustomerItem result;
 
