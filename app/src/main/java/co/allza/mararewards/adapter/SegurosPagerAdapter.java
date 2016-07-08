@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.view.PagerAdapter;
+import android.telephony.PhoneNumberUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,12 +51,7 @@ public class SegurosPagerAdapter extends PagerAdapter implements VolleyCallback
 
     }
     @Override
-    public int getCount() {
-
-
-        return CargarDatos.getArraySeguros().size();
-
-    }
+    public int getCount() {return CargarDatos.getArraySeguros().size();}
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
@@ -83,7 +80,12 @@ public class SegurosPagerAdapter extends PagerAdapter implements VolleyCallback
         seguro.setText(item.getDescription());
         beneficiario.setText(item.getInsured_name());
         renovacion.setText("Renovación el "+item.getExpiration());
-        emergencia.setText("Emergencia al "+item.getEmergency());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            emergencia.setText("Emergencia al "+ PhoneNumberUtils.formatNumber(item.getEmergency(),"MX"));
+        }
+        else{
+        emergencia.setText("Emergencia al "+ PhoneNumberUtils.formatNumber(item.getEmergency()));}
+
 
         poliza.setTypeface(CargarFuentes.getTypeface(context,CargarFuentes.RUBIK_REGULAR));
         aseguradora.setTypeface(CargarFuentes.getTypeface(context,CargarFuentes.RUBIK_REGULAR));
@@ -91,6 +93,8 @@ public class SegurosPagerAdapter extends PagerAdapter implements VolleyCallback
         beneficiario.setTypeface(CargarFuentes.getTypeface(context,CargarFuentes.RUBIK_REGULAR));
         renovacion.setTypeface(CargarFuentes.getTypeface(context,CargarFuentes.RUBIK_REGULAR));
         emergencia.setTypeface(CargarFuentes.getTypeface(context,CargarFuentes.RUBIK_MEDIUM));
+
+
 
         info.setOnClickListener(new View.OnClickListener() {
             @Override

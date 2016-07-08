@@ -6,9 +6,13 @@
         android:id="@+id/borrarNotif"
         android:title="@string/borrarNotif"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/detenerNotif"
+        android:title="@string/desactivarNotif"
+        app:showAsAction="never"/>
 
 
-    <!-- Settings, should always be in the overflow -->
+
 
 
 

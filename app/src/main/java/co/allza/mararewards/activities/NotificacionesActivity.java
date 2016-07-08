@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -24,6 +25,7 @@ import co.allza.mararewards.adapter.NotificacionesAdapter;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
 import co.allza.mararewards.interfaces.VolleyCallback;
 import co.allza.mararewards.items.NotificacionItem;
+import co.allza.mararewards.services.SegurosService;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -62,14 +64,20 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
 
         //Pedir Adapter , meter el swipe layout
 
-
+        if(hola.size()!=0){
         for(int i=0;i<hola.size();i++)
         {
             adapter.add(hola.get(i));
         }
 
         lista.setAdapter(adapter);
+        }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     public int getStatusBarHeight() {
@@ -94,27 +102,44 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
                             .addNextIntentWithParentStack(upIntent)
                             // Navigate up to the closest parent
                             .startActivities();
+                    finish();
                 } else {
                     // This activity is part of this app's task, so simply
                     // navigate up to the logical parent activity.
                     NavUtils.navigateUpTo(this, upIntent);
+                    finish();
                 }
                 return true;
             case R.id.borrarNotif:
+
+                if(CargarDatos.getNotifAdapter().size()!=0){
+                    for(int i=0;i<CargarDatos.getNotifAdapter().size();i++)
+                    {
+                        adapter.remove(CargarDatos.getNotifAdapter().get(i));
+                    }
+
+                    lista.setAdapter(adapter);
+                }
+                CargarDatos.getNotifAdapter().clear();
                 Realm realm=CargarDatos.getRealm(this);
                 RealmResults<NotificacionItem> borrarNotif=realm.where(NotificacionItem.class).findAll();
                 realm.beginTransaction();
                 borrarNotif.deleteAllFromRealm();
                 realm.commitTransaction();
-                if(!lista.getAdapter().isEmpty())
-                {
-                    adapter.clear();
 
-                }
+                return true;
+            case R.id.detenerNotif:
+                stopService(new Intent(NotificacionesActivity.this, SegurosService.class));
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

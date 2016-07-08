@@ -27,11 +27,17 @@ public class NotificacionesAdapter extends ArrayAdapter<NotificacionItem> {
     public NotificacionesAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
         this.contexto=context;
+
     }
 
     @Override
     public void add(NotificacionItem object) {
         super.add(object);
+    }
+
+    @Override
+    public void remove(NotificacionItem object) {
+        super.remove(object);
     }
 
     @Override

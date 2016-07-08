@@ -2,6 +2,8 @@ package co.allza.mararewards;
 
 import android.content.Context;
 import android.widget.Toast;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -112,7 +114,10 @@ public class CargarDatos {
                 callback.onFailure(error.toString());
             }
         });
-
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                40000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(stringRequest);
 
     }

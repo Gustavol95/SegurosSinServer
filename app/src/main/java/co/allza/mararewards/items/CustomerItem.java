@@ -17,6 +17,9 @@ public class CustomerItem extends RealmObject {
     private String created_at;
     private String updated_at;
     private String token;
+    private boolean notif=true;
+
+
 
     public CustomerItem() {
     }
@@ -91,5 +94,13 @@ public class CustomerItem extends RealmObject {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public boolean isNotif() {
+        return notif;
+    }
+
+    public void setNotif(boolean notif) {
+        this.notif = notif;
     }
 }

@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,7 +82,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         toolbar.getLayoutParams().height=getStatusBarHeight()+anchoViejo;
         toolbar.setTitle("Seguros");
         toolbar.setBackgroundColor(getResources().getColor(R.color.toolbarSeguros));
-        toolbar.setNavigationIcon(R.drawable.ic_notifications_active_white_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_notifications_white_24dp);
         toolbar.setNavigationOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,10 +135,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.desactivarNotif) {
 
-            return true;
-        }
         if (id == R.id.cerrar) {
 
             Realm realm = CargarDatos.getRealm(getApplicationContext());
@@ -293,8 +293,14 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         SeguroItem temp=adapter.getArrayList().get(id);
         AlertDialog.Builder builder = new AlertDialog.Builder(this,theme);
         builder.setTitle(temp.getDescription());
-        builder.setMessage(temp.getFeatures());
         builder.setPositiveButton("Cerrar", null);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.dialog_custom, null);
+        TextView text = (TextView) layout.findViewById(R.id.text);
+        if(theme==R.style.MyAlertDialogStyleBlanco)
+            text.setTextColor(Color.BLACK);
+        text.setText(Html.fromHtml(temp.getFeatures()));
+        builder.setView(layout);
         builder.show();
     }
 }

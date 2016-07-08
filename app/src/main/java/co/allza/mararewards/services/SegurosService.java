@@ -37,10 +37,11 @@ public class SegurosService extends Service {
     Date fechaSeguro;
     SimpleDateFormat parserFecha;
     SimpleDateFormat  parserFormal;
-    boolean notificate=false;
     NotificationManager mNotifyMgr;
     SeguroItem seguroTemporal;
-    int notifId;
+    AlarmManager alarmMgr;
+    Intent intent ;
+    PendingIntent pintent;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -50,16 +51,17 @@ public class SegurosService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        AlarmManager alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, SegurosService.class);
-        PendingIntent pintent=PendingIntent.getService(this,0,intent,0);
+        if(alarmMgr==null)
+        alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
+
+        intent = new Intent(this, SegurosService.class);
+        pintent=PendingIntent.getService(this,0,intent,0);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
-        cal.set(Calendar.HOUR_OF_DAY, 16);
+        cal.set(Calendar.HOUR_OF_DAY, 4);
         cal.set(Calendar.MINUTE,33);
         alarmMgr.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, pintent);
-        Toast.makeText(SegurosService.this, "onCreate Servicio", Toast.LENGTH_SHORT).show();
          mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
     }
@@ -124,6 +126,8 @@ public class SegurosService extends Service {
 
     @Override
     public void onDestroy() {
+        if(alarmMgr!=null)
+            alarmMgr.cancel(pintent);
         Toast.makeText(SegurosService.this, "onDestroy", Toast.LENGTH_SHORT).show();
         super.onDestroy();
 
@@ -163,8 +167,10 @@ public class SegurosService extends Service {
     {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.logoandroid)
+                        .setSmallIcon(R.drawable.ic_notifications_white_48dp)
                         .setContentTitle(seguroTemporal.getDescription())
+                        .setLargeIcon( BitmapFactory.decodeResource(getResources(), R.drawable.logoandroid))
+                        .setColor(122)
                         .setContentText("Ha expirado, comunícate con tu aseguradora");
         mBuilder.setAutoCancel(true);
         Intent resultIntent = new Intent(this, SplashActivity.class);
