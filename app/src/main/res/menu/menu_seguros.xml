@@ -4,9 +4,15 @@
     <!-- "Mark Favorite", should appear as action button if possible -->
 
     <item
-        android:id="@+id/cerrar"
-        android:title="@string/cerrarSesion"
-        app:showAsAction="never"/>
+    android:id="@+id/cerrar"
+    android:title="@string/cerrarSesion"
+    app:showAsAction="never"/>
+    <item
+        android:id="@+id/callToAction"
+        android:title="@string/callToAction"
+        app:showAsAction="never"
+        android:visible="false"/>
+
 
     <!-- Settings, should always be in the overflow -->
 

@@ -79,28 +79,23 @@
             android:paddingRight="15dp"
             android:layout_marginTop="50dp"
             android:textSize="16sp"/>
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:paddingBottom="10dp"
-            android:indeterminate="true"
-            android:visibility="invisible"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@+id/textViewFooterLoginCodigo"
-            />
 
-        <TextView
-            android:id="@+id/textViewFooterLoginCodigo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:textAlignment="center"
-            android:textColor="@color/textoLoginCodigo"
-            android:textSize="17sp"
-            android:text="@string/footerLoginCodigo"
-            android:layout_marginBottom="45dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/buttonLoginCodigo">
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:indeterminate="true"
+                android:visibility="invisible"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                />
+        </RelativeLayout>
+
+
 
     </RelativeLayout>
 

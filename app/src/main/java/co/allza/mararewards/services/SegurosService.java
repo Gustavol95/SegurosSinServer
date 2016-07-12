@@ -58,8 +58,8 @@ public class SegurosService extends Service {
         pintent=PendingIntent.getService(this,0,intent,0);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
-        cal.set(Calendar.HOUR_OF_DAY, 4);
-        cal.set(Calendar.MINUTE,33);
+        cal.set(Calendar.HOUR_OF_DAY, 17);
+        cal.set(Calendar.MINUTE,48);
         alarmMgr.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, pintent);
          mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -121,13 +121,14 @@ public class SegurosService extends Service {
             Toast.makeText(SegurosService.this, "Esperando", Toast.LENGTH_SHORT).show();
 
         CargarDatos.getNotificacionesFromDatabase(this);
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Override
     public void onDestroy() {
         if(alarmMgr!=null)
             alarmMgr.cancel(pintent);
+        mNotifyMgr.cancelAll();
         Toast.makeText(SegurosService.this, "onDestroy", Toast.LENGTH_SHORT).show();
         super.onDestroy();
 
@@ -195,6 +196,7 @@ public class SegurosService extends Service {
     @Override
     public boolean stopService(Intent name) {
         mNotifyMgr.cancelAll();
+        Toast.makeText(SegurosService.this, "StopService", Toast.LENGTH_SHORT).show();
         return super.stopService(name);
     }
 

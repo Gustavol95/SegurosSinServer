@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
@@ -64,6 +65,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     TransitionDrawable fondo;
     int id=0;
     int theme=R.style.MyAlertDialogStyle;
+    Menu menu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +75,8 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //getWindow().setStatusBarColor(getResources().getColor(R.color.statusbarSeguros));
         }
+
+
 
         CargarDatos.setDialogCallback(this);
         linear=(LinearLayout)findViewById(R.id.linearSeguros);
@@ -127,6 +131,9 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_seguros, menu);
+        this.menu=menu;
+        validarPantalla();
+
         return true;
         
     }
@@ -135,23 +142,27 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        switch(id)
+        {
+            case R.id.cerrar:
+                Realm realm = CargarDatos.getRealm(getApplicationContext());
+                RealmResults<CustomerItem> todo=realm.where(CustomerItem.class).findAll();
+                RealmResults<NotificacionItem> allNotifications=realm.where(NotificacionItem.class).findAll();
+                realm.beginTransaction();
+                todo.deleteAllFromRealm();
+                allNotifications.deleteAllFromRealm();
+                realm.commitTransaction();
+                Intent i=new Intent(SegurosActivity.this,LoginActivity.class);
+                startActivity(i);
+                finish();
+                return true;
 
-        if (id == R.id.cerrar) {
-
-            Realm realm = CargarDatos.getRealm(getApplicationContext());
-            RealmResults<CustomerItem> todo=realm.where(CustomerItem.class).findAll();
-            RealmResults<NotificacionItem> allNotifications=realm.where(NotificacionItem.class).findAll();
-            realm.beginTransaction();
-            todo.deleteAllFromRealm();
-            allNotifications.deleteAllFromRealm();
-            realm.commitTransaction();
-            Intent i=new Intent(SegurosActivity.this,LoginActivity.class);
-            startActivity(i);
-            finish();
-
-
-            return true;
+            case R.id.callToAction:
+                Intent ii=new Intent(SegurosActivity.this,CallToActionActivity.class);
+                startActivity(ii);
+                return true;
         }
+
 
       
         return super.onOptionsItemSelected(item);
@@ -227,6 +238,19 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
 
     }
 
+    public void validarPantalla()
+    {
+        if(((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL
+                ||(getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL)
+                && getResources().getDisplayMetrics().density<=2.0f)
+        {
+            botonCallToAction.setVisibility(View.GONE);
+            if(menu!=null)
+            menu.findItem(R.id.callToAction).setVisible(true);
+
+        }
+    }
+
     public void iniciarServicioSeguros()
     {
         AlarmManager alarmMgr = (AlarmManager)this.getSystemService(Context.ALARM_SERVICE);
@@ -258,6 +282,8 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             editor.commit();
         }
     }
+
+
     @Override
     protected void onDestroy() {
 

@@ -25,7 +25,7 @@ import io.realm.Realm;
  */
 public class LoginCodigoActivity extends Activity implements View.OnClickListener, VolleyCallback {
     TextView introducir;
-    TextView footer;
+
     EditText editTextCodigo;
     Button botonEntrar;
     CustomerItem customer;
@@ -38,13 +38,13 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setContentView(R.layout.activity_login_codigo);
         introducir= (TextView)findViewById(R.id.textViewLoginCodigo);
-        footer=(TextView)findViewById(R.id.textViewFooterLoginCodigo);
+
         editTextCodigo=(EditText)findViewById(R.id.editTextLoginCodigo);
         botonEntrar=(Button)findViewById(R.id.buttonLoginCodigo);
         progress=(ProgressBar) findViewById(R.id.progress);
 
         introducir.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.ROBOTO_MEDIUM));
-        footer.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.RUBIK_LIGHT));
+
         editTextCodigo.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.RUBIK_REGULAR));
         botonEntrar.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.ROBOTO_MEDIUM));
         botonEntrar.setOnClickListener(this);

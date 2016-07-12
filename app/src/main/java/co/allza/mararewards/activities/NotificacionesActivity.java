@@ -33,6 +33,7 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
     ListView lista;
     Toolbar toolbar;
     NotificacionesAdapter adapter;
+    Menu menu;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -126,9 +127,9 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
                 realm.beginTransaction();
                 borrarNotif.deleteAllFromRealm();
                 realm.commitTransaction();
-
                 return true;
             case R.id.detenerNotif:
+
                 stopService(new Intent(NotificacionesActivity.this, SegurosService.class));
                 return true;
         }
@@ -144,6 +145,7 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_notificaciones, menu);
+        this.menu=menu;
         return true;
 
     }
