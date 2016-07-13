@@ -7,11 +7,12 @@ import io.realm.annotations.PrimaryKey;
  * Created by Tavo on 22/06/2016.
  */
 public class CustomerItem extends RealmObject {
-    @PrimaryKey
+
     private int id;
     private String name;
     private String daten;
     private String email;
+    @PrimaryKey
     private String usertoken;
     private String phone;
     private String created_at;

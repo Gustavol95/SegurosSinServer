@@ -56,13 +56,9 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
             case R.id.buttonLoginCodigo:
                 CargarDatos.getTokenFromServer(getApplicationContext(),editTextCodigo.getText().toString(),this);
                 botonEntrar.setEnabled(false);
-
                 progress.setVisibility(View.VISIBLE);
                 progress.setProgress(15);
-
-
                 break;
-
         }
 
     }
@@ -92,6 +88,8 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
     @Override
     public void onTokenReceived(String token) {
         this.token=token;
+        CargarDatos.setToken(token);
+        CargarDatos.setUser(editTextCodigo.getText().toString());
         CargarDatos.pullSeguros(LoginCodigoActivity.this,editTextCodigo.getText().toString(),token,this);
 
     }

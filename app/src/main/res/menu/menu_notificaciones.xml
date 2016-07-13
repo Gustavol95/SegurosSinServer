@@ -11,6 +11,12 @@
         android:title="@string/desactivarNotif"
         app:showAsAction="never"
         />
+    <item
+        android:id="@+id/iniciarNotif"
+        android:title="@string/activarNotif"
+        app:showAsAction="never"
+        android:visible="false"
+        />
 
 
 

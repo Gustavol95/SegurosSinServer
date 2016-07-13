@@ -28,9 +28,6 @@ import co.allza.mararewards.items.SeguroItem;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-/**
- * Created by Tavo on 27/06/2016.
- */
 public class SegurosService extends Service {
 
     Date fechaActual;
@@ -47,6 +44,7 @@ public class SegurosService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+    public static final String PREFS_NAME = "prefServicio";
 
     @Override
     public void onCreate() {

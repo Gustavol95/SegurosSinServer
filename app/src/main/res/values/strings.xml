@@ -2,6 +2,7 @@
     <string name="app_name">Estas Seguro</string>
     <string name="action_settings">Settings</string>
     <string name="desactivarNotif">Desactivar notificaciones</string>
+    <string name="activarNotif">Activar notificaciones</string>
     <string name="borrarNotif">Borrar notificaciones</string>
     <string name="cerrarSesion">Cerrar Sesión</string>
     <string name="callToAction">Quiero contratar un seguro</string>

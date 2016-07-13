@@ -1,6 +1,7 @@
 package co.allza.mararewards.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -34,6 +35,9 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
     Toolbar toolbar;
     NotificacionesAdapter adapter;
     Menu menu;
+    SharedPreferences settings;
+    SharedPreferences.Editor editor;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,8 +67,6 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        //Pedir Adapter , meter el swipe layout
-
         if(hola.size()!=0){
         for(int i=0;i<hola.size();i++)
         {
@@ -74,6 +76,8 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
         lista.setAdapter(adapter);
         }
 
+        settings = getSharedPreferences(SegurosService.PREFS_NAME, 0);
+        editor = settings.edit();
     }
 
     @Override
@@ -112,13 +116,11 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
                 }
                 return true;
             case R.id.borrarNotif:
-
                 if(CargarDatos.getNotifAdapter().size()!=0){
                     for(int i=0;i<CargarDatos.getNotifAdapter().size();i++)
                     {
                         adapter.remove(CargarDatos.getNotifAdapter().get(i));
                     }
-
                     lista.setAdapter(adapter);
                 }
                 CargarDatos.getNotifAdapter().clear();
@@ -129,8 +131,20 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
                 realm.commitTransaction();
                 return true;
             case R.id.detenerNotif:
-
                 stopService(new Intent(NotificacionesActivity.this, SegurosService.class));
+                menu.findItem(R.id.detenerNotif).setVisible(false);
+                menu.findItem(R.id.iniciarNotif).setVisible(true);
+                editor = settings.edit();
+                editor.putBoolean("servicio" , false);
+                editor.commit();
+                return true;
+            case R.id.iniciarNotif:
+                startService(new Intent(NotificacionesActivity.this, SegurosService.class));
+                menu.findItem(R.id.detenerNotif).setVisible(true);
+                menu.findItem(R.id.iniciarNotif).setVisible(false);
+                editor = settings.edit();
+                editor.putBoolean("servicio" , true);
+                editor.commit();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -146,6 +160,11 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_notificaciones, menu);
         this.menu=menu;
+        if(settings.getBoolean("servicio",true))
+        {
+            menu.findItem(R.id.detenerNotif).setVisible(false);
+            menu.findItem(R.id.iniciarNotif).setVisible(true);
+        }
         return true;
 
     }

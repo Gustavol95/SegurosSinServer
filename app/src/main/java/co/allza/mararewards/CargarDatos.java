@@ -32,14 +32,13 @@ public class CargarDatos {
     private static String getCustomer="http://verdad.herokuapp.com/api/customers/";
     private static String accessToken="?access_token=";
     private static String getToken=" http://verdad.herokuapp.com/api/apikey/new?access_token=";
+    private static JSONObject respuesta;
     private static String token;
+    private static String user;
     private static Realm realm;
     private static RequestQueue queue;
     private static StringRequest stringRequest;
-    private static JSONObject respuesta;
     private static SegurosPagerAdapter adapter;
-    private static NotificacionesAdapter notifAdapter;
-    private static boolean segurosCargados;
     private static Context context;
     private static ArrayList<SeguroItem> arraySeguros;
     private static ArrayList<NotificacionItem> arrayNotif;
@@ -80,12 +79,14 @@ public class CargarDatos {
 
     public static void pullSeguros(final Context ctx, String usuario, String usertoken, final VolleyCallback callback)
     {
+        token=usertoken;
+        user=usuario;
         context=ctx;
         final ArrayList<SeguroItem> items=new ArrayList<>();
         if(queue==null)
             queue=Volley.newRequestQueue(ctx);
 
-        String url=getCustomer+usuario+accessToken+usertoken;
+        final String url=getCustomer+usuario+accessToken+usertoken;
         //Toast.makeText(context, usuario + usertoken, Toast.LENGTH_SHORT).show();
 
         stringRequest = new StringRequest(Request.Method.GET,
@@ -141,9 +142,9 @@ public class CargarDatos {
             customer.setPhone(cliente.getString("phone"));
             customer.setCreated_at(cliente.getString("created_at"));
             customer.setUpdated_at(cliente.getString("updated_at"));
-
+            customer.setToken(token);
             realm.beginTransaction();
-            CustomerItem cust=realm.copyToRealmOrUpdate(customer);
+            realm.copyToRealmOrUpdate(customer);
             realm.commitTransaction();
             arraySeguros=new ArrayList<>();
             //Obtener los seguros
@@ -161,6 +162,8 @@ public class CargarDatos {
                 seg.setEmergency(obj.getString("emergency"));
                 seg.setRefname(obj.getString("refname"));
                 seg.setFeatures(obj.getString("features"));
+
+
                 realm.beginTransaction();
                 realm.copyToRealmOrUpdate(seg);
                 realm.commitTransaction();
@@ -189,26 +192,22 @@ public class CargarDatos {
         ArrayList<SeguroItem> items=new ArrayList<>();
         CustomerItem cliente=realm.where(CustomerItem.class)
                 .findFirst();
-
         RealmResults<SeguroItem> result = realm.where(SeguroItem.class)
                 .equalTo("customer_id",cliente.getId())
                 .findAll();
         for (int i=0; i<result.size(); i++){
             items.add(result.get(i));
             }
-
         callback.onSuccess(adapter);
         arraySeguros=new ArrayList<>();
         arraySeguros.addAll(items);
         adapter=new SegurosPagerAdapter(context,items);
-
         return items;
     }
     public static ArrayList<SeguroItem> getArraySeguros()
     {
         return arraySeguros;
     }
-
     public static boolean adapterIsNull()
     {
         if(adapter==null)
@@ -218,7 +217,6 @@ public class CargarDatos {
 
         return false;
     }
-
     public static ArrayList<SeguroItem> getSegurosArray()
     {
         return arraySeguros;
@@ -227,9 +225,6 @@ public class CargarDatos {
     {
         return adapter;
     }
-
-
-
     public static Realm getRealm(Context ctx)
     {
         context=ctx;
@@ -285,4 +280,19 @@ public class CargarDatos {
          return dialogCallback;
     }
 
+    public static String getToken() {
+        return token;
+    }
+
+    public static void setToken(String token) {
+        CargarDatos.token = token;
+    }
+
+    public static String getUser() {
+        return user;
+    }
+
+    public static void setUser(String user) {
+        CargarDatos.user = user;
+    }
 }
