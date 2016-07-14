@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -37,6 +38,7 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
     Menu menu;
     SharedPreferences settings;
     SharedPreferences.Editor editor;
+    ArrayList<NotificacionItem> hola;
 
 
     @Override
@@ -50,13 +52,14 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
         toolbar.setTitle("Notificaciones");
         setSupportActionBar(toolbar);
         adapter = new NotificacionesAdapter(this, R.layout.listview_notificaciones);
-        final ArrayList<NotificacionItem> hola=CargarDatos.getNotifAdapter();
+        hola=CargarDatos.getNotifAdapter();
         lista=(ListView)findViewById(R.id.listViewNotificaciones);
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                 Intent i=new Intent(NotificacionesActivity.this,SegurosActivity.class);
-                i.putExtra("id",hola.get(position).getId());
+                i.putExtra("goTo",  adapter.getItem(position).getId());
                 startActivity(i);
                 finish();
             }
@@ -80,11 +83,6 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
         editor = settings.edit();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     public int getStatusBarHeight() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -93,6 +91,12 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
         }
         return result;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -145,6 +149,27 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
                 editor = settings.edit();
                 editor.putBoolean("servicio" , true);
                 editor.commit();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if(CargarDatos.getNotifAdapter().size()!=0){
+                            for(int i=0;i<CargarDatos.getNotifAdapter().size();i++)
+                            {
+                                adapter.remove(CargarDatos.getNotifAdapter().get(i));
+                            }
+                        }
+                        CargarDatos.getNotificacionesFromDatabase(NotificacionesActivity.this);
+                        hola=CargarDatos.getNotifAdapter();
+                        if(CargarDatos.getNotifAdapter().size()!=0){
+                            for(int i=0;i<CargarDatos.getNotifAdapter().size();i++)
+                            {
+                                adapter.add(CargarDatos.getNotifAdapter().get(i));
+                            }
+                            lista.setAdapter(adapter);
+                        }
+                    }
+                },1000);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -168,7 +193,6 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
         return true;
 
     }
-
 
     @Override
     public void onSuccess(SegurosPagerAdapter result) {

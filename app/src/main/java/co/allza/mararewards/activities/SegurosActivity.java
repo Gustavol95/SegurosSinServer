@@ -28,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.pixelcan.inkpageindicator.InkPageIndicator;
 
 import java.text.ParseException;
@@ -48,6 +49,7 @@ import co.allza.mararewards.items.DepthPageTransformer;
 import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
 import co.allza.mararewards.services.SegurosService;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -68,6 +70,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     boolean estaVencido = false;
     TransitionDrawable fondo;
     int id = 0;
+    int goTo;
     int theme = R.style.MyAlertDialogStyle;
     Menu menu;
 
@@ -80,6 +83,11 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //getWindow().setStatusBarColor(getResources().getColor(R.color.statusbarSeguros));
         }
+        Intent aver=getIntent();
+        if(aver.hasExtra("goTo"))
+        goTo=aver.getExtras().getInt("goTo",0);
+        Toast.makeText(SegurosActivity.this, FirebaseInstanceId.getInstance().getToken(), Toast.LENGTH_SHORT).show();
+        System.out.println(FirebaseInstanceId.getInstance().getToken()+"    ALAVERGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
 
         CargarDatos.setDialogCallback(this);
@@ -143,6 +151,15 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         fechaActual = calendar.getTime();
 
         validarPrimerUso();
+        if(goTo!=0){
+            pagerSeguros.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    pagerSeguros.setCurrentItem(goTo ,true);
+                }
+            }, 100);
+        }
 
 
     }
@@ -249,7 +266,9 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+
         }
+
 
     }
 
@@ -293,7 +312,6 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             editor.commit();
         }
     }
-
 
     @Override
     protected void onDestroy() {
@@ -343,4 +361,6 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         builder.setView(layout);
         builder.show();
     }
+
+
 }
