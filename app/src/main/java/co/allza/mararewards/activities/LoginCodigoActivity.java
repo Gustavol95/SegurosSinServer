@@ -71,9 +71,8 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
 
     @Override
     public void onFailure(String error) {
-        Toast.makeText(LoginCodigoActivity.this, "Algo está mal, intente de nuevo por favor", Toast.LENGTH_SHORT).show();
+        Toast.makeText(LoginCodigoActivity.this, "Hubo un error al intentar conectar", Toast.LENGTH_SHORT).show();
         botonEntrar.setEnabled(true);
-        botonEntrar.setText(error);
         progress.setVisibility(View.INVISIBLE);
     }
 

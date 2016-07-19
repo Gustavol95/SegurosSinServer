@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coordinatorNotif"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_deverdad_blanco"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FF2751"
-        android:fitsSystemWindows="false"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_deverdad_blanco"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:fitsSystemWindows="true"
-            app:popupTheme="@style/AppTheme.PopupOverlay"></android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
+            android:layout_height="wrap_content"
+            android:background="#FF2751"
+            android:fitsSystemWindows="false"
+            android:theme="@style/AppTheme.AppBarOverlay">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeNotif"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:fitsSystemWindows="true"
+                app:popupTheme="@style/AppTheme.PopupOverlay"></android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
 
-        <ListView
-            android:id="@+id/listViewNotificaciones"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeNotif"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:divider="@color/listViewNotificacionValor"
-            android:dividerHeight="@dimen/dividerHeight"></ListView>
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_height="match_parent">
 
-</LinearLayout>
+            <ListView
+                android:id="@+id/listViewNotificaciones"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:divider="@color/listViewNotificacionValor"
+                android:dividerHeight="@dimen/dividerHeight"></ListView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

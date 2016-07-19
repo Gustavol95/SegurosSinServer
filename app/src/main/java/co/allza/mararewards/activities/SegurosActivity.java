@@ -12,11 +12,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.transition.Fade;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -73,7 +76,6 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         System.out.println(FirebaseInstanceId.getInstance().getToken()+"       ALA VERGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         CargarDatos.setDialogCallback(this);
-        CargarDatos.getNotificacionesFromDatabase(this);
         linear = (RelativeLayout) findViewById(R.id.linearSeguros);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -113,8 +115,29 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                 CustomerItem result = realm.where(CustomerItem.class)
                         .findFirst();
                 if (result != null) {
-                    if (pagerSeguros != null)
-                        pagerSeguros.setAdapter(null);
+                    if (pagerSeguros != null){
+                        AlphaAnimation alpha=new AlphaAnimation(1.0f,0.0f);
+                        alpha.setDuration(250);
+                        alpha.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                pagerSeguros.setAdapter(null);
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
+                        pagerSeguros.startAnimation(alpha);
+
+                    }
                     realm.beginTransaction();
                     RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
                     segurosAnteriores.deleteAllFromRealm();
@@ -230,23 +253,42 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         return result;
     }
 
-    public void onSegurosPulled(SegurosPagerAdapter pagerAdapter) {
+    public void onSegurosPulled(final SegurosPagerAdapter pagerAdapter) {
+        AlphaAnimation alpha=new AlphaAnimation(0.0f,1.0f);
+        alpha.setDuration(1200);
+        alpha.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                pagerSeguros.setAdapter(pagerAdapter);
 
-        pagerSeguros.setAdapter(CargarDatos.getAdapter());
+            }
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                inkPageIndicator.setViewPager(pagerSeguros);
+            }
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        pagerSeguros.startAnimation(alpha);
         arraySeguros = CargarDatos.getArraySeguros();
         if(arraySeguros.size()<=0)
         {
+
             Realm realm = CargarDatos.getRealm(SegurosActivity.this);
             CustomerItem result = realm.where(CustomerItem.class)
                     .findFirst();
             if (result != null) {
-                if (pagerSeguros != null)
-                    pagerSeguros.setAdapter(null);
+                if (pagerSeguros != null){
+                    pagerSeguros.startAnimation(alpha);
+                }
                 realm.beginTransaction();
                 RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
                 segurosAnteriores.deleteAllFromRealm();
                 realm.commitTransaction();
                 CargarDatos.pullSeguros(SegurosActivity.this, result.getUsertoken(), result.getToken(), SegurosActivity.this);
+                pagerSeguros.startAnimation(alpha);
                                 }
         }
         pagerSeguros.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -287,19 +329,17 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             parserFecha = new SimpleDateFormat("dd/MMM/yyyy");
             calendar = Calendar.getInstance();
             fechaActual = calendar.getTime();
-            inkPageIndicator.setViewPager(pagerSeguros);
             try {
                 fechaSeguro = parserFecha.parse(pagerAdapter.getArrayList().get(0).getExpiration());
-
-
                 if (fechaActual.after(fechaSeguro)) {
                     estaVencido=true;
                     fondo.startTransition(1500);
                     theme = R.style.MyAlertDialogStyleBlanco;
                 }
-                else if(estaVencido)
+                else if(estaVencido){
                     fondo.reverseTransition(1500);
-
+                    estaVencido=false;
+                    theme = R.style.MyAlertDialogStyle;}
                 pagerSeguros.setCurrentItem(0);
 
             } catch (ParseException e) {

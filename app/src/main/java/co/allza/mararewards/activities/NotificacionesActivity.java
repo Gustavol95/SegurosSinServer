@@ -4,6 +4,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -36,6 +38,7 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
     SharedPreferences.Editor editor;
     ArrayList<NotificacionItem> hola;
     SwipeRefreshLayout swipe;
+    CoordinatorLayout coordinator;
 
 
     @Override
@@ -43,14 +46,16 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setContentView(R.layout.activity_notificaciones);
+
+        coordinator=(CoordinatorLayout)findViewById(R.id.coordinatorNotif);
         toolbar=(Toolbar)findViewById(R.id.toolbar);
         int anchoViejo=toolbar.getLayoutParams().height;
         toolbar.getLayoutParams().height=getStatusBarHeight()+anchoViejo;
         toolbar.setTitle("Notificaciones");
         setSupportActionBar(toolbar);
         adapter = new NotificacionesAdapter(this, R.layout.listview_notificaciones);
+        CargarDatos.getNotificacionesFromDatabase(this);
         hola=CargarDatos.getNotifAdapter();
-
         swipe=(SwipeRefreshLayout)findViewById(R.id.swipeNotif);
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -156,6 +161,9 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
                     editor = settings.edit();
                     editor.putBoolean("servicio" , false);
                     editor.commit();
+                    Snackbar snackbar = Snackbar
+                            .make(coordinator, "Notificaciones Desactivadas", Snackbar.LENGTH_LONG);
+                    snackbar.show();
                     return true;
                 }
                 else
@@ -186,6 +194,9 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
                             }
                         }
                     },1000);
+                    Snackbar snackbar = Snackbar
+                            .make(coordinator, "Notificaciones Activadas", Snackbar.LENGTH_LONG);
+                    snackbar.show();
                     return true;
                 }
 

@@ -14,7 +14,11 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
 import co.allza.mararewards.interfaces.DialogCallback;
 import co.allza.mararewards.interfaces.VolleyCallback;
@@ -85,6 +89,23 @@ public class CargarDatos {
         queue.add(stringRequest);
 
     }
+    public static void MakePetition(Context ctx, String url) {
+        context=ctx;
+        if(queue==null)
+            queue=Volley.newRequestQueue(ctx);
+        stringRequest = new StringRequest(Request.Method.GET,
+                url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {     }
+        });
+        queue.add(stringRequest);
+
+    }
 
     public static void pullSeguros( Context ctx, String usuario, String usertoken, final VolleyCallback callback) {
         token=usertoken;
@@ -110,10 +131,11 @@ public class CargarDatos {
             public void onErrorResponse(VolleyError error) {
                 callback.onFailure(error.toString());      }
         });
+
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                10000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                5000,
+                2,
+                1));
         queue.add(stringRequest);
     }
 
@@ -227,6 +249,17 @@ public class CargarDatos {
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(item);
         realm.commitTransaction();
+
+    }
+    public static void pushNotificationIfContext(String titulo, String contenido) {
+        if(context!=null) {
+            SimpleDateFormat parserFormal= new SimpleDateFormat("dd MMM yyyy");
+            NotificacionItem item=new NotificacionItem(R.drawable.logoandroid,titulo,contenido,parserFormal.format(Calendar.getInstance().getTime()));
+            Realm realm = getRealm(context.getApplicationContext());
+            realm.beginTransaction();
+            realm.copyToRealmOrUpdate(item);
+            realm.commitTransaction();
+        }
 
     }
 

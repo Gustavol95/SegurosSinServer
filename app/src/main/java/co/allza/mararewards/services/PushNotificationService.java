@@ -21,6 +21,8 @@ import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.R;
 import co.allza.mararewards.activities.SplashActivity;
 import co.allza.mararewards.items.NotificacionItem;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 
 /**
@@ -76,17 +78,17 @@ public class PushNotificationService extends FirebaseMessagingService
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.perfil_whitebg)
-                        .setContentTitle("Titulo")
+                        .setContentTitle(remote.getData().get("title"))
                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logoandroid))
                         .setColor(4)
-                        .setContentText("texto de contenido");
-
+                        .setContentText(remote.getData().get("message"));
         mBuilder.setAutoCancel(true);
         Intent resultIntent = new Intent(this, SplashActivity.class);
         resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         resultIntent.putExtra("goTo",0);
-        NotificacionItem item = new NotificacionItem(R.drawable.logoandroid, remote.getFrom(), "De servidor", parserFormal.format(Calendar.getInstance().getTime()));
-        item.setId(0);
+        NotificacionItem item=new NotificacionItem(R.drawable.logoandroid,remote.getData().get("title"),remote.getData().get("message"),parserFormal.format(Calendar.getInstance().getTime()));
+        item.setId(Integer.parseInt(Double.toString(Math.random()*100)));
+        push(item);
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         this,
@@ -205,5 +207,16 @@ public class PushNotificationService extends FirebaseMessagingService
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 
-
+    public void push(NotificacionItem item)
+    {
+        RealmConfiguration config = new RealmConfiguration
+                .Builder(this)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(config);
+         Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(item);
+        realm.commitTransaction();
+    }
 }
