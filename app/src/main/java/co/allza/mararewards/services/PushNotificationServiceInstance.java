@@ -19,8 +19,8 @@ public class PushNotificationServiceInstance extends FirebaseInstanceIdService{
     public void onTokenRefresh() {
         super.onTokenRefresh();
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        Toast.makeText(PushNotificationServiceInstance.this, ""+refreshedToken, Toast.LENGTH_SHORT).show();
-        System.out.println(refreshedToken+"         ALAVERGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+       
+
 
     }
 }

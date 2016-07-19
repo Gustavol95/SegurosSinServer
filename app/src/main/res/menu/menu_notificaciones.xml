@@ -6,18 +6,13 @@
         android:id="@+id/borrarNotif"
         android:title="@string/borrarNotif"
         app:showAsAction="never"/>
-    <item
-        android:id="@+id/detenerNotif"
-        android:title="@string/desactivarNotif"
-        app:showAsAction="never"
-        android:visible="false"
 
-        />
     <item
         android:id="@+id/iniciarNotif"
         android:title="@string/activarNotif"
         app:showAsAction="never"
 
+        android:checkable="true"
         />
 
 

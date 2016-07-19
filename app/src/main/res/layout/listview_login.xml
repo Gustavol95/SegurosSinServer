@@ -5,9 +5,9 @@
     android:orientation="horizontal">
     <ImageView
         android:id="@+id/listViewLoginIcono"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginLeft="30dp"
+        android:layout_width="@dimen/editTextCodigoPaddingLeftRight"
+        android:layout_height="@dimen/editTextCodigoPaddingLeftRight"
+        android:layout_marginLeft="@dimen/editTextCodigoPaddingLeftRight"
         android:layout_gravity="center"
         />
     <TextView
@@ -15,10 +15,10 @@
         android:layout_width="match_parent"
         android:textSize="15sp"
         android:textColor="@android:color/white"
-        android:padding="15dp"
-        android:paddingEnd="30dp"
+        android:padding="@dimen/buttonLoginPaddingRightLeft"
+        android:paddingEnd="@dimen/editTextCodigoPaddingLeftRight"
         android:gravity="center_vertical|left"
-        android:layout_height="75dp"
+        android:layout_height="@dimen/LoginListViewTextViewHeight"
        />
 
 </LinearLayout>

@@ -1,5 +1,4 @@
 package co.allza.mararewards.adapter;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,26 +6,21 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import co.allza.mararewards.CargarFuentes;
+import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.R;
 import co.allza.mararewards.items.LoginItem;
-
 /**
  * Created by Tavo on 10/06/2016.
  */
-public class CallToActionAdapter extends ArrayAdapter<LoginItem>
-{
-private static final String TAG = "CallToActionAdpater";
-private List<LoginItem> lista = new ArrayList<LoginItem>();
-private Context contexto;
-static class CardViewHolder2 {
+public class CallToActionAdapter extends ArrayAdapter<LoginItem> {
+
+    private Context contexto;
+
+    static class CardViewHolder2 {
     TextView line1;
     ImageView image;
 }
+
     public CallToActionAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
         this.contexto=context;
@@ -64,7 +58,7 @@ static class CardViewHolder2 {
         }
         LoginItem item = getItem(position);
         viewHolder.line1.setText(item.getTexto());
-        viewHolder.line1.setTypeface(CargarFuentes.getTypeface(contexto,CargarFuentes.RUBIK_MEDIUM));
+        viewHolder.line1.setTypeface(CargarDatos.getTypeface(contexto,CargarDatos.RUBIK_MEDIUM));
         viewHolder.image.setImageResource(item.getIcono());
         return row;
     }

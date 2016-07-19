@@ -8,7 +8,7 @@
     <RelativeLayout
         android:id="@+id/frameLoginLogo"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="@dimen/RelativeHeightForLogo"
         android:layout_gravity="center"
         >
         <ImageView
@@ -18,18 +18,17 @@
             android:src="@drawable/firma_white_new"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:paddingLeft="45dp"
-            android:paddingRight="45dp"
-            android:paddingBottom="20dp"
-            android:paddingTop="65dp"
+            android:paddingLeft="@dimen/paddingLeftRightLogo"
+            android:paddingRight="@dimen/paddingLeftRightLogo"
+            android:paddingBottom="@dimen/paddingBottomLogo"
+            android:paddingTop="@dimen/paddingTopLogo"
             />
     </RelativeLayout>
 
     <ListView
         android:id="@+id/listViewLogin"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-      >
+        android:layout_height="wrap_content">
     </ListView>
 
     <TextView
@@ -41,9 +40,9 @@
         android:textSize="17sp"
         android:textColor="@android:color/white"
         android:textAlignment="center"
-        android:layout_marginTop="20dp"
-        android:paddingTop="25dp"
-        android:paddingBottom="25dp"
+        android:layout_marginTop="@dimen/textViewAdquirirMarginTop"
+        android:paddingTop="@dimen/textViewAdquirirPaddingTop"
+        android:paddingBottom="@dimen/textViewAdquirirPaddingBottom"
         android:layout_gravity="center"
         />
 
@@ -53,17 +52,17 @@
 
         <Button
             android:id="@+id/buttonLogin"
-            android:layout_width="150dp"
+            android:layout_width="@dimen/buttonLoginWidth"
             android:layout_height="wrap_content"
             android:text="@string/comenzar"
             android:textColor="@color/loginButton"
             android:background="@drawable/button_radius"
             android:layout_centerHorizontal="true"
             style="@style/Widget.AppCompat.Button.Colored"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
+            android:paddingBottom="@dimen/buttonLoginPaddingTopBottom"
+            android:paddingTop="@dimen/buttonLoginPaddingTopBottom"
+            android:paddingLeft="@dimen/buttonLoginPaddingRightLeft"
+            android:paddingRight="@dimen/buttonLoginPaddingRightLeft"
             android:layout_centerVertical="true"
             android:textSize="16sp"/>
 

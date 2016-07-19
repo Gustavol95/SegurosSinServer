@@ -1,5 +1,4 @@
 package co.allza.mararewards.adapter;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,27 +6,22 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import java.util.ArrayList;
-import java.util.List;
-import co.allza.mararewards.CargarFuentes;
+
+import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.R;
 import co.allza.mararewards.items.NotificacionItem;
-
 /**
  * Created by Tavo on 14/06/2016.
  */
 public class NotificacionesAdapter extends ArrayAdapter<NotificacionItem> {
-    private static final String TAG = "NotificacionesAdapter";
-    private List<NotificacionItem> lista = new ArrayList<NotificacionItem>();
-    private Context contexto;
+
     static class CardViewHolder4 {
        ImageView imagen;
         TextView titulo,subtitulo,valor;
     }
+
     public NotificacionesAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
-        this.contexto=context;
-
     }
 
     @Override
@@ -73,10 +67,9 @@ public class NotificacionesAdapter extends ArrayAdapter<NotificacionItem> {
         viewHolder.valor.setText(item.getValor());
         viewHolder.imagen.setImageResource(item.getImagen());
 
-        viewHolder.titulo.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_REGULAR));
-        viewHolder.subtitulo.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_LIGHT));
-        viewHolder.titulo.setTypeface(CargarFuentes.getTypeface(getContext(),CargarFuentes.RUBIK_LIGHT));
-
+        viewHolder.titulo.setTypeface(CargarDatos.getTypeface(getContext(),CargarDatos.RUBIK_REGULAR));
+        viewHolder.subtitulo.setTypeface(CargarDatos.getTypeface(getContext(),CargarDatos.RUBIK_LIGHT));
+        viewHolder.titulo.setTypeface(CargarDatos.getTypeface(getContext(),CargarDatos.RUBIK_LIGHT));
 
         return row;
     }

@@ -1,5 +1,4 @@
 package co.allza.mararewards.activities;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,42 +10,29 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-
-import co.allza.mararewards.CargarFuentes;
+import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.CallToActionAdapter;
 import co.allza.mararewards.items.LoginItem;
-
 /**
  * Created by Tavo on 10/06/2016.
  */
 public class CallToActionActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener {
+
     private TextView texto;
     private ListView lista;
     private FloatingActionButton fab;
     private CallToActionAdapter adapter;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Para kitkat
         requestWindowFeature(getWindow().FEATURE_NO_TITLE);
-        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-
-// finally change the color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.StatusBarColorCallToAction));
         }
         setContentView(R.layout.activity_call_to_action);
-        //para Lollipop
-
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         lista = (ListView) findViewById(R.id.listViewCallToAction);
@@ -60,12 +46,10 @@ public class CallToActionActivity extends Activity implements AdapterView.OnItem
         adapter.add(new LoginItem("Seguro de Viaje", R.drawable.briefcase));
 
         lista.setAdapter(adapter);
-        texto.setTypeface(CargarFuentes.getTypeface(getApplicationContext(), CargarFuentes.RUBIK_REGULAR));
+        texto.setTypeface(CargarDatos.getTypeface(getApplicationContext(), CargarDatos.RUBIK_REGULAR));
 
         lista.setOnItemClickListener(this);
         fab.setOnClickListener(this);
-
-
     }
 
     @Override

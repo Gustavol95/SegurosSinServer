@@ -1,8 +1,6 @@
 package co.allza.mararewards.items;
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
-
 /**
  * Created by Tavo on 22/06/2016.
  */
@@ -19,8 +17,6 @@ public class CustomerItem extends RealmObject {
     private String updated_at;
     private String token;
     private boolean notif=true;
-
-
 
     public CustomerItem() {
     }

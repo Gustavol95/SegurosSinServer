@@ -74,15 +74,12 @@
             </intent-filter>
         </service>
 
-        ...
-
         <service
             android:name=".services.PushNotificationServiceInstance">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
-
 
         <receiver android:name=".BootReceiver" android:enabled="true" android:exported="false">
             <intent-filter>
@@ -91,6 +88,7 @@
         </receiver>
 
     </application>
+
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />

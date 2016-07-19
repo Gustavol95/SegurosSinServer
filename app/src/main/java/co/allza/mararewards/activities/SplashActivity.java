@@ -1,23 +1,14 @@
 package co.allza.mararewards.activities;
-
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.view.WindowManager;
-import android.widget.Toast;
-import java.util.Calendar;
 import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
 import co.allza.mararewards.interfaces.VolleyCallback;
 import co.allza.mararewards.items.CustomerItem;
-import co.allza.mararewards.services.SegurosService;
 import io.realm.Realm;
 
 
@@ -30,6 +21,7 @@ public class SplashActivity extends Activity implements VolleyCallback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
 
         Realm realm = CargarDatos.getRealm(SplashActivity.this);
         result = realm.where(CustomerItem.class)
@@ -70,13 +62,15 @@ public class SplashActivity extends Activity implements VolleyCallback {
 
     @Override
     public void onSuccess(SegurosPagerAdapter result) {
-
-
         elHandler=new Handler();
         elHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent i = new Intent(SplashActivity.this, SegurosActivity.class);
+                Intent aver=getIntent();
+                if(aver.hasExtra("goTo"))
+                    i.putExtra("goTo",aver.getExtras().getInt("goTo",-1));
+                i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
                 finish();
             }},1000);
@@ -84,7 +78,6 @@ public class SplashActivity extends Activity implements VolleyCallback {
 
     @Override
     public void onFailure(String error) {
-        Toast.makeText(SplashActivity.this, ""+error, Toast.LENGTH_SHORT).show();
 
     }
 

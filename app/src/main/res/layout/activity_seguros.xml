@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linearSeguros"
-    android:background="@drawable/bg_deverdad_blur_rojo"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_deverdad_blur_rojo">
+
     <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/aver"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:background="@android:color/transparent"
         android:fitsSystemWindows="false"
-        android:layout_alignParentTop="true"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -27,68 +28,62 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <view
+    <view xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipe"
         class="co.allza.mararewards.items.CustomSwipeToRefresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/aver"
+        android:layout_below="@+id/aver">
 
-        xmlns:android="http://schemas.android.com/apk/res/android">
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
-
             android:fitsSystemWindows="false"
             android:orientation="vertical">
-
-
-
-
 
             <TextView
                 android:id="@+id/tituloSeguroActual"
                 android:layout_width="match_parent"
-                android:layout_height="65dp"
-                android:paddingTop="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_margin="20dp"
+                android:layout_height="@dimen/paddingTopLogo"
+                android:layout_margin="@dimen/textViewAdquirirMarginTop"
+                android:layout_marginTop="@dimen/seguroActualTextViewPaddingMarginTop"
+                android:paddingTop="@dimen/seguroActualTextViewPaddingMarginTop"
+                android:shadowColor="@color/backGroundAlphaNegro"
+                android:shadowDx="0"
+                android:shadowDy="4"
+                android:shadowRadius="3"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
-                android:textSize="25sp"
-                android:shadowDy="4"
-                android:shadowDx="0"
-                android:shadowRadius="3"
                 android:textColorHighlight="@color/backGroundAlphaNegro"
-                android:shadowColor="@color/backGroundAlphaNegro"/>
+                android:textSize="25sp" />
+
             <view
                 android:id="@+id/viewPagerSeguros"
                 class="co.allza.mararewards.items.CustomViewPager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                >
+                android:background="@android:color/transparent">
 
             </view>
+
             <com.pixelcan.inkpageindicator.InkPageIndicator
                 android:id="@+id/indicator"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:paddingTop="8dp"/>
+                android:layout_marginTop="@dimen/buttonLoginPaddingTopBottom"
+                android:paddingTop="@dimen/buttonLoginPaddingTopBottom" />
+
             <Button
                 android:id="@+id/botonCallToAction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/botonCalltoAction"
-                android:textSize="15sp"
-                android:textColor="@color/rectanguloSplash"
-                android:textAlignment="center"
+                android:layout_margin="@dimen/textViewAdquirirPaddingTop"
                 android:background="@android:color/white"
-                android:layout_margin="25dp"/>
-
+                android:text="@string/botonCalltoAction"
+                android:textAlignment="center"
+                android:textColor="@color/rectanguloSplash"
+                android:textSize="15sp" />
 
 
         </LinearLayout>

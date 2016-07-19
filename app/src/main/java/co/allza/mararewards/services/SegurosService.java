@@ -1,34 +1,29 @@
 package co.allza.mararewards.services;
-
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
+import io.realm.Realm;
+import io.realm.RealmResults;
+import io.realm.Sort;
 import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.R;
-import co.allza.mararewards.activities.NotificacionesActivity;
-import co.allza.mararewards.activities.SegurosActivity;
 import co.allza.mararewards.activities.SplashActivity;
 import co.allza.mararewards.items.CustomerItem;
 import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
-import io.realm.Realm;
-import io.realm.RealmResults;
 
 public class SegurosService extends Service {
 
@@ -41,12 +36,7 @@ public class SegurosService extends Service {
     AlarmManager alarmMgr;
     Intent intent;
     PendingIntent pintent;
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+    String action[];
 
     public static final String PREFS_NAME = "prefServicio";
 
@@ -55,18 +45,29 @@ public class SegurosService extends Service {
         super.onCreate();
         if (alarmMgr == null)
             alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-
         intent = new Intent(this, SegurosService.class);
         pintent = PendingIntent.getService(this, 0, intent, 0);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
-        cal.set(Calendar.HOUR_OF_DAY, 17);
-        cal.set(Calendar.MINUTE, 48);
+        cal.set(Calendar.HOUR_OF_DAY, 10);
+        cal.set(Calendar.MINUTE, 45);
         alarmMgr.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, pintent);
         mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
+        action = new String[]{
+                        Intent.ACTION_APP_ERROR,
+                        Intent.ACTION_REBOOT,
+                        Intent.ACTION_ALL_APPS,
+                        Intent.ACTION_BATTERY_OKAY,
+                        Intent.ACTION_DEFAULT,
+                        Intent.ACTION_MAIN,
+                        Intent.ACTION_SEND,
+                        Intent.ACTION_SCREEN_OFF,
+                        Intent.ACTION_SCREEN_ON,
+                        Intent.ACTION_SHUTDOWN};
+        Toast.makeText(SegurosService.this, "Inicia servicio", Toast.LENGTH_SHORT).show();
     }
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -76,7 +77,6 @@ public class SegurosService extends Service {
         fechaActual = calendar.getTime();
         Realm realm = CargarDatos.getRealm(this);
         ArrayList<SeguroItem> items = new ArrayList<>();
-
         CustomerItem cliente = realm.where(CustomerItem.class)
                 .findFirst();
 
@@ -84,6 +84,7 @@ public class SegurosService extends Service {
             RealmResults<SeguroItem> result = realm.where(SeguroItem.class)
                     .equalTo("customer_id", cliente.getId())
                     .findAll();
+            result.sort("id", Sort.DESCENDING);
             for (int i = 0; i < result.size(); i++) {
                 try {
                     fechaSeguro = parserFecha.parse(result.get(i).getExpiration());
@@ -99,7 +100,6 @@ public class SegurosService extends Service {
                     if (alreadyInDB.isEmpty()) {
                         notifProximoAExpirar(i);
                     }
-
                 }
                 if (temp > 0) {
                     //Ya expiró
@@ -109,13 +109,8 @@ public class SegurosService extends Service {
                     if (alreadyInDB.isEmpty()) {
                         notifExpiro(i);
                     }
-
                 }
-
-
             }
-
-
         } else
             Toast.makeText(SegurosService.this, "Esperando", Toast.LENGTH_SHORT).show();
 
@@ -128,10 +123,35 @@ public class SegurosService extends Service {
         if (alarmMgr != null)
             alarmMgr.cancel(pintent);
         mNotifyMgr.cancelAll();
+        Toast.makeText(SegurosService.this, "Murió servicio", Toast.LENGTH_SHORT).show();
         super.onDestroy();
 
     }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public boolean stopService(Intent name) {
+        mNotifyMgr.cancelAll();
+        Toast.makeText(SegurosService.this, "StopService", Toast.LENGTH_SHORT).show();
+        return super.stopService(name);
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        mNotifyMgr.cancelAll();
+        return super.onUnbind(intent);
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        mNotifyMgr.cancelAll();
+        super.onTaskRemoved(rootIntent);
+    }
 
     public void notifProximoAExpirar(int id) {
         NotificationCompat.Builder mBuilder =
@@ -144,7 +164,8 @@ public class SegurosService extends Service {
 
         mBuilder.setAutoCancel(true);
         Intent resultIntent = new Intent(this, SplashActivity.class);
-        resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        resultIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        resultIntent.setAction(action[id]);
         resultIntent.putExtra("goTo",id);
         NotificacionItem item = new NotificacionItem(R.drawable.logoandroid, seguroTemporal.getRefname(), "Próximo a expirar", parserFormal.format(fechaActual));
         item.setId(id);
@@ -173,7 +194,8 @@ public class SegurosService extends Service {
                         .setContentText("Ha expirado, comunícate con tu aseguradora");
         mBuilder.setAutoCancel(true);
         Intent resultIntent = new Intent(this, SplashActivity.class);
-        resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        resultIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        resultIntent.setAction(action[id]);
         resultIntent.putExtra("goTo",id);
         NotificacionItem item = new NotificacionItem(R.drawable.logoandroid, seguroTemporal.getRefname(), "Ha expirado, comunícate con tu aseguradora", parserFormal.format(fechaActual));
         item.setId(id);
@@ -189,24 +211,5 @@ public class SegurosService extends Service {
         mBuilder.setContentIntent(resultPendingIntent);
         int mNotificationId = id;
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
-    }
-
-    @Override
-    public boolean stopService(Intent name) {
-        mNotifyMgr.cancelAll();
-        Toast.makeText(SegurosService.this, "StopService", Toast.LENGTH_SHORT).show();
-        return super.stopService(name);
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        mNotifyMgr.cancelAll();
-        return super.onUnbind(intent);
-    }
-
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        mNotifyMgr.cancelAll();
-        super.onTaskRemoved(rootIntent);
     }
 }

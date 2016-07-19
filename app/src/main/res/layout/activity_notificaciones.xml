@@ -20,18 +20,21 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:fitsSystemWindows="true"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            app:popupTheme="@style/AppTheme.PopupOverlay"></android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeNotif"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        </android.support.v7.widget.Toolbar>
         <ListView
             android:id="@+id/listViewNotificaciones"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@android:color/transparent"
             android:divider="@color/listViewNotificacionValor"
-            android:dividerHeight="1dp"
-            android:background="@android:color/transparent">
-        </ListView>
-    </android.support.design.widget.AppBarLayout>
+            android:dividerHeight="@dimen/dividerHeight"></ListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

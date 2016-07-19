@@ -1,9 +1,7 @@
 package co.allza.mararewards.activities;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -11,21 +9,17 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import co.allza.mararewards.CargarDatos;
-import co.allza.mararewards.CargarFuentes;
 import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
 import co.allza.mararewards.interfaces.VolleyCallback;
 import co.allza.mararewards.items.CustomerItem;
 import io.realm.Realm;
-
 /**
  * Created by Tavo on 10/06/2016.
  */
 public class LoginCodigoActivity extends Activity implements View.OnClickListener, VolleyCallback {
     TextView introducir;
-
     EditText editTextCodigo;
     Button botonEntrar;
     CustomerItem customer;
@@ -34,19 +28,17 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //para lolipop
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setContentView(R.layout.activity_login_codigo);
-        introducir= (TextView)findViewById(R.id.textViewLoginCodigo);
 
+        introducir= (TextView)findViewById(R.id.textViewLoginCodigo);
         editTextCodigo=(EditText)findViewById(R.id.editTextLoginCodigo);
         botonEntrar=(Button)findViewById(R.id.buttonLoginCodigo);
         progress=(ProgressBar) findViewById(R.id.progress);
 
-        introducir.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.ROBOTO_MEDIUM));
-
-        editTextCodigo.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.RUBIK_REGULAR));
-        botonEntrar.setTypeface(CargarFuentes.getTypeface(getApplicationContext(),CargarFuentes.ROBOTO_MEDIUM));
+        introducir.setTypeface(CargarDatos.getTypeface(getApplicationContext(),CargarDatos.ROBOTO_MEDIUM));
+        editTextCodigo.setTypeface(CargarDatos.getTypeface(getApplicationContext(),CargarDatos.RUBIK_REGULAR));
+        botonEntrar.setTypeface(CargarDatos.getTypeface(getApplicationContext(),CargarDatos.ROBOTO_MEDIUM));
         botonEntrar.setOnClickListener(this);
     }
 
@@ -60,7 +52,6 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
                 progress.setProgress(15);
                 break;
         }
-
     }
 
     @Override
@@ -82,6 +73,7 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
     public void onFailure(String error) {
         Toast.makeText(LoginCodigoActivity.this, "Algo está mal, intente de nuevo por favor", Toast.LENGTH_SHORT).show();
         botonEntrar.setEnabled(true);
+        botonEntrar.setText(error);
         progress.setVisibility(View.INVISIBLE);
     }
 
@@ -90,7 +82,6 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
         this.token=token;
         CargarDatos.setToken(token);
         CargarDatos.setUser(editTextCodigo.getText().toString());
-        CargarDatos.pullSeguros(LoginCodigoActivity.this,editTextCodigo.getText().toString(),token,this);
-
+        CargarDatos.pullSeguros(LoginCodigoActivity.this,editTextCodigo.getText().toString(),token,LoginCodigoActivity.this);
     }
 }

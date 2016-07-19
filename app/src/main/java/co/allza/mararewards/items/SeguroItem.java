@@ -27,10 +27,8 @@ public class SeguroItem extends RealmObject {
     private String refname;
     private String features;
 
-
     public SeguroItem() {
     }
-
 
     public int getId() {
         return id;

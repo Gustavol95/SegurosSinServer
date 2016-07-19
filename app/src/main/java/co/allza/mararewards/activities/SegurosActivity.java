@@ -1,14 +1,9 @@
 package co.allza.mararewards.activities;
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.TransitionDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
@@ -23,22 +18,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.pixelcan.inkpageindicator.InkPageIndicator;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
+import io.realm.Realm;
+import io.realm.RealmResults;
 import co.allza.mararewards.CargarDatos;
-import co.allza.mararewards.CargarFuentes;
 import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
 import co.allza.mararewards.interfaces.DialogCallback;
@@ -50,8 +41,8 @@ import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
 import co.allza.mararewards.services.SegurosService;
 
-import io.realm.Realm;
-import io.realm.RealmResults;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.pixelcan.inkpageindicator.InkPageIndicator;
 
 public class SegurosActivity extends AppCompatActivity implements VolleyCallback, DialogCallback {
 
@@ -67,36 +58,28 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     Date fechaActual;
     Date fechaSeguro;
     InkPageIndicator inkPageIndicator;
-    boolean estaVencido = false;
+    boolean estaVencido ;
     TransitionDrawable fondo;
-    int id = 0;
+    int id = -1;
     int goTo;
     int theme = R.style.MyAlertDialogStyle;
     Menu menu;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seguros);
-        //para Lollipop
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //getWindow().setStatusBarColor(getResources().getColor(R.color.statusbarSeguros));
-        }
-        Intent aver=getIntent();
-        if(aver.hasExtra("goTo"))
-        goTo=aver.getExtras().getInt("goTo",0);
-        Toast.makeText(SegurosActivity.this, FirebaseInstanceId.getInstance().getToken(), Toast.LENGTH_SHORT).show();
-        System.out.println(FirebaseInstanceId.getInstance().getToken()+"    ALAVERGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
-
+        System.out.println(FirebaseInstanceId.getInstance().getToken()+"       ALA VERGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         CargarDatos.setDialogCallback(this);
+        CargarDatos.getNotificacionesFromDatabase(this);
         linear = (RelativeLayout) findViewById(R.id.linearSeguros);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         int anchoViejo = toolbar.getLayoutParams().height;
         toolbar.getLayoutParams().height = getStatusBarHeight() + anchoViejo;
-        toolbar.setTitle("Seguros");
+        getSupportActionBar().setTitle("Mis seguros");
         toolbar.setBackgroundColor(getResources().getColor(R.color.toolbarSeguros));
         toolbar.setNavigationIcon(R.drawable.ic_notifications_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -109,19 +92,12 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
 
         fondo = (TransitionDrawable) getResources().getDrawable(R.drawable.fondo_seguros);
         linear.setBackground(fondo);
-
-
         pagerSeguros = (ViewPager) findViewById(R.id.viewPagerSeguros);
         inkPageIndicator = (InkPageIndicator) findViewById(R.id.indicator);
-        //CargarDatos.pullSeguros(getApplicationContext(),"","",this);
-        CargarDatos.getNotificacionesFromDatabase(this);
-        if (!CargarDatos.adapterIsNull()) {
-            onSuccess(CargarDatos.getAdapter());
-        }
         seguroActual = (TextView) findViewById(R.id.tituloSeguroActual);
-        seguroActual.setTypeface(CargarFuentes.getTypeface(getApplicationContext(), CargarFuentes.RUBIK_MEDIUM));
+        seguroActual.setTypeface(CargarDatos.getTypeface(getApplicationContext(), CargarDatos.RUBIK_MEDIUM));
         botonCallToAction = (Button) findViewById(R.id.botonCallToAction);
-        botonCallToAction.setTypeface(CargarFuentes.getTypeface(getApplicationContext(), CargarFuentes.ROBOTO_MEDIUM));
+        botonCallToAction.setTypeface(CargarDatos.getTypeface(getApplicationContext(), CargarDatos.ROBOTO_MEDIUM));
         botonCallToAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,27 +115,21 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                 if (result != null) {
                     if (pagerSeguros != null)
                         pagerSeguros.setAdapter(null);
-
+                    realm.beginTransaction();
+                    RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
+                    segurosAnteriores.deleteAllFromRealm();
+                    realm.commitTransaction();
                     CargarDatos.pullSeguros(SegurosActivity.this, result.getUsertoken(), result.getToken(), SegurosActivity.this);
-
                 }
 
             }
         });
+        swipe.setColorSchemeResources(R.color.rectanguloSplash,R.color.toolbarSeguros);
+        CargarDatos.getSegurosFromDatabase(this,this);
         parserFecha = new SimpleDateFormat("dd/MMM/yyyy");
         calendar = Calendar.getInstance();
         fechaActual = calendar.getTime();
-
         validarPrimerUso();
-        if(goTo!=0){
-            pagerSeguros.postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    pagerSeguros.setCurrentItem(goTo ,true);
-                }
-            }, 100);
-        }
 
 
     }
@@ -170,9 +140,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         getMenuInflater().inflate(R.menu.menu_seguros, menu);
         this.menu = menu;
         validarPantalla();
-
         return true;
-
     }
 
     @Override
@@ -203,132 +171,23 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         return super.onOptionsItemSelected(item);
     }
 
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
-
-    public void onSegurosPulled(SegurosPagerAdapter pagerAdapter) {
-
-        pagerSeguros.setAdapter(pagerAdapter);
-        arraySeguros = pagerAdapter.getArrayList();
-        pagerSeguros.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                seguroActual.setText(arraySeguros.get(position).getRefname());
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                try {
-                    fechaSeguro = parserFecha.parse(arraySeguros.get(position).getExpiration());
-                    if (fechaActual.after(fechaSeguro) && !estaVencido) {
-                        estaVencido = !estaVencido;
-                        fondo.startTransition(500);
-                        theme = R.style.MyAlertDialogStyleBlanco;
-
-                    }
-                    if (fechaActual.before(fechaSeguro) && estaVencido) {
-                        estaVencido = !estaVencido;
-                        fondo.reverseTransition(500);
-                        theme = R.style.MyAlertDialogStyle;
-                    }
-
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    Toast.makeText(SegurosActivity.this, "" + e.toString(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-        pagerSeguros.setPageTransformer(true, new DepthPageTransformer());
-        inkPageIndicator.setViewPager(pagerSeguros);
-        if (pagerAdapter.getCount() > 0) {
-            parserFecha = new SimpleDateFormat("dd/MMM/yyyy");
-            calendar = Calendar.getInstance();
-            fechaActual = calendar.getTime();
-            try {
-                fechaSeguro = parserFecha.parse(pagerAdapter.getArrayList().get(0).getExpiration());
-                if (fechaActual.after(fechaSeguro) && !estaVencido) {
-                    estaVencido = !estaVencido;
-                    fondo.startTransition(1500);
-                    theme = R.style.MyAlertDialogStyleBlanco;
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-
-    }
-
-    public void validarPantalla() {
-        if (((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL
-                || (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL)
-                && getResources().getDisplayMetrics().density <= 2.0f) {
-            botonCallToAction.setVisibility(View.GONE);
-            if (menu != null)
-                menu.findItem(R.id.callToAction).setVisible(true);
-
-        }
-    }
-
-    public void iniciarServicioSeguros() {
-        AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, SegurosService.class);
-        PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        cal.set(Calendar.HOUR_OF_DAY, 16);
-        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pintent);
-    }
-
-    public void validarPrimerUso() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!prefs.getBoolean("firstTime", false)) {
-            // run your one time code
-            AlarmManager alarmMgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-            Intent intent = new Intent(this, SegurosService.class);
-            PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(System.currentTimeMillis());
-            cal.set(Calendar.HOUR_OF_DAY, 15);
-            cal.set(Calendar.MINUTE, 22);
-            alarmMgr.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY, pintent);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("firstTime", true);
-            editor.commit();
-        }
-    }
-
     @Override
     protected void onDestroy() {
-
         super.onDestroy();
-
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        pagerSeguros.setAdapter(CargarDatos.getAdapter());
-    }
+    protected void onResume() {
+        super.onResume();
+        validarPosicion();    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);                     }
 
     @Override
     public void onSuccess(SegurosPagerAdapter result) {
-
         adapter = new SegurosPagerAdapter(SegurosActivity.this, CargarDatos.getArraySeguros());
         onSegurosPulled(adapter);
         if (swipe != null && swipe.isRefreshing())
@@ -362,5 +221,127 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         builder.show();
     }
 
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
 
+    public void onSegurosPulled(SegurosPagerAdapter pagerAdapter) {
+
+        pagerSeguros.setAdapter(CargarDatos.getAdapter());
+        arraySeguros = CargarDatos.getArraySeguros();
+        if(arraySeguros.size()<=0)
+        {
+            Realm realm = CargarDatos.getRealm(SegurosActivity.this);
+            CustomerItem result = realm.where(CustomerItem.class)
+                    .findFirst();
+            if (result != null) {
+                if (pagerSeguros != null)
+                    pagerSeguros.setAdapter(null);
+                realm.beginTransaction();
+                RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
+                segurosAnteriores.deleteAllFromRealm();
+                realm.commitTransaction();
+                CargarDatos.pullSeguros(SegurosActivity.this, result.getUsertoken(), result.getToken(), SegurosActivity.this);
+                                }
+        }
+        pagerSeguros.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                seguroActual.setText(arraySeguros.get(position).getRefname());
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+
+                try {
+                    fechaSeguro = parserFecha.parse(arraySeguros.get(position).getExpiration());
+                    if (fechaActual.after(fechaSeguro) && !estaVencido) {
+                        estaVencido=true;
+                        fondo.startTransition(500);
+                        theme = R.style.MyAlertDialogStyleBlanco;
+                    }
+                    if (fechaActual.before(fechaSeguro)&& estaVencido ) {
+                        estaVencido=false;
+                        fondo.reverseTransition(500);
+                        theme = R.style.MyAlertDialogStyle;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        pagerSeguros.setPageTransformer(true, new DepthPageTransformer());
+        if (pagerAdapter.getCount() > 0) {
+            parserFecha = new SimpleDateFormat("dd/MMM/yyyy");
+            calendar = Calendar.getInstance();
+            fechaActual = calendar.getTime();
+            inkPageIndicator.setViewPager(pagerSeguros);
+            try {
+                fechaSeguro = parserFecha.parse(pagerAdapter.getArrayList().get(0).getExpiration());
+
+
+                if (fechaActual.after(fechaSeguro)) {
+                    estaVencido=true;
+                    fondo.startTransition(1500);
+                    theme = R.style.MyAlertDialogStyleBlanco;
+                }
+                else if(estaVencido)
+                    fondo.reverseTransition(1500);
+
+                pagerSeguros.setCurrentItem(0);
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void validarPantalla() {
+        if (((getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL
+                || (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL)
+                && getResources().getDisplayMetrics().density <= 2.0f) {
+            botonCallToAction.setVisibility(View.GONE);
+            if (menu != null)
+                menu.findItem(R.id.callToAction).setVisible(true);
+
+        }
+    }
+
+    public void validarPrimerUso() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefs.getBoolean("firstTime", false)) {
+            SharedPreferences.Editor editor = prefs.edit();
+            startService(new Intent(SegurosActivity.this, SegurosService.class));
+            editor.remove("servicio");
+            editor.putBoolean("firstTime", true);
+            editor.commit();
+        }
+    }
+
+    public void validarPosicion(){
+        if(getIntent().hasExtra("goTo"))
+            goTo=getIntent().getExtras().getInt("goTo",-1);
+        if(goTo!=-1){
+            pagerSeguros.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    pagerSeguros.setCurrentItem(goTo ,true);
+                    goTo=-1;
+                }
+            }, 100);
+
+        }
+    }
 }

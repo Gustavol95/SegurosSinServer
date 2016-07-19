@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,22 +35,58 @@ public class PushNotificationService extends FirebaseMessagingService
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+
+        switch (Integer.parseInt(remoteMessage.getData().get("type")))
+        {
+            case 1:
+                notificacionSimple(remoteMessage);
+                break;
+            case 2:
+                notificacionBigText(remoteMessage);
+                break;
+            case 3:
+                notificacionBigPicture(remoteMessage);
+                break;
+            case 4:
+                notificationInbox(remoteMessage);
+                break;
+        }
+
+    }
+
+    @Override
+    public void onDeletedMessages() {
+        Log.e("Notification Service","onDeletedMEssages");
+        super.onDeletedMessages();
+    }
+
+    @Override
+    public void onMessageSent(String s) {
+        super.onMessageSent(s);
+    }
+
+    @Override
+    public void onSendError(String s, Exception e) {
+        super.onSendError(s, e);
+    }
+
+    public void notificacionSimple(RemoteMessage remote) {
         NotificationManager mNotifyMgr= (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         SimpleDateFormat parserFormal= new SimpleDateFormat("dd MMM yyyy");
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.perfil_whitebg)
-                        .setContentTitle(remoteMessage.getNotification().getBody())
+                        .setContentTitle("Titulo")
                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logoandroid))
                         .setColor(4)
-                        .setContentText("Desde Servidor");
+                        .setContentText("texto de contenido");
+
         mBuilder.setAutoCancel(true);
         Intent resultIntent = new Intent(this, SplashActivity.class);
         resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         resultIntent.putExtra("goTo",0);
-        NotificacionItem item = new NotificacionItem(R.drawable.logoandroid, remoteMessage.getFrom(), "De servidor", parserFormal.format(Calendar.getInstance().getTime()));
+        NotificacionItem item = new NotificacionItem(R.drawable.logoandroid, remote.getFrom(), "De servidor", parserFormal.format(Calendar.getInstance().getTime()));
         item.setId(0);
-       // CargarDatos.pushNotification(this, item);
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         this,
@@ -61,19 +100,110 @@ public class PushNotificationService extends FirebaseMessagingService
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 
-    @Override
-    public void onDeletedMessages() {
-        super.onDeletedMessages();
+    public void notificacionBigPicture(RemoteMessage remote) {
+        NotificationManager mNotifyMgr= (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        SimpleDateFormat parserFormal= new SimpleDateFormat("dd MMM yyyy");
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.perfil_whitebg)
+                        .setContentTitle("Titulo")
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logoandroid))
+                        .setColor(4)
+                        .setContentText("Texto de contenido")
+                        .setStyle(new NotificationCompat.BigPictureStyle()
+                        .setBigContentTitle("Titulo Extendido")
+                        .bigLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logoandroid))
+                        .bigPicture(BitmapFactory.decodeResource(getResources(), R.drawable.bg_deverdad_blur_rojo)));
+
+        mBuilder.setAutoCancel(true);
+        Intent resultIntent = new Intent(this, SplashActivity.class);
+        resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        resultIntent.putExtra("goTo",0);
+        NotificacionItem item = new NotificacionItem(R.drawable.logoandroid, remote.getFrom(), "De servidor", parserFormal.format(Calendar.getInstance().getTime()));
+        item.setId(0);
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        mBuilder.setContentIntent(resultPendingIntent);
+        int mNotificationId = 0;
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 
-    @Override
-    public void onMessageSent(String s) {
-        super.onMessageSent(s);
+    public void notificacionBigText(RemoteMessage remote) {
+        NotificationManager mNotifyMgr= (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        SimpleDateFormat parserFormal= new SimpleDateFormat("dd MMM yyyy");
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.perfil_whitebg)
+                        .setContentTitle("Titulo")
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logoandroid))
+                        .setColor(4)
+                        .setContentText("texto de contenido")
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                        .setBigContentTitle("Titulo Extentido")
+                        .bigText("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod nulla quam, et bibendum ipsum elementum sit amet. Sed at urna vulputate turpis dignissim sodales. Integer hendrerit eleifend blandit. Praesent dui quam, porttitor et felis pretium, dignissim semper tellus. Vestibulum molestie eros at consequat imperdiet. Sed sagittis est et risus volutpat eleifend. Duis magna neque, pellentesque vel metus sit amet, ornare consectetur libero. ")
+                        .setSummaryText("Texto resumido")
+                        );
+
+        mBuilder.setAutoCancel(true);
+        Intent resultIntent = new Intent(this, SplashActivity.class);
+        resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        resultIntent.putExtra("goTo",0);
+        NotificacionItem item = new NotificacionItem(R.drawable.logoandroid, remote.getFrom(), "De servidor", parserFormal.format(Calendar.getInstance().getTime()));
+        item.setId(0);
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        mBuilder.setContentIntent(resultPendingIntent);
+        int mNotificationId = 0;
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
 
-    @Override
-    public void onSendError(String s, Exception e) {
-        super.onSendError(s, e);
+    public void notificationInbox(RemoteMessage remote) {
+        NotificationManager mNotifyMgr= (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        SimpleDateFormat parserFormal= new SimpleDateFormat("dd MMM yyyy");
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.perfil_whitebg)
+                        .setContentTitle("Titulo")
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logoandroid))
+                        .setColor(4)
+                        .setContentText("texto de contenido")
+                        .setStyle(new NotificationCompat.InboxStyle()
+                        .setBigContentTitle("Texto extendido")
+                        .setSummaryText("Texto resumido")
+                        .addLine("Linea 1")
+                        .addLine("Linea 2")
+                        );
+
+        mBuilder.setAutoCancel(true);
+        Intent resultIntent = new Intent(this, SplashActivity.class);
+        resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        resultIntent.putExtra("goTo",0);
+        NotificacionItem item = new NotificacionItem(R.drawable.logoandroid, remote.getFrom(), "De servidor", parserFormal.format(Calendar.getInstance().getTime()));
+        item.setId(0);
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        resultIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+
+        mBuilder.setContentIntent(resultPendingIntent);
+        int mNotificationId = 0;
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
     }
+
 
 }

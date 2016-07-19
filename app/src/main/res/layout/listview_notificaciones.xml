@@ -6,18 +6,18 @@
     android:orientation="horizontal">
 
     <TextView
-        android:layout_width="1dp"
-        android:layout_height="70dp"
+        android:layout_width="@dimen/dividerHeight"
+        android:layout_height="@dimen/notifListViewInvisibleHeight"
         android:visibility="invisible" />
 
     <ImageView
         android:id="@+id/listViewNotificacionesIcono"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/editTextCodigoMarginTop"
+        android:layout_height="@dimen/editTextCodigoMarginTop"
         android:layout_gravity="center"
-        android:layout_marginLeft="7dp"
-        android:layout_marginRight="7dp"
-        android:padding="10dp"
+        android:layout_marginLeft="@dimen/CallImageViewPaddingRigth"
+        android:layout_marginRight="@dimen/CallImageViewPaddingRigth"
+        android:padding="@dimen/seguroActualTextViewPaddingMarginTop"
 
 
         />
@@ -33,7 +33,7 @@
             android:id="@+id/listViewNotificacionesTitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
+            android:paddingTop="@dimen/seguroActualTextViewPaddingMarginTop"
             android:textColor="@color/listViewNotificacionTitulo"
             android:textSize="14dp" />
 
@@ -41,8 +41,8 @@
             android:id="@+id/listViewNotificacionesSubtitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
             android:ems="10"
+            android:paddingBottom="@dimen/seguroActualTextViewPaddingMarginTop"
             android:textColor="@color/listViewNotificacionSubtitulo"
             android:textSize="13sp" />
     </LinearLayout>
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:paddingRight="15dp"
+            android:paddingRight="@dimen/buttonLoginPaddingRightLeft"
             android:textColor="@color/listViewNotificacionValor"
             android:textSize="12sp" />
     </RelativeLayout>

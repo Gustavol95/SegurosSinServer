@@ -7,7 +7,7 @@
     <RelativeLayout
         android:id="@+id/frameLoginLogoCodigo"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="@dimen/RelativeHeightForLogo"
         android:layout_gravity="center"
         >
         <ImageView
@@ -17,10 +17,10 @@
             android:src="@drawable/firma_white_new"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:paddingLeft="45dp"
-            android:paddingRight="45dp"
-            android:paddingBottom="20dp"
-            android:paddingTop="65dp"
+            android:paddingLeft="@dimen/paddingLeftRightLogo"
+            android:paddingRight="@dimen/paddingLeftRightLogo"
+            android:paddingBottom="@dimen/paddingBottomLogo"
+            android:paddingTop="@dimen/paddingTopLogo"
             />
     </RelativeLayout>
     <TextView
@@ -33,20 +33,20 @@
         android:textColor="@android:color/white"
         android:textColorHint="@color/textoLoginCodigo"
         android:textAlignment="center"
-        android:layout_marginTop="20dp"
-        android:paddingTop="25dp"
-        android:paddingBottom="25dp"
+        android:layout_marginTop="@dimen/textViewAdquirirMarginTop"
+        android:paddingTop="@dimen/textViewAdquirirPaddingTop"
+        android:paddingBottom="@dimen/textViewAdquirirPaddingBottom"
         android:layout_gravity="center"
         />
         
     <EditText
         android:id="@+id/editTextLoginCodigo"
-        android:layout_width="300dp"
+        android:layout_width="@dimen/editTextCodigoWidth"
         android:layout_height="wrap_content"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
+        android:paddingLeft="@dimen/editTextCodigoPaddingLeftRight"
+        android:paddingRight="@dimen/editTextCodigoPaddingLeftRight"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="@dimen/editTextCodigoMarginTop"
         android:hint="Ej. 12345678901011"
         android:inputType="number"
         android:lines="1"
@@ -54,7 +54,7 @@
         android:textColor="@android:color/white"
         android:textSize="25sp"
         android:background="@drawable/edittext_bg"
-        android:paddingBottom="15dp"
+        android:paddingBottom="@dimen/buttonLoginPaddingRightLeft"
         />
 
 
@@ -65,7 +65,7 @@
 
         <Button
             android:id="@+id/buttonLoginCodigo"
-            android:layout_width="120dp"
+            android:layout_width="@dimen/buttonCodigoWidth"
             android:layout_height="wrap_content"
             android:text="@string/entrar"
             android:textColor="@color/loginButton"
@@ -73,11 +73,11 @@
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
             style="@style/Widget.AppCompat.Button.Colored"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:layout_marginTop="50dp"
+            android:paddingBottom="@dimen/buttonLoginPaddingTopBottom"
+            android:paddingTop="@dimen/buttonLoginPaddingTopBottom"
+            android:paddingLeft="@dimen/buttonLoginPaddingRightLeft"
+            android:paddingRight="@dimen/buttonLoginPaddingRightLeft"
+            android:layout_marginTop="@dimen/editTextCodigoMarginTop"
             android:textSize="16sp"/>
 
         <RelativeLayout
@@ -86,8 +86,8 @@
             android:layout_below="@+id/buttonLoginCodigo">
             <ProgressBar
                 android:id="@+id/progress"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="@dimen/editTextCodigoMarginTop"
+                android:layout_height="@dimen/editTextCodigoMarginTop"
                 android:indeterminate="true"
                 android:visibility="invisible"
                 android:layout_centerHorizontal="true"
@@ -95,9 +95,6 @@
                 />
         </RelativeLayout>
 
-
-
     </RelativeLayout>
-
 
 </LinearLayout>

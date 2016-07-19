@@ -17,12 +17,9 @@ public class NotificacionItem extends RealmObject {
     public NotificacionItem() {
     }
 
-
-
     public NotificacionItem(int imagen, String titulo, String subtitulo, String valor) {
         this.imagen = imagen;
         this.titulo = titulo;
-
         this.subtitulo = subtitulo;
         this.valor = valor;
     }
@@ -58,6 +55,7 @@ public class NotificacionItem extends RealmObject {
     public void setValor(String valor) {
         this.valor = valor;
     }
+
     public int getId() {
         return id;
     }

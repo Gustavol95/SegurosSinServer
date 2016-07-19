@@ -1,13 +1,12 @@
 package co.allza.mararewards.activities;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -16,11 +15,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import java.util.ArrayList;
-
 import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.R;
 import co.allza.mararewards.adapter.NotificacionesAdapter;
@@ -36,9 +31,11 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
     Toolbar toolbar;
     NotificacionesAdapter adapter;
     Menu menu;
+    MenuItem checkNotif;
     SharedPreferences settings;
     SharedPreferences.Editor editor;
     ArrayList<NotificacionItem> hola;
+    SwipeRefreshLayout swipe;
 
 
     @Override
@@ -53,6 +50,29 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
         setSupportActionBar(toolbar);
         adapter = new NotificacionesAdapter(this, R.layout.listview_notificaciones);
         hola=CargarDatos.getNotifAdapter();
+
+        swipe=(SwipeRefreshLayout)findViewById(R.id.swipeNotif);
+        swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if(CargarDatos.getNotifAdapter().size()!=0){
+                    for(int i=0;i<CargarDatos.getNotifAdapter().size();i++)
+                    {
+                        adapter.remove(CargarDatos.getNotifAdapter().get(i));
+                    }
+                    lista.setAdapter(adapter);
+                }
+                CargarDatos.getNotifAdapter().clear();
+                CargarDatos.getNotificacionesFromDatabase(NotificacionesActivity.this);
+                hola=CargarDatos.getNotifAdapter();
+                for(int i=0;i<hola.size();i++)
+                {
+                    adapter.add(hola.get(i));
+                }
+                swipe.setRefreshing(false);
+            }
+        });
+        swipe.setColorSchemeResources(R.color.rectanguloSplash,R.color.toolbarSeguros);
         lista=(ListView)findViewById(R.id.listViewNotificaciones);
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -60,6 +80,7 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
 
                 Intent i=new Intent(NotificacionesActivity.this,SegurosActivity.class);
                 i.putExtra("goTo",  adapter.getItem(position).getId());
+                i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
                 finish();
             }
@@ -83,18 +104,10 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
         editor = settings.edit();
     }
 
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
-
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onPause() {
+        super.onPause();
+        finish();
     }
 
     @Override
@@ -134,50 +147,50 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
                 borrarNotif.deleteAllFromRealm();
                 realm.commitTransaction();
                 return true;
-            case R.id.detenerNotif:
-                stopService(new Intent(NotificacionesActivity.this, SegurosService.class));
-                menu.findItem(R.id.detenerNotif).setVisible(false);
-                menu.findItem(R.id.iniciarNotif).setVisible(true);
-                editor = settings.edit();
-                editor.putBoolean("servicio" , false);
-                editor.commit();
-                return true;
-            case R.id.iniciarNotif:
-                startService(new Intent(NotificacionesActivity.this, SegurosService.class));
-                menu.findItem(R.id.detenerNotif).setVisible(true);
-                menu.findItem(R.id.iniciarNotif).setVisible(false);
-                editor = settings.edit();
-                editor.putBoolean("servicio" , true);
-                editor.commit();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
 
-                        if(CargarDatos.getNotifAdapter().size()!=0){
-                            for(int i=0;i<CargarDatos.getNotifAdapter().size();i++)
-                            {
-                                adapter.remove(CargarDatos.getNotifAdapter().get(i));
+            case R.id.iniciarNotif:
+                if(checkNotif.isChecked())
+                {
+                    checkNotif.setChecked(false);
+                    stopService(new Intent(NotificacionesActivity.this, SegurosService.class));
+                    editor = settings.edit();
+                    editor.putBoolean("servicio" , false);
+                    editor.commit();
+                    return true;
+                }
+                else
+                {
+                    checkNotif.setChecked(true);
+                    startService(new Intent(NotificacionesActivity.this, SegurosService.class));
+                    editor = settings.edit();
+                    editor.remove("servicio");
+                    editor.commit();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if(CargarDatos.getNotifAdapter().size()!=0){
+                                for(int i=0;i<CargarDatos.getNotifAdapter().size();i++)
+                                {
+                                    adapter.remove(CargarDatos.getNotifAdapter().get(i));
+                                }
+                            }
+                            CargarDatos.getNotificacionesFromDatabase(NotificacionesActivity.this);
+                            hola=CargarDatos.getNotifAdapter();
+                            if(CargarDatos.getNotifAdapter().size()!=0){
+                                for(int i=0;i<CargarDatos.getNotifAdapter().size();i++)
+                                {
+                                    adapter.add(CargarDatos.getNotifAdapter().get(i));
+                                }
+                                lista.setAdapter(adapter);
                             }
                         }
-                        CargarDatos.getNotificacionesFromDatabase(NotificacionesActivity.this);
-                        hola=CargarDatos.getNotifAdapter();
-                        if(CargarDatos.getNotifAdapter().size()!=0){
-                            for(int i=0;i<CargarDatos.getNotifAdapter().size();i++)
-                            {
-                                adapter.add(CargarDatos.getNotifAdapter().get(i));
-                            }
-                            lista.setAdapter(adapter);
-                        }
-                    }
-                },1000);
-                return true;
+                    },1000);
+                    return true;
+                }
+
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     @Override
@@ -185,10 +198,10 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_notificaciones, menu);
         this.menu=menu;
+        checkNotif=menu.findItem(R.id.iniciarNotif);
         if(settings.getBoolean("servicio",true))
         {
-            menu.findItem(R.id.detenerNotif).setVisible(false);
-            menu.findItem(R.id.iniciarNotif).setVisible(true);
+          checkNotif.setChecked(true);
         }
         return true;
 
@@ -207,5 +220,14 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
     @Override
     public void onTokenReceived(String token) {
 
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }

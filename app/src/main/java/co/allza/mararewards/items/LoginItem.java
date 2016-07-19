@@ -1,5 +1,4 @@
 package co.allza.mararewards.items;
-
 /**
  * Created by Tavo on 07/06/2016.
  */

@@ -18,7 +18,6 @@ public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
         SharedPreferences settings = context.getSharedPreferences(SegurosService.PREFS_NAME, 0);
         boolean silent = settings.getBoolean("servicio",true);
         if(silent){

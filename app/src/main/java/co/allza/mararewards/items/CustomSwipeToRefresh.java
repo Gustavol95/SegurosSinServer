@@ -1,11 +1,9 @@
 package co.allza.mararewards.items;
-
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
-
 /**
  * Created by Tavo on 12/07/2016.
  */
@@ -18,7 +16,6 @@ public class CustomSwipeToRefresh extends SwipeRefreshLayout {
 
     public CustomSwipeToRefresh(Context context, AttributeSet attrs) {
         super(context, attrs);
-
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 

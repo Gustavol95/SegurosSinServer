@@ -4,5 +4,50 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <!-- Login Activity -->
+    <dimen name="RelativeHeightForLogo">180dp</dimen>
+    <dimen name="paddingLeftRightLogo">45dp</dimen>
+    <dimen name="paddingBottomLogo">20dp</dimen>
+    <dimen name="paddingTopLogo">65dp</dimen>
+    <dimen name="textViewAdquirirMarginTop">20dp</dimen>
+    <dimen name="textViewAdquirirPaddingTop">25dp</dimen>
+    <dimen name="textViewAdquirirPaddingBottom">25dp</dimen>
+    <dimen name="buttonLoginWidth">150dp</dimen>
+    <dimen name="buttonLoginPaddingTopBottom">8dp</dimen>
+    <dimen name="buttonLoginPaddingRightLeft">15dp</dimen>
+
+    <!-- Login  Codigo Activity -->
+    <dimen name="editTextCodigoWidth">300dp</dimen>
+    <dimen name="editTextCodigoPaddingLeftRight">30dp</dimen>
+    <dimen name="editTextCodigoMarginTop">50dp</dimen>
+    <dimen name="buttonCodigoWidth">120dp</dimen>
+
+    <!-- Notificaciones Activity -->
+    <dimen name="dividerHeight">1dp</dimen>
+
+    <!-- Seguros Activity -->
+    <dimen name="seguroActualTextViewPaddingMarginTop">10dp</dimen>
+
+    <!-- Splash Activity -->
+    <dimen name="splashLogoPadding">40dp</dimen>
+
+    <!-- Custom Dialog -->
+    <dimen name="dialogTextviewPadingLeftRight">24dp</dimen>
+
+    <!-- Call To Action ListView -->
+    <dimen name="CallImageViewPaddingRigth">7dp</dimen>
+
+    <!-- Login ListView -->
+    <dimen name="LoginListViewTextViewHeight">75dp</dimen>
+
+    <!-- Notificaciones ListView -->
+    <dimen name="notifListViewInvisibleHeight">70dp</dimen>
+
+    <!-- Seguro ListView -->
+    <dimen name="SegRelativeMargin">100dp</dimen>
+    <dimen name="cardMarginTopBottom">5dp</dimen>
+    <dimen name="cardElevation">4dp</dimen>
+    <dimen name="polizaMargin">17dp</dimen>
+    <dimen name="infoDimension">22dp</dimen>
 
 </resources>

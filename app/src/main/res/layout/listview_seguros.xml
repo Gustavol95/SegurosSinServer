@@ -3,15 +3,15 @@
      android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@android:color/transparent"
-    android:layout_margin="100dp">
+    android:layout_margin="@dimen/SegRelativeMargin">
 <android.support.v7.widget.CardView android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginLeft="25dp"
-    android:layout_marginRight="25dp"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp"
-    app:cardElevation="4dp"
+    android:layout_marginLeft="@dimen/textViewAdquirirMarginTop"
+    android:layout_marginRight="@dimen/textViewAdquirirMarginTop"
+    android:layout_marginTop="@dimen/cardMarginTopBottom"
+    android:layout_marginBottom="@dimen/cardMarginTopBottom"
+    app:cardElevation="@dimen/cardElevation"
     android:background="@android:color/white"
     xmlns:android="http://schemas.android.com/apk/res/android">
         <RelativeLayout
@@ -25,39 +25,39 @@
                 android:textSize="16sp"
                 android:textColor="@color/rectanguloSplash"
                 android:layout_alignParentTop="true"
-                android:layout_margin="17dp"
+                android:layout_margin="@dimen/polizaMargin"
 
                 />
             <ImageView
                 android:id="@+id/cardInfoIcono"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="@dimen/infoDimension"
+                android:layout_height="@dimen/infoDimension"
                 android:src="@drawable/information_outline_card"
                 android:layout_alignParentRight="true"
                 android:layout_toLeftOf="@+id/cardPoliza"
-                android:layout_marginRight="17dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginBottom="17dp"
-                android:layout_marginTop="17dp" />
+                android:layout_marginRight="@dimen/polizaMargin"
+                android:layout_marginLeft="@dimen/textViewAdquirirPaddingBottom"
+                android:layout_marginBottom="@dimen/polizaMargin"
+                android:layout_marginTop="@dimen/polizaMargin" />
                                             <TextView
                                                 android:id="@+id/div1"
                                                 android:layout_width="match_parent"
-                                                android:layout_height="1dp"
+                                                android:layout_height="@dimen/dividerHeight"
                                                 android:background="@color/divisorCardSeguro"
                                                 android:layout_below="@+id/cardPoliza"
                                                 android:alpha="0.5"
                                                 />
             <ImageView
                 android:id="@+id/cardAseguradoraIcono"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="@dimen/infoDimension"
+                android:layout_height="@dimen/infoDimension"
                 android:src="@drawable/briefcase_card"
                android:layout_alignParentLeft="true"
                 android:layout_below="@id/div1"
-                android:layout_marginRight="17dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginBottom="17dp"
-                android:layout_marginTop="17dp"
+                android:layout_marginRight="@dimen/polizaMargin"
+                android:layout_marginLeft="@dimen/textViewAdquirirPaddingBottom"
+                android:layout_marginBottom="@dimen/polizaMargin"
+                android:layout_marginTop="@dimen/polizaMargin"
                 />
             <TextView
                 android:id="@+id/cardAseguradora"
@@ -67,27 +67,27 @@
                 android:textColor="@color/textoCardSeguro"
                 android:layout_below="@+id/div1"
                 android:layout_toRightOf="@+id/cardAseguradoraIcono"
-                android:layout_marginBottom="17dp"
-                android:layout_marginTop="17dp"
+                android:layout_marginBottom="@dimen/polizaMargin"
+                android:layout_marginTop="@dimen/polizaMargin"
                />
                                             <TextView
                                                 android:id="@+id/div2"
                                                 android:layout_width="match_parent"
-                                                android:layout_height="1dp"
+                                                android:layout_height="@dimen/dividerHeight"
                                                 android:background="@color/divisorCardSeguro"
                                                 android:layout_below="@+id/cardAseguradora"
                                                 />
             <ImageView
                 android:id="@+id/cardNombreSeguroIcono"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@drawable/briefcase_card"
+                android:layout_width="@dimen/infoDimension"
+                android:layout_height="@dimen/infoDimension"
+                android:src="@drawable/verified_card"
                 android:layout_below="@id/div2"
                 android:layout_alignParentLeft="true"
-                android:layout_marginRight="17dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginBottom="17dp"
-                android:layout_marginTop="17dp"
+                android:layout_marginRight="@dimen/polizaMargin"
+                android:layout_marginLeft="@dimen/textViewAdquirirPaddingBottom"
+                android:layout_marginBottom="@dimen/polizaMargin"
+                android:layout_marginTop="@dimen/polizaMargin"
                 />
             <TextView
                 android:id="@+id/cardNombreSeguro"
@@ -97,27 +97,27 @@
                 android:textColor="@color/textoCardSeguro"
                 android:layout_below="@+id/div2"
                 android:layout_toRightOf="@+id/cardNombreSeguroIcono"
-                android:layout_marginBottom="17dp"
-                android:layout_marginTop="17dp"
+                android:layout_marginBottom="@dimen/polizaMargin"
+                android:layout_marginTop="@dimen/polizaMargin"
                />
                                             <TextView
                                                 android:id="@+id/div3"
                                                 android:layout_width="match_parent"
-                                                android:layout_height="1dp"
+                                                android:layout_height="@dimen/dividerHeight"
                                                 android:background="@color/divisorCardSeguro"
                                                 android:layout_below="@+id/cardNombreSeguro"
                                                 />
             <ImageView
                 android:id="@+id/cardBeneficiarioIcono"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@drawable/verified_card"
+                android:layout_width="@dimen/infoDimension"
+                android:layout_height="@dimen/infoDimension"
+                android:src="@drawable/account_multiple_card"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@id/div3"
-                android:layout_marginRight="17dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginBottom="17dp"
-                android:layout_marginTop="17dp"
+                android:layout_marginRight="@dimen/polizaMargin"
+                android:layout_marginLeft="@dimen/textViewAdquirirPaddingBottom"
+                android:layout_marginBottom="@dimen/polizaMargin"
+                android:layout_marginTop="@dimen/polizaMargin"
                 />
             <TextView
                 android:id="@+id/cardBeneficiario"
@@ -127,27 +127,27 @@
                 android:textColor="@color/textoCardSeguro"
                 android:layout_below="@+id/div3"
                 android:layout_toRightOf="@id/cardBeneficiarioIcono"
-                android:layout_marginBottom="17dp"
-                android:layout_marginTop="17dp"
+                android:layout_marginBottom="@dimen/polizaMargin"
+                android:layout_marginTop="@dimen/polizaMargin"
                />
                                             <TextView
                                                 android:id="@+id/div4"
                                                 android:layout_width="match_parent"
-                                                android:layout_height="1dp"
+                                                android:layout_height="@dimen/dividerHeight"
                                                 android:background="@color/divisorCardSeguro"
                                                 android:layout_below="@+id/cardBeneficiario"
                                                 />
             <ImageView
                 android:id="@+id/cardRenovacionIcono"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="@dimen/infoDimension"
+                android:layout_height="@dimen/infoDimension"
                 android:src="@drawable/history_card"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@id/div4"
-                android:layout_marginRight="17dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginBottom="17dp"
-                android:layout_marginTop="17dp"
+                android:layout_marginRight="@dimen/polizaMargin"
+                android:layout_marginLeft="@dimen/textViewAdquirirPaddingBottom"
+                android:layout_marginBottom="@dimen/polizaMargin"
+                android:layout_marginTop="@dimen/polizaMargin"
                 />
             <TextView
                 android:id="@+id/cardRenovacion"
@@ -157,27 +157,27 @@
                 android:textColor="@color/textoCardSeguro"
                 android:layout_below="@+id/div4"
                 android:layout_toRightOf="@+id/cardRenovacionIcono"
-                android:layout_marginBottom="17dp"
-                android:layout_marginTop="17dp"
+                android:layout_marginBottom="@dimen/polizaMargin"
+                android:layout_marginTop="@dimen/polizaMargin"
                 />
                                             <TextView
                                                 android:id="@+id/div5"
                                                 android:layout_width="match_parent"
-                                                android:layout_height="1dp"
+                                                android:layout_height="@dimen/dividerHeight"
                                                 android:background="@color/divisorCardSeguro"
                                                 android:layout_below="@+id/cardRenovacion"
                                                 />
             <ImageView
                 android:id="@+id/cardEmergenciaIcono"
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="@dimen/infoDimension"
+                android:layout_height="@dimen/infoDimension"
                 android:src="@drawable/ring_card"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@id/div5"
-                android:layout_marginRight="17dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginBottom="17dp"
-                android:layout_marginTop="17dp"
+                android:layout_marginRight="@dimen/polizaMargin"
+                android:layout_marginLeft="@dimen/textViewAdquirirPaddingBottom"
+                android:layout_marginBottom="@dimen/polizaMargin"
+                android:layout_marginTop="@dimen/polizaMargin"
                 />
             <TextView
                 android:id="@+id/cardEmergencia"
@@ -187,8 +187,8 @@
                 android:textColor="@color/rectanguloSplash"
                 android:layout_below="@+id/div5"
                 android:layout_toRightOf="@id/cardEmergenciaIcono"
-                android:layout_marginBottom="17dp"
-                android:layout_marginTop="17dp"
+                android:layout_marginBottom="@dimen/polizaMargin"
+                android:layout_marginTop="@dimen/polizaMargin"
                />
 
         </RelativeLayout>
