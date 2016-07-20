@@ -36,7 +36,6 @@ public class SplashActivity extends Activity implements VolleyCallback {
                     startActivity(i);
                     finish();
                 }},1000);
-
         }
         else
         {

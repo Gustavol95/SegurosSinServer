@@ -89,7 +89,7 @@ public class CargarDatos {
         queue.add(stringRequest);
 
     }
-    public static void MakePetition(Context ctx, String url) {
+    public static void makePetition(Context ctx, String url) {
         context=ctx;
         if(queue==null)
             queue=Volley.newRequestQueue(ctx);
@@ -133,9 +133,9 @@ public class CargarDatos {
         });
 
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                5000,
-                2,
-                1));
+                1000,
+                3,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(stringRequest);
     }
 

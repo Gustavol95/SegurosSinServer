@@ -84,7 +84,8 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Intent i=new Intent(NotificacionesActivity.this,SegurosActivity.class);
-                i.putExtra("goTo",  adapter.getItem(position).getId());
+                if(adapter.getItem(position).getId()<100){
+                i.putExtra("goTo",  adapter.getItem(position).getId());}
                 i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
                 finish();

@@ -1,5 +1,7 @@
 package co.allza.mararewards.services;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -7,6 +9,8 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -30,7 +34,7 @@ import io.realm.RealmConfiguration;
  */
 public class PushNotificationService extends FirebaseMessagingService
 {
-
+    String url="http://verdad.herokuapp.com/campaigns/conta?idcampaigns=";
     public PushNotificationService() {
         super();
     }
@@ -86,8 +90,9 @@ public class PushNotificationService extends FirebaseMessagingService
         Intent resultIntent = new Intent(this, SplashActivity.class);
         resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         resultIntent.putExtra("goTo",0);
+        int id=Integer.parseInt(remote.getData().get("idcampaigns"))+100;
         NotificacionItem item=new NotificacionItem(R.drawable.logoandroid,remote.getData().get("title"),remote.getData().get("message"),parserFormal.format(Calendar.getInstance().getTime()));
-        item.setId(Integer.parseInt(Double.toString(Math.random()*100)));
+        item.setId(id);
         push(item);
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
@@ -98,8 +103,10 @@ public class PushNotificationService extends FirebaseMessagingService
                 );
 
         mBuilder.setContentIntent(resultPendingIntent);
-        int mNotificationId = 0;
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+
+        mNotifyMgr.notify(id, mBuilder.build());
+        CargarDatos.makePetition(PushNotificationService.this,url+(id-100));
+        System.out.println(url+(id-100)+"    A LA VERGAAAAAAAAAAAAAAAAA");
     }
 
     public void notificacionBigPicture(RemoteMessage remote) {
@@ -219,4 +226,5 @@ public class PushNotificationService extends FirebaseMessagingService
         realm.copyToRealmOrUpdate(item);
         realm.commitTransaction();
     }
+
 }
