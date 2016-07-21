@@ -35,6 +35,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import co.allza.mararewards.items.CustomViewPager;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import co.allza.mararewards.CargarDatos;
@@ -53,7 +55,7 @@ import com.pixelcan.inkpageindicator.InkPageIndicator;
 public class SegurosActivity extends AppCompatActivity implements VolleyCallback, DialogCallback {
 
     RelativeLayout linear;
-    ViewPager pagerSeguros;
+    CustomViewPager pagerSeguros;
     SegurosPagerAdapter adapter;
     CustomSwipeToRefresh swipe;
     ArrayList<SeguroItem> arraySeguros;
@@ -96,7 +98,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
 
         fondo = (TransitionDrawable) getResources().getDrawable(R.drawable.fondo_seguros);
         linear.setBackground(fondo);
-        pagerSeguros = (ViewPager) findViewById(R.id.viewPagerSeguros);
+        pagerSeguros = (CustomViewPager) findViewById(R.id.viewPagerSeguros);
         inkPageIndicator = (InkPageIndicator) findViewById(R.id.indicator);
         seguroActual = (TextView) findViewById(R.id.tituloSeguroActual);
         seguroActual.setTypeface(CargarDatos.getTypeface(getApplicationContext(), CargarDatos.RUBIK_MEDIUM));
@@ -117,46 +119,23 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                 CustomerItem result = realm.where(CustomerItem.class)
                         .findFirst();
                 if (result != null) {
-                    if (pagerSeguros != null){
-                        AlphaAnimation alpha=new AlphaAnimation(1.0f,0.0f);
-                        alpha.setDuration(250);
-                        alpha.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
-
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                pagerSeguros.setAdapter(null);
-
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-
-                            }
-                        });
-                        pagerSeguros.startAnimation(alpha);
-
-                    }
+                    CargarDatos.pullSeguros(SegurosActivity.this, result.getUsertoken(), result.getToken(), SegurosActivity.this);
+                    pagerSeguros.setDeshabilitarTouch(true);
                     realm.beginTransaction();
                     RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
                     segurosAnteriores.deleteAllFromRealm();
                     realm.commitTransaction();
-                    CargarDatos.pullSeguros(SegurosActivity.this, result.getUsertoken(), result.getToken(), SegurosActivity.this);
+
                 }
 
             }
         });
         swipe.setColorSchemeResources(R.color.rectanguloSplash,R.color.toolbarSeguros);
-        CargarDatos.getSegurosFromDatabase(this,this);
         parserFecha = new SimpleDateFormat("dd/MMM/yyyy");
         calendar = Calendar.getInstance();
         fechaActual = calendar.getTime();
         validarPrimerUso();
-
-
+        CargarDatos.getSegurosFromDatabase(this,this);
     }
 
     @Override
@@ -204,6 +183,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     @Override
     protected void onResume() {
         super.onResume();
+
         validarPosicion();    }
 
     @Override
@@ -256,45 +236,66 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     }
 
     public void onSegurosPulled(final SegurosPagerAdapter pagerAdapter) {
-        pagerSeguros.setVisibility(View.INVISIBLE);
-        pagerSeguros.setAdapter(pagerAdapter);
-        pagerSeguros.setVisibility(View.VISIBLE);
-        AlphaAnimation alpha=new AlphaAnimation(0.0f,1.0f);
-        alpha.setDuration(500);
-        alpha.setAnimationListener(new Animation.AnimationListener() {
+        final AlphaAnimation alphaReveal=new AlphaAnimation(0.0f,1.0f);
+        alphaReveal.setDuration(500);
+        alphaReveal.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
+                pagerSeguros.setVisibility(View.VISIBLE);
                 pagerSeguros.setAdapter(pagerAdapter); }
             @Override
             public void onAnimationEnd(Animation animation)   {
-                inkPageIndicator.setViewPager(pagerSeguros);  }
+                if(pagerSeguros!=null && pagerAdapter!=null){
+                if(pagerAdapter.getCount()>1)
+                    inkPageIndicator.setViewPager(pagerSeguros);
+                else
+                    inkPageIndicator.setVisibility(View.GONE);}
+
+                pagerSeguros.setDeshabilitarTouch(false);
+
+            }
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
         });
+        AlphaAnimation alpha=new AlphaAnimation(1.0f,0.0f);
+        alpha.setDuration(150);
+        alpha.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
 
-            pagerSeguros.startAnimation(alpha);
+            }
 
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                pagerSeguros.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        pagerSeguros.startAnimation(alpha);
+        pagerSeguros.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                pagerSeguros.clearAnimation();
+                pagerSeguros.startAnimation(alphaReveal);  }},170);
         arraySeguros = CargarDatos.getArraySeguros();
         if(arraySeguros.size()<=0)
         {
-
             Realm realm = CargarDatos.getRealm(SegurosActivity.this);
             CustomerItem result = realm.where(CustomerItem.class)
                     .findFirst();
             if (result != null) {
                 if (pagerSeguros != null){
-
-                    pagerSeguros.setVisibility(View.VISIBLE);
-                    pagerSeguros.clearAnimation();
-                    pagerSeguros.startAnimation(alpha);
-
+                    CargarDatos.pullSeguros(SegurosActivity.this, result.getUsertoken(), result.getToken(), SegurosActivity.this);
                 }
                 realm.beginTransaction();
                 RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
                 segurosAnteriores.deleteAllFromRealm();
                 realm.commitTransaction();
-                CargarDatos.pullSeguros(SegurosActivity.this, result.getUsertoken(), result.getToken(), SegurosActivity.this);
                                 }
         }
         pagerSeguros.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -390,53 +391,5 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
 
         }
     }
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    void enterReveal(View myView) {
-        // previously invisible view
 
-        // get the center for the clipping circle
-        int cx = myView.getMeasuredWidth() / 2;
-        int cy = myView.getMeasuredHeight() / 2;
-
-        // get the final radius for the clipping circle
-        int finalRadius = Math.max(myView.getWidth(), myView.getHeight()) / 2;
-
-        // create the animator for this view (the start radius is zero)
-        Animator anim =
-                null;
-
-        anim = ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
-
-
-        // make the view visible and start the animation
-        myView.setVisibility(View.VISIBLE);
-        anim.start();
-    }
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    void exitReveal(final View myView) {
-        // previously visible view
-
-        // get the center for the clipping circle
-        int cx = myView.getMeasuredWidth() / 2;
-        int cy = myView.getMeasuredHeight() / 2;
-
-        // get the initial radius for the clipping circle
-        int initialRadius = myView.getWidth() / 2;
-
-        // create the animation (the final radius is zero)
-        Animator anim =
-                ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
-
-        // make the view invisible when the animation is done
-        anim.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
-                myView.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        // start the animation
-        anim.start();
-    }
 }

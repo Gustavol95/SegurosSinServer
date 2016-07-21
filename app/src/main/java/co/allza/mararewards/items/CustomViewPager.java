@@ -3,6 +3,7 @@ import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
@@ -13,7 +14,7 @@ import java.lang.reflect.Field;
 public class CustomViewPager extends ViewPager {
 
     MyScroller elScroller;
-
+    private boolean deshabilitarTouch=false;
     public CustomViewPager(Context context) {
         super(context);
         setMyScroller();
@@ -46,6 +47,13 @@ public class CustomViewPager extends ViewPager {
         elScroller.setVelocidad(200);
             }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        if(deshabilitarTouch==true)
+            return true;
+        else
+        return super.onTouchEvent(ev);
+    }
     private void setMyScroller() {
         try {
             elScroller=new MyScroller(getContext());
@@ -56,6 +64,14 @@ public class CustomViewPager extends ViewPager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isDeshabilitarTouch() {
+        return deshabilitarTouch;
+    }
+
+    public void setDeshabilitarTouch(boolean deshabilitarTouch) {
+        this.deshabilitarTouch = deshabilitarTouch;
     }
 
     public class MyScroller extends Scroller {
@@ -78,6 +94,7 @@ public class CustomViewPager extends ViewPager {
             this.velocidad = velocidad;
         }
     }
+
 
 
 }

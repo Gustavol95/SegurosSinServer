@@ -23,7 +23,7 @@ public class DepthPageTransformer implements ViewPager.PageTransformer {
 
         } else if (position <= 1) { // (0,1]
             // Fade the page out.
-            view.setAlpha(1 - position);
+            view.setAlpha(1 - (position/2));
 
             // Counteract the default slide transition
             view.setTranslationX(pageWidth * -position);

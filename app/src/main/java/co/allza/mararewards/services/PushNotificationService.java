@@ -2,6 +2,7 @@ package co.allza.mararewards.services;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -85,6 +86,8 @@ public class PushNotificationService extends FirebaseMessagingService
                         .setContentTitle(remote.getData().get("title"))
                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logoandroid))
                         .setColor(4)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setDefaults(Notification.DEFAULT_ALL)
                         .setContentText(remote.getData().get("message"));
         mBuilder.setAutoCancel(true);
         Intent resultIntent = new Intent(this, SplashActivity.class);

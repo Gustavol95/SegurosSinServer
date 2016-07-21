@@ -63,7 +63,7 @@
                 class="co.allza.mararewards.items.CustomViewPager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/toolbarSeguros">
+                android:background="@android:color/transparent">
 
             </view>
 
