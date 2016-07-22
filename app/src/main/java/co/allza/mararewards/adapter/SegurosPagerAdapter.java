@@ -44,12 +44,15 @@ public class SegurosPagerAdapter extends PagerAdapter implements VolleyCallback 
         fechaActual=calendar.getTime();
     }
 
-    @Override
-    public int getCount() {return CargarDatos.getArraySeguros().size();}
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
         return view==object;
+    }
+
+    @Override
+    public int getCount() {
+        return pages.size();
     }
 
     @Override

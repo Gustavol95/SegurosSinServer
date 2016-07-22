@@ -50,6 +50,8 @@ import co.allza.mararewards.items.DepthPageTransformer;
 import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
 import co.allza.mararewards.services.SegurosService;
+
+import com.eftimoff.viewpagertransformers.StackTransformer;
 import com.pixelcan.inkpageindicator.InkPageIndicator;
 
 public class SegurosActivity extends AppCompatActivity implements VolleyCallback, DialogCallback {
@@ -245,7 +247,8 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                 pagerSeguros.setAdapter(pagerAdapter); }
             @Override
             public void onAnimationEnd(Animation animation)   {
-                if(pagerSeguros!=null && pagerAdapter!=null){
+
+                if(CargarDatos.getArraySeguros().size()>0){
                 if(pagerAdapter.getCount()>1)
                     inkPageIndicator.setViewPager(pagerSeguros);
                 else
@@ -331,7 +334,9 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
 
             }
         });
-        pagerSeguros.setPageTransformer(true, new DepthPageTransformer());
+       // pagerSeguros.setPageTransformer(true, new DepthPageTransformer());
+       pagerSeguros.setPageTransformer(true, new StackTransformer());
+
         if (pagerAdapter.getCount() > 0) {
             parserFecha = new SimpleDateFormat("dd/MMM/yyyy");
             calendar = Calendar.getInstance();
