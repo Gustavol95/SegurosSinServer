@@ -41,12 +41,12 @@ public class NotificacionesActivity extends AppCompatActivity implements VolleyC
     CoordinatorLayout coordinator;
 
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setContentView(R.layout.activity_notificaciones);
-
         coordinator=(CoordinatorLayout)findViewById(R.id.coordinatorNotif);
         toolbar=(Toolbar)findViewById(R.id.toolbar);
         int anchoViejo=toolbar.getLayoutParams().height;

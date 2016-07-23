@@ -12,6 +12,19 @@
         android:title="@string/callToAction"
         app:showAsAction="never"
         android:visible="false"/>
+    <item
+        android:id="@+id/borrarNotif"
+        android:title="@string/borrarNotif"
+        app:showAsAction="never"
+        android:visible="false"/>
+
+    <item
+        android:id="@+id/iniciarNotif"
+        android:title="@string/activarNotif"
+        app:showAsAction="never"
+        android:visible="false"
+        android:checkable="true"
+        />
 
 
     <!-- Settings, should always be in the overflow -->

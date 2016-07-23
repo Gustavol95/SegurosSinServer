@@ -1,6 +1,8 @@
 package co.allza.mararewards;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.util.TypedValue;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -288,5 +290,11 @@ public class CargarDatos {
         }
         fontsLoaded = true;
 
+    }
+
+    public static float convertirAPixel(int dp, Context context){
+        Resources r = context.getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+        return (int)(px);
     }
 }

@@ -25,6 +25,22 @@
 
         </android.support.v7.widget.Toolbar>
 
+        <LinearLayout
+            android:id="@+id/linearNotif"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/toolbarSeguros"
+            android:visibility="gone">
+            <ListView
+                android:id="@+id/listViewNotificaciones"
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:background="@android:color/transparent"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="8dp"
+                android:padding="8dp"
+                ></ListView>
+        </LinearLayout>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -36,6 +52,7 @@
         android:layout_below="@+id/aver">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/linearContenido"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"

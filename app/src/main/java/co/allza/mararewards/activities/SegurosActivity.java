@@ -9,7 +9,10 @@ import android.graphics.Color;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -17,15 +20,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.transition.Fade;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +43,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import co.allza.mararewards.adapter.NotificacionesAdapter;
 import co.allza.mararewards.items.CustomViewPager;
+import co.allza.mararewards.items.ResizeAnimation;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import co.allza.mararewards.CargarDatos;
@@ -50,13 +59,16 @@ import co.allza.mararewards.items.DepthPageTransformer;
 import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
 import co.allza.mararewards.services.SegurosService;
-
 import com.eftimoff.viewpagertransformers.StackTransformer;
 import com.pixelcan.inkpageindicator.InkPageIndicator;
 
 public class SegurosActivity extends AppCompatActivity implements VolleyCallback, DialogCallback {
 
     RelativeLayout linear;
+    ListView listaNotif;
+    LinearLayout linearContenido;
+    ArrayList<NotificacionItem> arrayNotif;
+    NotificacionesAdapter adapterNotif;
     CustomViewPager pagerSeguros;
     SegurosPagerAdapter adapter;
     CustomSwipeToRefresh swipe;
@@ -70,10 +82,19 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     InkPageIndicator inkPageIndicator;
     boolean estaVencido ;
     TransitionDrawable fondo;
+    TransitionDrawable flecha;
     int id = -1;
     int goTo;
     int theme = R.style.MyAlertDialogStyle;
     Menu menu;
+    MenuItem checkNotif;
+    SharedPreferences settings;
+    SharedPreferences.Editor editor;
+    int alturaToolbar;
+    AppBarLayout barLayout;
+    boolean expandir=true;
+    Toolbar toolbar;
+    LinearLayout linearNotif;
 
 
     @Override
@@ -83,18 +104,27 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         CargarDatos.setDialogCallback(this);
         linear = (RelativeLayout) findViewById(R.id.linearSeguros);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        linearContenido=(LinearLayout)findViewById(R.id.linearContenido);
+        linearNotif=(LinearLayout)findViewById(R.id.linearNotif);
+        barLayout=(AppBarLayout)findViewById(R.id.aver);
+        listaNotif=(ListView)findViewById(R.id.listViewNotificaciones);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         int anchoViejo = toolbar.getLayoutParams().height;
         toolbar.getLayoutParams().height = getStatusBarHeight() + anchoViejo;
+        alturaToolbar=toolbar.getLayoutParams().height;
         getSupportActionBar().setTitle("Mis seguros");
         toolbar.setBackgroundColor(getResources().getColor(R.color.toolbarSeguros));
-        toolbar.setNavigationIcon(R.drawable.ic_notifications_white_24dp);
+        flecha = (TransitionDrawable) getResources().getDrawable(R.drawable.morphing_arrow);
+        linear.setBackground(fondo);
+        toolbar.setNavigationIcon(flecha);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(SegurosActivity.this, NotificacionesActivity.class);
-                SegurosActivity.this.startActivity(i);
+                if(expandir)
+                    expandirToolbar();
+                else
+                   colapsarToolbar();
             }
         });
 
@@ -138,6 +168,22 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         fechaActual = calendar.getTime();
         validarPrimerUso();
         CargarDatos.getSegurosFromDatabase(this,this);
+        linearContenido.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(!expandir)
+                    colapsarToolbar();
+                return false;
+            }
+        });
+        pagerSeguros.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(!expandir)
+                    colapsarToolbar();
+                return false;
+            }
+        });
     }
 
     @Override
@@ -145,14 +191,21 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_seguros, menu);
         this.menu = menu;
+        checkNotif=menu.findItem(R.id.iniciarNotif);
         validarPantalla();
         return true;
     }
 
     @Override
+    protected void onPause() {
+        if(!expandir)
+            colapsarToolbar();
+        super.onPause();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         switch (id) {
             case R.id.cerrar:
                 Realm realm = CargarDatos.getRealm(getApplicationContext());
@@ -171,21 +224,70 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                 Intent ii = new Intent(SegurosActivity.this, CallToActionActivity.class);
                 startActivity(ii);
                 return true;
-        }
+            case R.id.borrarNotif:
+                if (CargarDatos.getNotifAdapter().size() != 0) {
+                    for (int b = 0; b < CargarDatos.getNotifAdapter().size(); b++) {
+                        adapterNotif.remove(CargarDatos.getNotifAdapter().get(b));
+                    }
+                    listaNotif.setAdapter(adapterNotif);
+                }
+                CargarDatos.getNotifAdapter().clear();
+                realm = CargarDatos.getRealm(this);
+                RealmResults<NotificacionItem> borrarNotif = realm.where(NotificacionItem.class).findAll();
+                realm.beginTransaction();
+                borrarNotif.deleteAllFromRealm();
+                realm.commitTransaction();
+                return true;
 
+            case R.id.iniciarNotif:
+                if (checkNotif.isChecked()) {
+                    checkNotif.setChecked(false);
+                    stopService(new Intent(this, SegurosService.class));
+                    editor = settings.edit();
+                    editor.putBoolean("servicio", false);
+                    editor.commit();
+
+                    return true;
+                } else {
+                    checkNotif.setChecked(true);
+                    startService(new Intent(this, SegurosService.class));
+                    editor = settings.edit();
+                    editor.remove("servicio");
+                    editor.commit();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if (CargarDatos.getNotifAdapter().size() != 0) {
+                                for (int i = 0; i < CargarDatos.getNotifAdapter().size(); i++) {
+                                    adapterNotif.remove(CargarDatos.getNotifAdapter().get(i));
+                                }
+                            }
+                            CargarDatos.getNotificacionesFromDatabase(SegurosActivity.this);
+                            arrayNotif = CargarDatos.getNotifAdapter();
+                            if (CargarDatos.getNotifAdapter().size() != 0) {
+                                for (int i = 0; i < CargarDatos.getNotifAdapter().size(); i++) {
+                                    adapterNotif.add(CargarDatos.getNotifAdapter().get(i));
+                                }
+                                listaNotif.setAdapter(adapterNotif);
+                            }
+                        }
+                    }, 1000);
+
+                    return true;
+                }
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-    }
+        super.onDestroy();     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         validarPosicion();    }
 
     @Override
@@ -244,15 +346,16 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             @Override
             public void onAnimationStart(Animation animation) {
                 pagerSeguros.setVisibility(View.VISIBLE);
-                pagerSeguros.setAdapter(pagerAdapter); }
-            @Override
-            public void onAnimationEnd(Animation animation)   {
-
-                if(CargarDatos.getArraySeguros().size()>0){
+                pagerSeguros.setAdapter(pagerAdapter);
                 if(pagerAdapter.getCount()>1)
                     inkPageIndicator.setViewPager(pagerSeguros);
                 else
                     inkPageIndicator.setVisibility(View.GONE);}
+            @Override
+            public void onAnimationEnd(Animation animation)   {
+
+                if(CargarDatos.getArraySeguros().size()>0){
+           }
 
                 pagerSeguros.setDeshabilitarTouch(false);
 
@@ -395,6 +498,100 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             }, 100);
 
         }
+    }
+
+    public void expandirToolbar() {
+        expandir=false;
+        flecha.startTransition(200);
+        adapterNotif = new NotificacionesAdapter(this, R.layout.listview_notificaciones);
+        CargarDatos.getNotificacionesFromDatabase(this);
+        arrayNotif=CargarDatos.getNotifAdapter();
+        menu.findItem(R.id.borrarNotif).setVisible(true);
+        menu.findItem(R.id.iniciarNotif).setVisible(true);
+        settings = getSharedPreferences(SegurosService.PREFS_NAME, 0);
+        editor = settings.edit();
+        if(settings.getBoolean("servicio",true))
+        {
+            checkNotif.setChecked(true);
+        }
+        final AlphaAnimation alpha =new AlphaAnimation(0.0f,1.0f);
+        alpha.setDuration(300);
+        alpha.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                if(arrayNotif.size()!=0){
+                    for(int i=0;i<arrayNotif.size();i++)
+                    {
+                        adapterNotif.add(arrayNotif.get(i));
+                    }
+                    listaNotif.setAdapter(adapterNotif);
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        ResizeAnimation expandirAnim=new ResizeAnimation(barLayout,(int)(CargarDatos.convertirAPixel(350,SegurosActivity.this)),alturaToolbar);
+        expandirAnim.setDuration(300);
+        expandirAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                linearNotif.setVisibility(View.VISIBLE);
+                listaNotif.setVisibility(View.VISIBLE);
+                linearNotif.startAnimation(alpha);
+                toolbar.setTitle("Notificaciones");
+                linearContenido.animate().alpha(0f).setDuration(300);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        barLayout.startAnimation(expandirAnim);
+
+
+    }
+    public void colapsarToolbar(){
+        expandir=true;
+        flecha.reverseTransition(200);
+        toolbar.setTitle("Mis Seguros");
+        menu.findItem(R.id.borrarNotif).setVisible(false);
+        menu.findItem(R.id.iniciarNotif).setVisible(false);
+        ResizeAnimation colapsarAnim=new ResizeAnimation(barLayout,-barLayout.getLayoutParams().height+alturaToolbar,barLayout.getLayoutParams().height);
+        colapsarAnim.setDuration(500);
+        colapsarAnim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                linearContenido.animate().alpha(1f).setDuration(300);
+                //listaNotif.animate().alpha(0f).setDuration(500);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                linearNotif.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        barLayout.startAnimation(colapsarAnim);
+
+
     }
 
 }
