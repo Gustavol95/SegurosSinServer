@@ -30,6 +30,7 @@ import android.view.ViewAnimationUtils;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -108,6 +109,18 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         linearNotif=(LinearLayout)findViewById(R.id.linearNotif);
         barLayout=(AppBarLayout)findViewById(R.id.aver);
         listaNotif=(ListView)findViewById(R.id.listViewNotificaciones);
+        listaNotif.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Intent i=new Intent(SegurosActivity.this,SegurosActivity.class);
+                if(adapterNotif.getItem(position).getId()<100){
+                    i.putExtra("goTo",  adapterNotif.getItem(position).getId());}
+                i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(i);
+
+            }
+        });
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         int anchoViejo = toolbar.getLayoutParams().height;
