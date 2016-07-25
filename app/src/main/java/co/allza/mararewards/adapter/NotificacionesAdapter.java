@@ -1,5 +1,7 @@
 package co.allza.mararewards.adapter;
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,13 +9,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.undo.UndoAdapter;
+
 import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.R;
 import co.allza.mararewards.items.NotificacionItem;
 /**
  * Created by Tavo on 14/06/2016.
  */
-public class NotificacionesAdapter extends ArrayAdapter<NotificacionItem> {
+public class NotificacionesAdapter extends ArrayAdapter<NotificacionItem>  implements UndoAdapter{
+
+
 
     static class CardViewHolder4 {
        ImageView imagen;
@@ -72,5 +78,23 @@ public class NotificacionesAdapter extends ArrayAdapter<NotificacionItem> {
         viewHolder.titulo.setTypeface(CargarDatos.getTypeface(getContext(),CargarDatos.RUBIK_LIGHT));
 
         return row;
+    }
+    @NonNull
+    @Override
+    public View getUndoView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        View view = convertView;
+        if (view == null) {
+            view = LayoutInflater.from(getContext()).inflate(R.layout.undoview_notificaciones, parent, false);
+            TextView texto=(TextView) view.findViewById(R.id.textoUndo);
+            texto.setTypeface(CargarDatos.getTypeface(getContext(),CargarDatos.RUBIK_MEDIUM));
+
+        }
+        return view;
+    }
+
+    @NonNull
+    @Override
+    public View getUndoClickView(@NonNull View view) {
+        return view.findViewById(R.id.undoImage);
     }
 }

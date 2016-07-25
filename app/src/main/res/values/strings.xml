@@ -16,4 +16,5 @@
     <string name="callToActionText">  De Verdad te ofrece una variedad de seguros a la medida de tus necesidades para que siempre estés seguro.  </string>
     <string name="title_activity_seguros">SegurosActivity</string>
     <string name="botonCalltoAction">QUIERO CONTRATAR UN SEGURO</string>
+    <string name="undoText">Desliza de nuevo para eliminar</string>
 </resources>

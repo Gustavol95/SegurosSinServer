@@ -25,7 +25,7 @@
 
         </android.support.v7.widget.Toolbar>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/linearNotif"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,10 +37,11 @@
                 android:layout_height="350dp"
                 android:background="@android:color/transparent"
                 android:divider="@android:color/transparent"
+                android:layout_alignParentTop="true"
                 android:dividerHeight="8dp"
                 android:padding="8dp"
                 ></ListView>
-        </LinearLayout>
+        </RelativeLayout>
 
     </android.support.design.widget.AppBarLayout>
 

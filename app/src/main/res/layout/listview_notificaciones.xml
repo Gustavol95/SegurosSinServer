@@ -1,66 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<android.support.v7.widget.CardView   xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    app:cardElevation="@dimen/cardElevation"
     android:background="@android:color/white"
-    android:orientation="horizontal">
-
-    <TextView
-        android:layout_width="@dimen/dividerHeight"
-        android:layout_height="@dimen/notifListViewInvisibleHeight"
-        android:visibility="invisible" />
-
-    <ImageView
-        android:id="@+id/listViewNotificacionesIcono"
-        android:layout_width="@dimen/editTextCodigoMarginTop"
-        android:layout_height="@dimen/editTextCodigoMarginTop"
-        android:layout_gravity="center"
-        android:layout_marginLeft="@dimen/CallImageViewPaddingRigth"
-        android:layout_marginRight="@dimen/CallImageViewPaddingRigth"
-        android:padding="@dimen/seguroActualTextViewPaddingMarginTop"
-
-
-        />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="@android:color/transparent"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/listViewNotificacionesTitulo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/seguroActualTextViewPaddingMarginTop"
-            android:textColor="@color/listViewNotificacionTitulo"
-            android:textSize="14dp" />
-
-        <TextView
-            android:id="@+id/listViewNotificacionesSubtitulo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:paddingBottom="@dimen/seguroActualTextViewPaddingMarginTop"
-            android:textColor="@color/listViewNotificacionSubtitulo"
-            android:textSize="13sp" />
-    </LinearLayout>
-
-    <RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical">
+        android:background="@android:color/white"
+        android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/listViewNotificacionesFecha"
+            android:layout_width="@dimen/dividerHeight"
+            android:layout_height="@dimen/notifListViewInvisibleHeight"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/listViewNotificacionesIcono"
+            android:layout_width="@dimen/editTextCodigoMarginTop"
+            android:layout_height="@dimen/editTextCodigoMarginTop"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/CallImageViewPaddingRigth"
+            android:layout_marginRight="@dimen/CallImageViewPaddingRigth"
+            android:padding="@dimen/seguroActualTextViewPaddingMarginTop"
+
+
+            />
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:paddingRight="@dimen/buttonLoginPaddingRightLeft"
-            android:textColor="@color/listViewNotificacionValor"
-            android:textSize="12sp" />
-    </RelativeLayout>
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
+            android:orientation="vertical">
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/listViewNotificacionesTitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/seguroActualTextViewPaddingMarginTop"
+                android:text="Titulo"
+                android:textColor="@color/listViewNotificacionTitulo"
+                android:textSize="14dp" />
+
+            <TextView
+                android:id="@+id/listViewNotificacionesSubtitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:paddingBottom="@dimen/seguroActualTextViewPaddingMarginTop"
+                android:textColor="@color/listViewNotificacionSubtitulo"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/listViewNotificacionesFecha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:paddingRight="@dimen/buttonLoginPaddingRightLeft"
+                android:textColor="@color/listViewNotificacionValor"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
@@ -27,6 +28,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -61,6 +63,9 @@ import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
 import co.allza.mararewards.services.SegurosService;
 import com.eftimoff.viewpagertransformers.StackTransformer;
+import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.OnDismissCallback;
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.undo.SimpleSwipeUndoAdapter;
 import com.pixelcan.inkpageindicator.InkPageIndicator;
 
 public class SegurosActivity extends AppCompatActivity implements VolleyCallback, DialogCallback {
@@ -95,8 +100,8 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     AppBarLayout barLayout;
     boolean expandir=true;
     Toolbar toolbar;
-    LinearLayout linearNotif;
-
+    RelativeLayout linearNotif;
+    private static final int INITIAL_DELAY_MILLIS = 300;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +111,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         CargarDatos.setDialogCallback(this);
         linear = (RelativeLayout) findViewById(R.id.linearSeguros);
         linearContenido=(LinearLayout)findViewById(R.id.linearContenido);
-        linearNotif=(LinearLayout)findViewById(R.id.linearNotif);
+        linearNotif=(RelativeLayout)findViewById(R.id.linearNotif);
         barLayout=(AppBarLayout)findViewById(R.id.aver);
         listaNotif=(ListView)findViewById(R.id.listViewNotificaciones);
         listaNotif.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -129,6 +134,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         getSupportActionBar().setTitle("Mis seguros");
         toolbar.setBackgroundColor(getResources().getColor(R.color.toolbarSeguros));
         flecha = (TransitionDrawable) getResources().getDrawable(R.drawable.morphing_arrow);
+        flecha.setCrossFadeEnabled(true);
         linear.setBackground(fondo);
         toolbar.setNavigationIcon(flecha);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -528,7 +534,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             checkNotif.setChecked(true);
         }
         final AlphaAnimation alpha =new AlphaAnimation(0.0f,1.0f);
-        alpha.setDuration(300);
+        alpha.setDuration(1);
         alpha.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -537,7 +543,40 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                     {
                         adapterNotif.add(arrayNotif.get(i));
                     }
-                    listaNotif.setAdapter(adapterNotif);
+                    SimpleSwipeUndoAdapter swipeUndoAdapter=new SimpleSwipeUndoAdapter(adapterNotif, SegurosActivity.this, new OnDismissCallback() {
+                        @Override
+                        public void onDismiss(@NonNull ViewGroup listView, @NonNull int[] reverseSortedPositions) {
+                            for (int position : reverseSortedPositions) {
+
+                                Realm realm = CargarDatos.getRealm(SegurosActivity.this);
+                                RealmResults<NotificacionItem> borrarNotif = realm.where(NotificacionItem.class)
+                                            .equalTo("id",adapterNotif.getItem(position).getId())
+                                            .findAll();
+                                adapterNotif.remove(adapterNotif.getItem(position));
+                                realm.beginTransaction();
+                                borrarNotif.deleteAllFromRealm();
+                                realm.commitTransaction();
+//                                if(CargarDatos.getNotifAdapter().size()>0) {
+//
+//                                    arrayNotif.remove(position);
+//                                    Realm realm = CargarDatos.getRealm(SegurosActivity.this);
+//                                    RealmResults<NotificacionItem> borrarNotif = realm.where(NotificacionItem.class)
+//                                            .equalTo("id",CargarDatos.getNotifAdapter().get(position).getId())
+//                                            .findAll();
+//                                    realm.beginTransaction();
+//                                    adapterNotif.remove(CargarDatos.getNotifAdapter().get(position));
+//                                    borrarNotif.deleteAllFromRealm();
+//                                    realm.commitTransaction();
+//                                }
+                                Toast.makeText(SegurosActivity.this, ""+position, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    AlphaInAnimationAdapter animationAdapter=new AlphaInAnimationAdapter(swipeUndoAdapter);
+                    animationAdapter.setAbsListView(listaNotif);
+                    assert animationAdapter.getViewAnimator() != null;
+                    animationAdapter.getViewAnimator().setInitialDelayMillis(INITIAL_DELAY_MILLIS);
+                    listaNotif.setAdapter(animationAdapter);
                 }
             }
 
@@ -577,8 +616,10 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
 
 
     }
+
     public void colapsarToolbar(){
         expandir=true;
+        flecha.startTransition(0);
         flecha.reverseTransition(200);
         toolbar.setTitle("Mis Seguros");
         menu.findItem(R.id.borrarNotif).setVisible(false);
