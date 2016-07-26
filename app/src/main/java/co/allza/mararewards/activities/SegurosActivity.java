@@ -34,6 +34,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -63,12 +64,16 @@ import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
 import co.allza.mararewards.services.SegurosService;
 import com.eftimoff.viewpagertransformers.StackTransformer;
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.Target;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.OnDismissCallback;
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.undo.SimpleSwipeUndoAdapter;
 import com.pixelcan.inkpageindicator.InkPageIndicator;
 
-public class SegurosActivity extends AppCompatActivity implements VolleyCallback, DialogCallback {
+public class SegurosActivity extends AppCompatActivity implements VolleyCallback, DialogCallback , View.OnClickListener , OnShowcaseEventListener{
 
     RelativeLayout linear;
     ListView listaNotif;
@@ -102,6 +107,9 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     Toolbar toolbar;
     RelativeLayout linearNotif;
     private static final int INITIAL_DELAY_MILLIS = 300;
+    private ShowcaseView showcaseView;
+    private int counter = 0;
+    private boolean firstTime=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,10 +148,19 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(expandir)
+                if(expandir){
                     expandirToolbar();
+                    Target viewTarget = new ViewTarget(R.id.cardEmergencia, SegurosActivity.this);
+                    new ShowcaseView.Builder(SegurosActivity.this)
+                            .setTarget(viewTarget)
+                            .setContentTitle("Toca esta zona para cerrar las notificaciones")
+                            .setStyle(R.style.CustomShowcaseTheme2)
+                            .singleShot(42)
+                            .build();
+                }
                 else
                    colapsarToolbar();
+
             }
         });
 
@@ -349,6 +366,32 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         builder.show();
     }
 
+    @Override
+    public void onClick(View v) {
+        switch(counter)
+        {
+            case 0:
+                showcaseView.setShowcase(new ViewTarget(R.id.cardInfoIcono,SegurosActivity.this),true);
+                showcaseView.setContentText("Verifica los detalles de tu seguro aquí");
+                showcaseView.setContentTitle("");
+                break;
+            case 1:
+                showcaseView.setShowcase(new ViewTarget(R.id.cardEmergencia,this),true);
+                showcaseView.setContentText("o pulsa aquí para llamar en caso de un siniestro");
+                break;
+            case 2:
+                showcaseView.setTarget(Target.NONE);
+                showcaseView.setContentTitle("Disfruta de tu aplicación");
+                showcaseView.setContentText("       - Seguros de verdad");
+                showcaseView.setButtonText("Cerrar");
+                break;
+            case 3:
+                showcaseView.hide();
+                break;
+        }
+        counter++;
+    }
+
     public int getStatusBarHeight() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -426,12 +469,12 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         pagerSeguros.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                seguroActual.setText(arraySeguros.get(position).getRefname());
+
             }
 
             @Override
             public void onPageSelected(int position) {
-
+                seguroActual.setText(arraySeguros.get(position).getRefname());
 
                 try {
                     fechaSeguro = parserFecha.parse(arraySeguros.get(position).getExpiration());
@@ -463,6 +506,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             parserFecha = new SimpleDateFormat("dd/MMM/yyyy");
             calendar = Calendar.getInstance();
             fechaActual = calendar.getTime();
+            seguroActual.setText(arraySeguros.get(0).getRefname());
             try {
                 fechaSeguro = parserFecha.parse(pagerAdapter.getArrayList().get(0).getExpiration());
                 if (fechaActual.after(fechaSeguro)) {
@@ -501,13 +545,24 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             editor.remove("servicio");
             editor.putBoolean("firstTime", true);
             editor.commit();
+
+            showcaseView = new ShowcaseView.Builder(SegurosActivity.this)
+                    .setTarget(new ViewTarget(getToolbarNavigationButton()))
+                    .withMaterialShowcase()
+                    .setContentTitle("¡Bienvenido!")
+                    .setOnClickListener(this)
+                    .setStyle(R.style.CustomShowcaseTheme2)
+                    .setContentText("Aquí podras ver tus notificaciones")
+                    .build();
+
+            firstTime=true;
         }
     }
 
     public void validarPosicion(){
         if(getIntent().hasExtra("goTo"))
             goTo=getIntent().getExtras().getInt("goTo",-1);
-        if(goTo!=-1){
+        if(goTo!=-1 && goTo<100){
             pagerSeguros.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -515,8 +570,9 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                     goTo=-1;
                 }
             }, 100);
-
         }
+        else if(goTo>100)
+            expandirToolbar();
     }
 
     public void expandirToolbar() {
@@ -556,18 +612,6 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                                 realm.beginTransaction();
                                 borrarNotif.deleteAllFromRealm();
                                 realm.commitTransaction();
-//                                if(CargarDatos.getNotifAdapter().size()>0) {
-//
-//                                    arrayNotif.remove(position);
-//                                    Realm realm = CargarDatos.getRealm(SegurosActivity.this);
-//                                    RealmResults<NotificacionItem> borrarNotif = realm.where(NotificacionItem.class)
-//                                            .equalTo("id",CargarDatos.getNotifAdapter().get(position).getId())
-//                                            .findAll();
-//                                    realm.beginTransaction();
-//                                    adapterNotif.remove(CargarDatos.getNotifAdapter().get(position));
-//                                    borrarNotif.deleteAllFromRealm();
-//                                    realm.commitTransaction();
-//                                }
                                 Toast.makeText(SegurosActivity.this, ""+position, Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -648,4 +692,38 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
 
     }
 
+    public ImageButton getToolbarNavigationButton() {
+        int size = toolbar.getChildCount();
+        for (int i = 0; i < size; i++) {
+            View child = toolbar.getChildAt(i);
+            if (child instanceof ImageButton) {
+                ImageButton btn = (ImageButton) child;
+                if (btn.getDrawable() == toolbar.getNavigationIcon()) {
+                    return btn;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+
+    }
+
+    @Override
+    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+        if(pagerSeguros!=null)
+            inkPageIndicator.setViewPager(pagerSeguros);
+    }
+
+    @Override
+    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+
+    }
+
+    @Override
+    public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
+
+    }
 }

@@ -92,8 +92,10 @@ public class PushNotificationService extends FirebaseMessagingService
         mBuilder.setAutoCancel(true);
         Intent resultIntent = new Intent(this, SplashActivity.class);
         resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-        resultIntent.putExtra("goTo",0);
+
+        System.out.println(remote.getData().toString());
         int id=Integer.parseInt(remote.getData().get("idcampaigns"))+100;
+        resultIntent.putExtra("goTo",id);
         NotificacionItem item=new NotificacionItem(R.drawable.logoandroid,remote.getData().get("title"),remote.getData().get("message"),parserFormal.format(Calendar.getInstance().getTime()));
         item.setId(id);
         push(item);

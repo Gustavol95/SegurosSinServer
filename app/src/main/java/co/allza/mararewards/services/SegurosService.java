@@ -65,7 +65,7 @@ public class SegurosService extends Service {
                         Intent.ACTION_SCREEN_OFF,
                         Intent.ACTION_SCREEN_ON,
                         Intent.ACTION_SHUTDOWN};
-        Toast.makeText(SegurosService.this, "Inicia servicio", Toast.LENGTH_SHORT).show();
+
     }
 
 
@@ -111,8 +111,7 @@ public class SegurosService extends Service {
                     }
                 }
             }
-        } else
-            Toast.makeText(SegurosService.this, "Esperando", Toast.LENGTH_SHORT).show();
+        }
 
         CargarDatos.getNotificacionesFromDatabase(this);
         return START_NOT_STICKY;
@@ -123,7 +122,6 @@ public class SegurosService extends Service {
         if (alarmMgr != null)
             alarmMgr.cancel(pintent);
         mNotifyMgr.cancelAll();
-        Toast.makeText(SegurosService.this, "Murió servicio", Toast.LENGTH_SHORT).show();
         super.onDestroy();
 
     }
@@ -137,7 +135,6 @@ public class SegurosService extends Service {
     @Override
     public boolean stopService(Intent name) {
         mNotifyMgr.cancelAll();
-        Toast.makeText(SegurosService.this, "StopService", Toast.LENGTH_SHORT).show();
         return super.stopService(name);
     }
 
