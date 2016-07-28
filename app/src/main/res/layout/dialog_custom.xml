@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView android:layout_height="wrap_content"
+    android:id="@+id/scroll"
     android:layout_width="wrap_content"
     android:paddingTop="@dimen/paddingBottomLogo"
     xmlns:android="http://schemas.android.com/apk/res/android" >
@@ -12,4 +13,6 @@
     android:paddingLeft="@dimen/dialogTextviewPadingLeftRight"
     android:paddingRight="@dimen/dialogTextviewPadingLeftRight"
     xmlns:android="http://schemas.android.com/apk/res/android" />
+
+
 </ScrollView>

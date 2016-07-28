@@ -86,7 +86,7 @@ public class NotificacionesAdapter extends ArrayAdapter<NotificacionItem>  imple
         if (view == null) {
             view = LayoutInflater.from(getContext()).inflate(R.layout.undoview_notificaciones, parent, false);
             TextView texto=(TextView) view.findViewById(R.id.textoUndo);
-            texto.setTypeface(CargarDatos.getTypeface(getContext(),CargarDatos.RUBIK_MEDIUM));
+            texto.setTypeface(CargarDatos.getTypeface(getContext(),CargarDatos.ROBOTO_REGULAR));
 
         }
         return view;

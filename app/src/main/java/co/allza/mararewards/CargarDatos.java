@@ -134,10 +134,7 @@ public class CargarDatos {
                 callback.onFailure(error.toString());      }
         });
 
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                1000,
-                3,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(3000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(stringRequest);
     }
 

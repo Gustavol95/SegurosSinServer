@@ -5,7 +5,11 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +24,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.transition.Fade;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -38,9 +43,16 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,6 +61,7 @@ import java.util.Date;
 
 import co.allza.mararewards.adapter.NotificacionesAdapter;
 import co.allza.mararewards.items.CustomViewPager;
+import co.allza.mararewards.items.HttpGetDrawableTask;
 import co.allza.mararewards.items.ResizeAnimation;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -150,13 +163,14 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             public void onClick(View v) {
                 if(expandir){
                     expandirToolbar();
+                    if(CargarDatos.getArraySeguros().size()>0){
                     Target viewTarget = new ViewTarget(R.id.cardEmergencia, SegurosActivity.this);
                     new ShowcaseView.Builder(SegurosActivity.this)
                             .setTarget(viewTarget)
                             .setContentTitle("Toca esta zona para cerrar las notificaciones")
                             .setStyle(R.style.CustomShowcaseTheme2)
                             .singleShot(42)
-                            .build();
+                            .build();}
                 }
                 else
                    colapsarToolbar();
@@ -183,6 +197,18 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                linearContenido.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        return true;
+                    }
+                });
+                pagerSeguros.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        return true;
+                    }
+                });
                 Realm realm = CargarDatos.getRealm(SegurosActivity.this);
                 CustomerItem result = realm.where(CustomerItem.class)
                         .findFirst();
@@ -193,33 +219,16 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                     RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
                     segurosAnteriores.deleteAllFromRealm();
                     realm.commitTransaction();
-
                 }
-
             }
         });
         swipe.setColorSchemeResources(R.color.rectanguloSplash,R.color.toolbarSeguros);
         parserFecha = new SimpleDateFormat("dd/MMM/yyyy");
         calendar = Calendar.getInstance();
         fechaActual = calendar.getTime();
-        validarPrimerUso();
         CargarDatos.getSegurosFromDatabase(this,this);
-        linearContenido.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(!expandir)
-                    colapsarToolbar();
-                return false;
-            }
-        });
-        pagerSeguros.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(!expandir)
-                    colapsarToolbar();
-                return false;
-            }
-        });
+        validarPrimerUso();
+
     }
 
     @Override
@@ -229,6 +238,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         this.menu = menu;
         checkNotif=menu.findItem(R.id.iniciarNotif);
         validarPantalla();
+        validarPosicion();
         return true;
     }
 
@@ -324,12 +334,13 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     @Override
     protected void onResume() {
         super.onResume();
-        validarPosicion();    }
+          }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        setIntent(intent);                     }
+        setIntent(intent);
+        validarPosicion();}
 
     @Override
     public void onSuccess(SegurosPagerAdapter result) {
@@ -352,16 +363,27 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
 
     @Override
     public void onDialogPetition(int id) {
-        SeguroItem temp = adapter.getArrayList().get(id);
+
+        final SeguroItem temp = adapter.getArrayList().get(id);
         AlertDialog.Builder builder = new AlertDialog.Builder(this, theme);
         builder.setTitle(temp.getDescription());
         builder.setPositiveButton("Cerrar", null);
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.dialog_custom, null);
-        TextView text = (TextView) layout.findViewById(R.id.text);
+        final TextView text = (TextView) layout.findViewById(R.id.text);
         if (theme == R.style.MyAlertDialogStyleBlanco)
             text.setTextColor(Color.BLACK);
-        text.setText(Html.fromHtml(temp.getFeatures()));
+        text.setText(Html.fromHtml(temp.getFeatures(), new Html.ImageGetter() {
+            @Override
+            public Drawable getDrawable(String source) {
+                HttpGetDrawableTask httpGetDrawableTask = new HttpGetDrawableTask(
+                        text, temp.getFeatures(),SegurosActivity.this);
+                httpGetDrawableTask.execute(source);
+
+                return null;
+            }
+        }, null));
+        text.setMovementMethod(LinkMovementMethod.getInstance());
         builder.setView(layout);
         builder.show();
     }
@@ -371,6 +393,10 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         switch(counter)
         {
             case 0:
+                if(CargarDatos.getArraySeguros().size()<=0){
+                    counter=2;
+                    break;
+                }
                 showcaseView.setShowcase(new ViewTarget(R.id.cardInfoIcono,SegurosActivity.this),true);
                 showcaseView.setContentText("Verifica los detalles de tu seguro aquí");
                 showcaseView.setContentTitle("");
@@ -380,12 +406,13 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                 showcaseView.setContentText("o pulsa aquí para llamar en caso de un siniestro");
                 break;
             case 2:
-                showcaseView.setTarget(Target.NONE);
-                showcaseView.setContentTitle("Disfruta de tu aplicación");
-                showcaseView.setContentText("       - Seguros de verdad");
-                showcaseView.setButtonText("Cerrar");
+                showcaseView.hide();
                 break;
             case 3:
+                showcaseView.setShowcase(new ViewTarget(R.id.botonCallToAction,this),true);
+                showcaseView.setContentText("Te invitamos a conocer nuestros seguros");
+                break;
+            case 4:
                 showcaseView.hide();
                 break;
         }
@@ -418,7 +445,18 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
 
                 if(CargarDatos.getArraySeguros().size()>0){
            }
-
+                linearContenido.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        return false;
+                    }
+                });
+                pagerSeguros.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        return false;
+                    }
+                });
                 pagerSeguros.setDeshabilitarTouch(false);
 
             }
@@ -555,6 +593,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                     .setContentText("Aquí podras ver tus notificaciones")
                     .build();
 
+
             firstTime=true;
         }
     }
@@ -612,7 +651,6 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                                 realm.beginTransaction();
                                 borrarNotif.deleteAllFromRealm();
                                 realm.commitTransaction();
-                                Toast.makeText(SegurosActivity.this, ""+position, Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -657,7 +695,22 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             }
         });
         barLayout.startAnimation(expandirAnim);
-
+        linearContenido.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(!expandir)
+                    colapsarToolbar();
+                return false;
+            }
+        });
+        pagerSeguros.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(!expandir)
+                    colapsarToolbar();
+                return false;
+            }
+        });
 
     }
 
