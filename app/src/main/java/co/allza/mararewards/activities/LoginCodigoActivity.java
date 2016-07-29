@@ -46,6 +46,7 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.buttonLoginCodigo:
+                CargarDatos.getRealm(this);
                 CargarDatos.getTokenFromServer(getApplicationContext(),editTextCodigo.getText().toString(),this);
                 botonEntrar.setEnabled(false);
                 progress.setVisibility(View.VISIBLE);
@@ -71,7 +72,8 @@ public class LoginCodigoActivity extends Activity implements View.OnClickListene
 
     @Override
     public void onFailure(String error) {
-        Toast.makeText(LoginCodigoActivity.this, "Hubo un error al intentar conectar", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(LoginCodigoActivity.this, "Hubo un error al intentar conectar", Toast.LENGTH_SHORT).show();
+        Toast.makeText(LoginCodigoActivity.this, error, Toast.LENGTH_SHORT).show();
         botonEntrar.setEnabled(true);
         progress.setVisibility(View.INVISIBLE);
     }

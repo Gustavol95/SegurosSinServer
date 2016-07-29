@@ -112,7 +112,8 @@ public class SegurosService extends Service {
                 }
             }
         }
-
+        realm.close();
+        realm=null;
         CargarDatos.getNotificacionesFromDatabase(this);
         return START_NOT_STICKY;
     }
@@ -179,6 +180,7 @@ public class SegurosService extends Service {
         mBuilder.setContentIntent(resultPendingIntent);
         int mNotificationId = id;
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        CargarDatos.notificationIsUp(seguroTemporal.getRefname(),this,mNotifyMgr);
     }
 
     public void notifExpiro(int id) {
@@ -208,5 +210,6 @@ public class SegurosService extends Service {
         mBuilder.setContentIntent(resultPendingIntent);
         int mNotificationId = id;
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        CargarDatos.notificationIsUp(seguroTemporal.getRefname(),this,mNotifyMgr);
     }
 }

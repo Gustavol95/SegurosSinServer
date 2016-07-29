@@ -37,6 +37,8 @@ public class PushNotificationServiceInstance extends FirebaseInstanceIdService{
             String refreshedToken = FirebaseInstanceId.getInstance().getToken();
             CargarDatos.makePetition(this,url+refreshedToken+url2+result.getUsertoken());
         }
+        realm.close();
+        realm=null;
 
 
 

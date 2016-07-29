@@ -122,7 +122,6 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     private static final int INITIAL_DELAY_MILLIS = 300;
     private ShowcaseView showcaseView;
     private int counter = 0;
-    private boolean firstTime=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -259,8 +258,16 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                 RealmResults<NotificacionItem> allNotifications = realm.where(NotificacionItem.class).findAll();
                 realm.beginTransaction();
                 todo.deleteAllFromRealm();
+                realm.commitTransaction();
+                realm.beginTransaction();
                 allNotifications.deleteAllFromRealm();
                 realm.commitTransaction();
+                realm.beginTransaction();
+                RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
+                segurosAnteriores.deleteAllFromRealm();
+                realm.commitTransaction();
+                realm.close();
+                realm=null;
                 Intent i = new Intent(SegurosActivity.this, LoginActivity.class);
                 startActivity(i);
                 finish();
@@ -269,20 +276,6 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             case R.id.callToAction:
                 Intent ii = new Intent(SegurosActivity.this, CallToActionActivity.class);
                 startActivity(ii);
-                return true;
-            case R.id.borrarNotif:
-                if (CargarDatos.getNotifAdapter().size() != 0) {
-                    for (int b = 0; b < CargarDatos.getNotifAdapter().size(); b++) {
-                        adapterNotif.remove(CargarDatos.getNotifAdapter().get(b));
-                    }
-                    listaNotif.setAdapter(adapterNotif);
-                }
-                CargarDatos.getNotifAdapter().clear();
-                realm = CargarDatos.getRealm(this);
-                RealmResults<NotificacionItem> borrarNotif = realm.where(NotificacionItem.class).findAll();
-                realm.beginTransaction();
-                borrarNotif.deleteAllFromRealm();
-                realm.commitTransaction();
                 return true;
 
             case R.id.iniciarNotif:
@@ -317,6 +310,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                                 }
                                 listaNotif.setAdapter(adapterNotif);
                             }
+                            colapsarToolbar();
                         }
                     }, 1000);
 
@@ -495,8 +489,9 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             CustomerItem result = realm.where(CustomerItem.class)
                     .findFirst();
             if (result != null) {
-                if (pagerSeguros != null){
+                if (pagerSeguros != null && id!=1000){
                     CargarDatos.pullSeguros(SegurosActivity.this, result.getUsertoken(), result.getToken(), SegurosActivity.this);
+                    id=1000;
                 }
                 realm.beginTransaction();
                 RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
@@ -537,7 +532,6 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
 
             }
         });
-       // pagerSeguros.setPageTransformer(true, new DepthPageTransformer());
        pagerSeguros.setPageTransformer(true, new StackTransformer());
 
         if (pagerAdapter.getCount() > 0) {
@@ -592,9 +586,6 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                     .setStyle(R.style.CustomShowcaseTheme2)
                     .setContentText("Aquí podras ver tus notificaciones")
                     .build();
-
-
-            firstTime=true;
         }
     }
 
@@ -612,6 +603,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         }
         else if(goTo>100)
             expandirToolbar();
+        CargarDatos.emptyNotificationCounter();
     }
 
     public void expandirToolbar() {
@@ -620,7 +612,6 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         adapterNotif = new NotificacionesAdapter(this, R.layout.listview_notificaciones);
         CargarDatos.getNotificacionesFromDatabase(this);
         arrayNotif=CargarDatos.getNotifAdapter();
-        menu.findItem(R.id.borrarNotif).setVisible(true);
         menu.findItem(R.id.iniciarNotif).setVisible(true);
         settings = getSharedPreferences(SegurosService.PREFS_NAME, 0);
         editor = settings.edit();
@@ -719,7 +710,6 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         flecha.startTransition(0);
         flecha.reverseTransition(200);
         toolbar.setTitle("Mis Seguros");
-        menu.findItem(R.id.borrarNotif).setVisible(false);
         menu.findItem(R.id.iniciarNotif).setVisible(false);
         ResizeAnimation colapsarAnim=new ResizeAnimation(barLayout,-barLayout.getLayoutParams().height+alturaToolbar,barLayout.getLayoutParams().height);
         colapsarAnim.setDuration(500);

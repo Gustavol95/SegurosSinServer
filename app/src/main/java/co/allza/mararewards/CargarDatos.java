@@ -1,8 +1,16 @@
 package co.allza.mararewards;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.util.TypedValue;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -21,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import co.allza.mararewards.activities.SplashActivity;
 import co.allza.mararewards.adapter.SegurosPagerAdapter;
 import co.allza.mararewards.interfaces.DialogCallback;
 import co.allza.mararewards.interfaces.VolleyCallback;
@@ -51,6 +60,8 @@ public class CargarDatos {
     private static ArrayList<SeguroItem> arraySeguros;
     private static ArrayList<NotificacionItem> arrayNotif;
     private static DialogCallback dialogCallback;
+    private static int counter=0;
+    private static ArrayList<String> titulos= new ArrayList<>();
     public static final int ROBOTO_MEDIUM =   0;
     public static final int ROBOTO_REGULAR =   1;
     public static final int RUBIK_LIGHT =   2;
@@ -74,6 +85,7 @@ public class CargarDatos {
         if(queue==null)
             queue=Volley.newRequestQueue(ctx);
         String url=getToken+ FirebaseInstanceId.getInstance().getToken()+accessToken2+usertoken;
+        Log.e("Token",url);
         stringRequest = new StringRequest(Request.Method.GET,
                 url, new Response.Listener<String>() {
             @Override
@@ -88,8 +100,8 @@ public class CargarDatos {
             @Override
             public void onErrorResponse(VolleyError error) {   callback.onFailure(error.toString());   }
         });
-        queue.add(stringRequest);
 
+        queue.add(stringRequest);
     }
     public static void makePetition(Context ctx, String url) {
         context=ctx;
@@ -117,6 +129,7 @@ public class CargarDatos {
         if(queue==null)
             queue=Volley.newRequestQueue(ctx);
         String url=getCustomer+usuario+accessToken+usertoken;
+        Log.e("Seguros",url);
         stringRequest = new StringRequest(Request.Method.GET,
                 url,
                 new Response.Listener<String>() {
@@ -133,8 +146,6 @@ public class CargarDatos {
             public void onErrorResponse(VolleyError error) {
                 callback.onFailure(error.toString());      }
         });
-
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(3000, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(stringRequest);
     }
 
@@ -157,8 +168,6 @@ public class CargarDatos {
             customer.setToken(token);
             realm.beginTransaction();
             realm.copyToRealmOrUpdate(customer);
-            RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
-            segurosAnteriores.deleteAllFromRealm();
             realm.commitTransaction();
             arraySeguros=new ArrayList<>();
 
@@ -214,7 +223,7 @@ public class CargarDatos {
 
     public static Realm getRealm(Context ctx) {
         context=ctx;
-        if(realm==null ){
+
         RealmConfiguration config = new RealmConfiguration
                 .Builder(ctx)
                 .deleteRealmIfMigrationNeeded()
@@ -222,8 +231,7 @@ public class CargarDatos {
         Realm.setDefaultConfiguration(config);
         realm = Realm.getDefaultInstance();
         return realm;
-        }
-        else{return  realm;}
+
     }
 
     public static void getNotificacionesFromDatabase(Context ctx) {
@@ -250,17 +258,8 @@ public class CargarDatos {
         realm.commitTransaction();
 
     }
-    public static void pushNotificationIfContext(String titulo, String contenido) {
-        if(context!=null) {
-            SimpleDateFormat parserFormal= new SimpleDateFormat("dd MMM yyyy");
-            NotificacionItem item=new NotificacionItem(R.drawable.logoandroid,titulo,contenido,parserFormal.format(Calendar.getInstance().getTime()));
-            Realm realm = getRealm(context.getApplicationContext());
-            realm.beginTransaction();
-            realm.copyToRealmOrUpdate(item);
-            realm.commitTransaction();
-        }
 
-    }
+
 
     public static void setDialogCallback(DialogCallback callback) {  dialogCallback=callback;   }
 
@@ -293,5 +292,45 @@ public class CargarDatos {
         Resources r = context.getResources();
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
         return (int)(px);
+    }
+
+    public static void notificationIsUp( String titulo,Context context, NotificationManager notifManager)
+    {
+        titulos.add(titulo);
+        counter++;
+        if(counter>1) {
+            notifManager.cancelAll();
+            NotificationCompat.InboxStyle estilo=new NotificationCompat.InboxStyle();
+            for(int i=0;i<counter;i++)
+            {   if(i<2)
+                estilo.addLine(titulos.get(i));
+            }
+            if(counter>3)
+            {
+                estilo.setSummaryText(counter-3+" más pendientes");
+            }
+            estilo.setBigContentTitle("");
+            NotificationCompat.Builder mBuilder =
+                   new NotificationCompat.Builder(context)
+                            .setSmallIcon(R.drawable.perfil_whitebg)
+                            .setContentTitle("Tienes "+counter+" notificaciones")
+                            .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.logoandroid))
+                            .setColor(4)
+                            .setStyle(estilo);
+
+
+
+            mBuilder.setAutoCancel(true);
+            Intent resultIntent = new Intent(context, SplashActivity.class);
+            resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+            resultIntent.putExtra("goTo",counter+100);
+            PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            mBuilder.setContentIntent(resultPendingIntent);
+            notifManager.notify(100, mBuilder.build());
+        }
+    }
+    public static void emptyNotificationCounter(){
+        counter=0;
+        titulos.clear();
     }
 }

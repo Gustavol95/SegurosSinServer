@@ -96,6 +96,7 @@ public class PushNotificationService extends FirebaseMessagingService
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
         mNotifyMgr.notify(id, mBuilder.build());
+        CargarDatos.notificationIsUp(remote.getData().get("title"),this,mNotifyMgr);
 
 
     }
@@ -111,6 +112,7 @@ public class PushNotificationService extends FirebaseMessagingService
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(item);
         realm.commitTransaction();
+        realm.close();
     }
 
     public int getInsurancePosition(int id)
@@ -132,6 +134,8 @@ public class PushNotificationService extends FirebaseMessagingService
                    return i;
            }
         }
+        realm.close();
+        realm=null;
         return id;
     }
 

@@ -48,15 +48,6 @@
 
 
         </activity>
-        <activity
-            android:name=".activities.NotificacionesActivity"
-            android:label="Estas Seguro"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
-            android:parentActivityName=".activities.SegurosActivity"
-            >
-
-        </activity>
 
         <!--
  ATTENTION: This was auto-generated to add Google Play services to your project for
