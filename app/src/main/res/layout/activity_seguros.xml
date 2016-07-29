@@ -97,7 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/textViewAdquirirPaddingTop"
-                android:background="@android:color/white"
+                android:background="@drawable/button_radius"
                 android:text="@string/botonCalltoAction"
                 android:textAlignment="center"
                 android:textColor="@color/rectanguloSplash"

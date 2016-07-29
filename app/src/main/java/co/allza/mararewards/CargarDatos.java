@@ -103,6 +103,7 @@ public class CargarDatos {
 
         queue.add(stringRequest);
     }
+
     public static void makePetition(Context ctx, String url) {
         context=ctx;
         if(queue==null)
@@ -259,8 +260,6 @@ public class CargarDatos {
 
     }
 
-
-
     public static void setDialogCallback(DialogCallback callback) {  dialogCallback=callback;   }
 
     public static DialogCallback getDialogCallback()  { return dialogCallback;  }
@@ -294,41 +293,45 @@ public class CargarDatos {
         return (int)(px);
     }
 
-    public static void notificationIsUp( String titulo,Context context, NotificationManager notifManager)
-    {
+    public static void notificationIsUp( String titulo,Context context, NotificationManager notifManager) {
         titulos.add(titulo);
         counter++;
+        System.out.println(counter+" ALAVERGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+        NotificationCompat.InboxStyle estilo=null;
+        Notification notif ;
         if(counter>1) {
             notifManager.cancelAll();
-            NotificationCompat.InboxStyle estilo=new NotificationCompat.InboxStyle();
+            estilo=new NotificationCompat.InboxStyle();
             for(int i=0;i<counter;i++)
-            {   if(i<2)
+            {   if(i<3)
                 estilo.addLine(titulos.get(i));
             }
             if(counter>3)
             {
-                estilo.setSummaryText(counter-3+" más pendientes");
+                estilo.setSummaryText((counter-3)+" más pendientes");
             }
-            estilo.setBigContentTitle("");
-            NotificationCompat.Builder mBuilder =
-                   new NotificationCompat.Builder(context)
-                            .setSmallIcon(R.drawable.perfil_whitebg)
-                            .setContentTitle("Tienes "+counter+" notificaciones")
-                            .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.logoandroid))
-                            .setColor(4)
-                            .setStyle(estilo);
+            estilo.setBigContentTitle("Notificaciones pendientes");
+        Intent resultIntent = new Intent(context, SplashActivity.class);
+        resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        resultIntent.putExtra("goTo",counter+100);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+         notif = new NotificationCompat.Builder(context)
+                .setContentTitle("Tienes "+counter+" notificaciones" )
+                .setContentText("Seguros De Verdad")
+                .setSmallIcon(R.drawable.perfil_whitebg)
+                .setColor(4)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.logoandroid))
+                .setStyle(estilo)
+                .setAutoCancel(true)
+                .setContentIntent(resultPendingIntent)
+                .build();
 
 
+        notifManager.notify(100,notif);}
 
-            mBuilder.setAutoCancel(true);
-            Intent resultIntent = new Intent(context, SplashActivity.class);
-            resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-            resultIntent.putExtra("goTo",counter+100);
-            PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            mBuilder.setContentIntent(resultPendingIntent);
-            notifManager.notify(100, mBuilder.build());
-        }
     }
+
     public static void emptyNotificationCounter(){
         counter=0;
         titulos.clear();

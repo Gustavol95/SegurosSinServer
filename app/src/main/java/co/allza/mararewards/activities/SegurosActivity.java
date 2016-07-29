@@ -1,7 +1,4 @@
 package co.allza.mararewards.activities;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -10,29 +7,27 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LevelListDrawable;
 import android.graphics.drawable.TransitionDrawable;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.method.LinkMovementMethod;
-import android.transition.Fade;
-import android.util.DisplayMetrics;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
@@ -43,16 +38,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,7 +53,6 @@ import java.util.Date;
 
 import co.allza.mararewards.adapter.NotificacionesAdapter;
 import co.allza.mararewards.items.CustomViewPager;
-import co.allza.mararewards.items.HttpGetDrawableTask;
 import co.allza.mararewards.items.ResizeAnimation;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -72,7 +63,6 @@ import co.allza.mararewards.interfaces.DialogCallback;
 import co.allza.mararewards.interfaces.VolleyCallback;
 import co.allza.mararewards.items.CustomSwipeToRefresh;
 import co.allza.mararewards.items.CustomerItem;
-import co.allza.mararewards.items.DepthPageTransformer;
 import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
 import co.allza.mararewards.services.SegurosService;
@@ -86,16 +76,13 @@ import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.OnDismissCa
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.undo.SimpleSwipeUndoAdapter;
 import com.pixelcan.inkpageindicator.InkPageIndicator;
 
-public class SegurosActivity extends AppCompatActivity implements VolleyCallback, DialogCallback , View.OnClickListener , OnShowcaseEventListener{
+public class SegurosActivity extends AppCompatActivity implements VolleyCallback, DialogCallback , View.OnClickListener , OnShowcaseEventListener, Html.ImageGetter{
 
     RelativeLayout linear;
-    ListView listaNotif;
+    RelativeLayout linearNotif;
     LinearLayout linearContenido;
+    ListView listaNotif;
     ArrayList<NotificacionItem> arrayNotif;
-    NotificacionesAdapter adapterNotif;
-    CustomViewPager pagerSeguros;
-    SegurosPagerAdapter adapter;
-    CustomSwipeToRefresh swipe;
     ArrayList<SeguroItem> arraySeguros;
     TextView seguroActual;
     Button botonCallToAction;
@@ -103,26 +90,31 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     Calendar calendar;
     Date fechaActual;
     Date fechaSeguro;
-    InkPageIndicator inkPageIndicator;
     boolean estaVencido ;
+    boolean expandir=true;
     TransitionDrawable fondo;
     TransitionDrawable flecha;
+    int counter=0;
     int id = -1;
     int goTo;
     int theme = R.style.MyAlertDialogStyle;
+    int alturaToolbar;
+    private static final int INITIAL_DELAY_MILLIS = 300;
     Menu menu;
     MenuItem checkNotif;
     SharedPreferences settings;
     SharedPreferences.Editor editor;
-    int alturaToolbar;
     AppBarLayout barLayout;
-    boolean expandir=true;
     Toolbar toolbar;
-    RelativeLayout linearNotif;
-    private static final int INITIAL_DELAY_MILLIS = 300;
+    NotificacionesAdapter adapterNotif;
+    CustomViewPager pagerSeguros;
+    SegurosPagerAdapter adapter;
+    CustomSwipeToRefresh swipe;
+    InkPageIndicator inkPageIndicator;
     private ShowcaseView showcaseView;
-    private int counter = 0;
-
+    Spanned spanned;
+    SpannableStringBuilder htmlSpannable;
+    TextView text;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,8 +131,10 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Intent i=new Intent(SegurosActivity.this,SegurosActivity.class);
-                if(adapterNotif.getItem(position).getId()<100){
-                    i.putExtra("goTo",  adapterNotif.getItem(position).getId());}
+                if(getIntent().hasExtra("goTo"))
+                    goTo=getIntent().getExtras().getInt("goTo",-1);
+                if(goTo!=-1 && goTo<100)
+                    i.putExtra("goTo",  adapterNotif.getItem(position).getId());
                 i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
 
@@ -358,26 +352,18 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     @Override
     public void onDialogPetition(int id) {
 
-        final SeguroItem temp = adapter.getArrayList().get(id);
+        SeguroItem temp = adapter.getArrayList().get(id);
+        spanned = Html.fromHtml(temp.getFeatures(),this,null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this, theme);
         builder.setTitle(temp.getDescription());
         builder.setPositiveButton("Cerrar", null);
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.dialog_custom, null);
-        final TextView text = (TextView) layout.findViewById(R.id.text);
+        text = (TextView) layout.findViewById(R.id.text);
         if (theme == R.style.MyAlertDialogStyleBlanco)
             text.setTextColor(Color.BLACK);
-        text.setText(Html.fromHtml(temp.getFeatures(), new Html.ImageGetter() {
-            @Override
-            public Drawable getDrawable(String source) {
-                HttpGetDrawableTask httpGetDrawableTask = new HttpGetDrawableTask(
-                        text, temp.getFeatures(),SegurosActivity.this);
-                httpGetDrawableTask.execute(source);
+        text.setText(spanned);
 
-                return null;
-            }
-        }, null));
-        text.setMovementMethod(LinkMovementMethod.getInstance());
         builder.setView(layout);
         builder.show();
     }
@@ -594,7 +580,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             goTo=getIntent().getExtras().getInt("goTo",-1);
         if(goTo!=-1 && goTo<100){
             pagerSeguros.postDelayed(new Runnable() {
-                @Override
+                 @Override
                 public void run() {
                     pagerSeguros.setCurrentItem(goTo ,true);
                     goTo=-1;
@@ -603,6 +589,33 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         }
         else if(goTo>100)
             expandirToolbar();
+
+        if(getIntent().hasExtra("actualizar")){
+            linearContenido.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return true;
+                }
+            });
+            pagerSeguros.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return true;
+                }
+            });
+            Realm realm = CargarDatos.getRealm(SegurosActivity.this);
+            CustomerItem result = realm.where(CustomerItem.class)
+                    .findFirst();
+            if (result != null) {
+                CargarDatos.pullSeguros(SegurosActivity.this, result.getUsertoken(), result.getToken(), SegurosActivity.this);
+                pagerSeguros.setDeshabilitarTouch(true);
+                realm.beginTransaction();
+                RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
+                segurosAnteriores.deleteAllFromRealm();
+                realm.commitTransaction();
+            }
+        }
+
         CargarDatos.emptyNotificationCounter();
     }
 
@@ -768,5 +781,53 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     @Override
     public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
 
+    }
+
+    @Override
+    public Drawable getDrawable(String source) {
+        LevelListDrawable d = new LevelListDrawable();
+        Drawable empty = getResources().getDrawable(R.drawable.account_vencido);
+        d.addLevel(0, 0, empty);
+        d.setBounds(0, 0, empty.getIntrinsicWidth(), empty.getIntrinsicHeight());
+
+        new LoadImage().execute(source, d);
+
+        return d;
+    }
+
+    private class LoadImage extends AsyncTask<Object, Void, Bitmap> {
+
+        private LevelListDrawable mDrawable;
+
+        @Override
+        protected Bitmap doInBackground(Object... params) {
+            String source = (String) params[0];
+            mDrawable = (LevelListDrawable) params[1];
+            try {
+                InputStream is = new URL(source).openStream();
+                return BitmapFactory.decodeStream(is);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (bitmap != null) {
+                BitmapDrawable d = new BitmapDrawable(bitmap);
+                mDrawable.addLevel(1, 1, d);
+                mDrawable.setBounds(0, 0, bitmap.getWidth(), bitmap.getHeight());
+                mDrawable.setLevel(1);
+                // i don't know yet a better way to refresh TextView
+                // mTv.invalidate() doesn't work as expected
+                CharSequence t = text.getText();
+                text.setText(t);
+            }
+        }
     }
 }

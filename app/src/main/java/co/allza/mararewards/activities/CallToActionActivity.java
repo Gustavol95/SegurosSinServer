@@ -17,7 +17,7 @@ import co.allza.mararewards.items.LoginItem;
 /**
  * Created by Tavo on 10/06/2016.
  */
-public class CallToActionActivity extends Activity implements AdapterView.OnItemClickListener, View.OnClickListener {
+public class CallToActionActivity extends Activity implements View.OnClickListener {
 
     private TextView texto;
     private ListView lista;
@@ -48,29 +48,17 @@ public class CallToActionActivity extends Activity implements AdapterView.OnItem
         lista.setAdapter(adapter);
         texto.setTypeface(CargarDatos.getTypeface(getApplicationContext(), CargarDatos.RUBIK_REGULAR));
 
-        lista.setOnItemClickListener(this);
         fab.setOnClickListener(this);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        switch (position)
-        {
-            case 0:
-                Intent jota=new Intent(CallToActionActivity.this,SegurosActivity.class);
-                startActivity(jota);
 
-
-                break;
-        }
-    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.fab:
                         Intent intent = new Intent(Intent.ACTION_DIAL);
-                        intent.setData(Uri.parse("tel:018001010145"));
+                        intent.setData(Uri.parse("tel:+526677614428"));
                         startActivity(intent);
                         break;
 

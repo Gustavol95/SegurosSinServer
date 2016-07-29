@@ -83,6 +83,8 @@ public class PushNotificationService extends FirebaseMessagingService
 
         if(Integer.parseInt(remote.getData().get("type"))==2){
             id=Integer.parseInt(remote.getData().get("idcampaigns"));
+            resultIntent.putExtra("actualizar", true);
+            System.out.print("ES DE TIPO 222222222222222222222222222222222222222222222222222222222222222222222222222");
         }
         else{
              id=Integer.parseInt(remote.getData().get("idcampaigns"))+100;
@@ -96,6 +98,7 @@ public class PushNotificationService extends FirebaseMessagingService
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
         mNotifyMgr.notify(id, mBuilder.build());
+
         CargarDatos.notificationIsUp(remote.getData().get("title"),this,mNotifyMgr);
 
 
