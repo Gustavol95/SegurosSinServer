@@ -79,16 +79,28 @@ public class PushNotificationService extends FirebaseMessagingService
                         .setContentText(remote.getData().get("message"));
         mBuilder.setAutoCancel(true);
         Intent resultIntent = new Intent(this, SplashActivity.class);
-        resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        resultIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
         if(Integer.parseInt(remote.getData().get("type"))==2){
             id=Integer.parseInt(remote.getData().get("idcampaigns"));
             resultIntent.putExtra("actualizar", true);
-            System.out.print("ES DE TIPO 222222222222222222222222222222222222222222222222222222222222222222222222222");
+            CargarDatos.notificationIsUp(remote.getData().get("title"),this,mNotifyMgr,true);
+            CargarDatos.clearArraySeguros();
+            RealmConfiguration config = new RealmConfiguration
+                    .Builder(this)
+                    .deleteRealmIfMigrationNeeded()
+                    .build();
+            Realm.setDefaultConfiguration(config);
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
+            segurosAnteriores.deleteAllFromRealm();
+            realm.commitTransaction();
         }
         else{
              id=Integer.parseInt(remote.getData().get("idcampaigns"))+100;
              CargarDatos.makePetition(PushNotificationService.this,url+(id-100));
+             CargarDatos.notificationIsUp(remote.getData().get("title"),this,mNotifyMgr,false);
         }
 
         resultIntent.putExtra("goTo",getInsurancePosition(id));
@@ -98,9 +110,6 @@ public class PushNotificationService extends FirebaseMessagingService
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
         mNotifyMgr.notify(id, mBuilder.build());
-
-        CargarDatos.notificationIsUp(remote.getData().get("title"),this,mNotifyMgr);
-
 
     }
 

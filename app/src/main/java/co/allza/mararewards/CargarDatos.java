@@ -293,11 +293,9 @@ public class CargarDatos {
         return (int)(px);
     }
 
-    public static void notificationIsUp( String titulo,Context context, NotificationManager notifManager) {
+    public static void notificationIsUp( String titulo,Context context, NotificationManager notifManager, boolean withRefresh) {
         titulos.add(titulo);
         counter++;
-        System.out.println(counter+" ALAVERGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
         NotificationCompat.InboxStyle estilo=null;
         Notification notif ;
         if(counter>1) {
@@ -313,8 +311,10 @@ public class CargarDatos {
             }
             estilo.setBigContentTitle("Notificaciones pendientes");
         Intent resultIntent = new Intent(context, SplashActivity.class);
-        resultIntent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-        resultIntent.putExtra("goTo",counter+100);
+        resultIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        resultIntent.putExtra("goTo",101);
+        resultIntent.putExtra("refresh",withRefresh);
+
         PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
          notif = new NotificationCompat.Builder(context)
                 .setContentTitle("Tienes "+counter+" notificaciones" )
@@ -328,12 +328,16 @@ public class CargarDatos {
                 .build();
 
 
-        notifManager.notify(100,notif);}
+        notifManager.notify(101,notif);}
 
     }
 
     public static void emptyNotificationCounter(){
         counter=0;
         titulos.clear();
+    }
+    public static void clearArraySeguros() {
+        arraySeguros.clear();
+
     }
 }

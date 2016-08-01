@@ -180,7 +180,7 @@ public class SegurosService extends Service {
         mBuilder.setContentIntent(resultPendingIntent);
         int mNotificationId = id;
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
-        CargarDatos.notificationIsUp(seguroTemporal.getRefname(),this,mNotifyMgr);
+        CargarDatos.notificationIsUp(seguroTemporal.getRefname(),this,mNotifyMgr,false);
     }
 
     public void notifExpiro(int id) {
@@ -210,6 +210,6 @@ public class SegurosService extends Service {
         mBuilder.setContentIntent(resultPendingIntent);
         int mNotificationId = id;
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
-        CargarDatos.notificationIsUp(seguroTemporal.getRefname(),this,mNotifyMgr);
+        CargarDatos.notificationIsUp(seguroTemporal.getRefname(),this,mNotifyMgr,false);
     }
 }

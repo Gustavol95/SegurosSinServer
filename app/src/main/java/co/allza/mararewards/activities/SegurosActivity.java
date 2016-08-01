@@ -21,7 +21,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,7 +38,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
+import android.widget.Toast;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,11 +49,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
 import co.allza.mararewards.adapter.NotificacionesAdapter;
 import co.allza.mararewards.items.CustomViewPager;
 import co.allza.mararewards.items.ResizeAnimation;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.R;
@@ -66,6 +65,8 @@ import co.allza.mararewards.items.CustomerItem;
 import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
 import co.allza.mararewards.services.SegurosService;
+import io.realm.Sort;
+
 import com.eftimoff.viewpagertransformers.StackTransformer;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
@@ -92,6 +93,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     Date fechaSeguro;
     boolean estaVencido ;
     boolean expandir=true;
+    boolean actualizar=false;
     TransitionDrawable fondo;
     TransitionDrawable flecha;
     int counter=0;
@@ -113,7 +115,6 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     InkPageIndicator inkPageIndicator;
     private ShowcaseView showcaseView;
     Spanned spanned;
-    SpannableStringBuilder htmlSpannable;
     TextView text;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,12 +130,9 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         listaNotif.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 Intent i=new Intent(SegurosActivity.this,SegurosActivity.class);
-                if(getIntent().hasExtra("goTo"))
-                    goTo=getIntent().getExtras().getInt("goTo",-1);
-                if(goTo!=-1 && goTo<100)
-                    i.putExtra("goTo",  adapterNotif.getItem(position).getId());
+                if(adapterNotif.getItem(position).getId()!=-1 && adapterNotif.getItem(position).getId()<100)
+                    i.putExtra("goTo",  getInsurancePosition(adapterNotif.getItem(position).getId()));
                 i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
 
@@ -221,6 +219,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         fechaActual = calendar.getTime();
         CargarDatos.getSegurosFromDatabase(this,this);
         validarPrimerUso();
+        Toast.makeText(SegurosActivity.this, "OnCreate", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -328,6 +327,13 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
+        if(CargarDatos.getArraySeguros().size()<=0){
+            try{  CargarDatos.getSegurosFromDatabase(this,this);}
+            finally {
+                validarPosicion();
+            }
+      }
+        else
         validarPosicion();}
 
     @Override
@@ -582,39 +588,15 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             pagerSeguros.postDelayed(new Runnable() {
                  @Override
                 public void run() {
+                     if(CargarDatos.getArraySeguros().size()>0){
                     pagerSeguros.setCurrentItem(goTo ,true);
-                    goTo=-1;
+                    goTo=-1;}
+                     else CargarDatos.getSegurosFromDatabase(SegurosActivity.this,SegurosActivity.this);
                 }
             }, 100);
         }
-        else if(goTo>100)
+        else if(goTo>100 && expandir)
             expandirToolbar();
-
-        if(getIntent().hasExtra("actualizar")){
-            linearContenido.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    return true;
-                }
-            });
-            pagerSeguros.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    return true;
-                }
-            });
-            Realm realm = CargarDatos.getRealm(SegurosActivity.this);
-            CustomerItem result = realm.where(CustomerItem.class)
-                    .findFirst();
-            if (result != null) {
-                CargarDatos.pullSeguros(SegurosActivity.this, result.getUsertoken(), result.getToken(), SegurosActivity.this);
-                pagerSeguros.setDeshabilitarTouch(true);
-                realm.beginTransaction();
-                RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
-                segurosAnteriores.deleteAllFromRealm();
-                realm.commitTransaction();
-            }
-        }
 
         CargarDatos.emptyNotificationCounter();
     }
@@ -794,6 +776,30 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
 
         return d;
     }
+
+    public int getInsurancePosition(int id) {
+        RealmConfiguration config = new RealmConfiguration
+                .Builder(this)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(config);
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<SeguroItem> result = realm.where(SeguroItem.class)
+                .findAll();
+        result.sort("id", Sort.DESCENDING);
+        if(result.size()>0)
+        {
+            for(int i=0;i<result.size();i++)
+            {
+                if(result.get(i).getId()==id)
+                    return i;
+            }
+        }
+        realm.close();
+        realm=null;
+        return 0;
+    }
+
 
     private class LoadImage extends AsyncTask<Object, Void, Bitmap> {
 
