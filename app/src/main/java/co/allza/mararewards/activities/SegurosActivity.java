@@ -67,7 +67,6 @@ import co.allza.mararewards.items.SeguroItem;
 import co.allza.mararewards.services.SegurosService;
 import io.realm.Sort;
 
-import com.eftimoff.viewpagertransformers.StackTransformer;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.Target;
@@ -219,8 +218,6 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
         fechaActual = calendar.getTime();
         CargarDatos.getSegurosFromDatabase(this,this);
         validarPrimerUso();
-        Toast.makeText(SegurosActivity.this, "OnCreate", Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
@@ -524,7 +521,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
 
             }
         });
-       pagerSeguros.setPageTransformer(true, new StackTransformer());
+       pagerSeguros.setPageTransformer(true, new co.allza.mararewards.items.StackTransformer());
 
         if (pagerAdapter.getCount() > 0) {
             parserFecha = new SimpleDateFormat("dd/MMM/yyyy");
