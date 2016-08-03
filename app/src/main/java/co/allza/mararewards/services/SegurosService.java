@@ -166,7 +166,7 @@ public class SegurosService extends Service {
         resultIntent.setAction(action[id]);
         resultIntent.putExtra("goTo",id);
         NotificacionItem item = new NotificacionItem(R.drawable.logoandroid, seguroTemporal.getRefname(), "Próximo a expirar", parserFormal.format(fechaActual));
-        item.setId(id);
+        item.setId(seguroTemporal.getId());
         CargarDatos.pushNotification(this, item);
 
         PendingIntent resultPendingIntent =
@@ -197,7 +197,7 @@ public class SegurosService extends Service {
         resultIntent.setAction(action[id]);
         resultIntent.putExtra("goTo",id);
         NotificacionItem item = new NotificacionItem(R.drawable.logoandroid, seguroTemporal.getRefname(), "Ha expirado, comunícate con tu aseguradora", parserFormal.format(fechaActual));
-        item.setId(id);
+        item.setId(seguroTemporal.getId());
         CargarDatos.pushNotification(this, item);
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(

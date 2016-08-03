@@ -52,6 +52,7 @@ import java.util.Date;
 import co.allza.mararewards.adapter.NotificacionesAdapter;
 import co.allza.mararewards.items.CustomViewPager;
 import co.allza.mararewards.items.ResizeAnimation;
+import co.allza.mararewards.items.SwipeDismissListViewTouchListener;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
@@ -130,8 +131,10 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i=new Intent(SegurosActivity.this,SegurosActivity.class);
-                if(adapterNotif.getItem(position).getId()!=-1 && adapterNotif.getItem(position).getId()<100)
+                if(adapterNotif.getItem(position).getId()!=-1 && adapterNotif.getItem(position).getId()<100){
                     i.putExtra("goTo",  getInsurancePosition(adapterNotif.getItem(position).getId()));
+                    Toast.makeText(SegurosActivity.this, ""+ getInsurancePosition(adapterNotif.getItem(position).getId()), Toast.LENGTH_SHORT).show();
+                }
                 i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
 
@@ -300,7 +303,7 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                                 }
                                 listaNotif.setAdapter(adapterNotif);
                             }
-                            colapsarToolbar();
+
                         }
                     }, 1000);
 
@@ -621,27 +624,35 @@ public class SegurosActivity extends AppCompatActivity implements VolleyCallback
                     {
                         adapterNotif.add(arrayNotif.get(i));
                     }
-                    SimpleSwipeUndoAdapter swipeUndoAdapter=new SimpleSwipeUndoAdapter(adapterNotif, SegurosActivity.this, new OnDismissCallback() {
-                        @Override
-                        public void onDismiss(@NonNull ViewGroup listView, @NonNull int[] reverseSortedPositions) {
-                            for (int position : reverseSortedPositions) {
+                    listaNotif.setAdapter(adapterNotif);
+                    SwipeDismissListViewTouchListener touchListener =
+                            new SwipeDismissListViewTouchListener(
+                                    listaNotif,
+                                    new SwipeDismissListViewTouchListener.DismissCallbacks() {
+                                        @Override
+                                        public boolean canDismiss(int position) {
+                                            return true;
+                                        }
 
-                                Realm realm = CargarDatos.getRealm(SegurosActivity.this);
-                                RealmResults<NotificacionItem> borrarNotif = realm.where(NotificacionItem.class)
-                                            .equalTo("id",adapterNotif.getItem(position).getId())
-                                            .findAll();
-                                adapterNotif.remove(adapterNotif.getItem(position));
-                                realm.beginTransaction();
-                                borrarNotif.deleteAllFromRealm();
-                                realm.commitTransaction();
-                            }
-                        }
-                    });
-                    AlphaInAnimationAdapter animationAdapter=new AlphaInAnimationAdapter(swipeUndoAdapter);
-                    animationAdapter.setAbsListView(listaNotif);
-                    assert animationAdapter.getViewAnimator() != null;
-                    animationAdapter.getViewAnimator().setInitialDelayMillis(INITIAL_DELAY_MILLIS);
-                    listaNotif.setAdapter(animationAdapter);
+                                        @Override
+                                        public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+                                            for (int position : reverseSortedPositions) {
+                                                Realm realm = CargarDatos.getRealm(SegurosActivity.this);
+                                                RealmResults<NotificacionItem> borrarNotif = realm.where(NotificacionItem.class)
+                                                        .equalTo("id",adapterNotif.getItem(position).getId())
+                                                        .findAll();
+                                                adapterNotif.remove(adapterNotif.getItem(position));
+                                                realm.beginTransaction();
+                                                borrarNotif.deleteAllFromRealm();
+                                                realm.commitTransaction();
+                                            }
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                    });
+                    listaNotif.setOnTouchListener(touchListener);
+                    // Setting this scroll listener is required to ensure that during ListView scrolling,
+                    // we don't look for swipes.
+                    listaNotif.setOnScrollListener(touchListener.makeScrollListener());
                 }
             }
 

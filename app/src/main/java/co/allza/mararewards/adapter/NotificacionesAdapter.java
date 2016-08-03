@@ -17,7 +17,7 @@ import co.allza.mararewards.items.NotificacionItem;
 /**
  * Created by Tavo on 14/06/2016.
  */
-public class NotificacionesAdapter extends ArrayAdapter<NotificacionItem>  implements UndoAdapter{
+public class NotificacionesAdapter extends ArrayAdapter<NotificacionItem> {
 
 
 
@@ -79,22 +79,5 @@ public class NotificacionesAdapter extends ArrayAdapter<NotificacionItem>  imple
 
         return row;
     }
-    @NonNull
-    @Override
-    public View getUndoView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View view = convertView;
-        if (view == null) {
-            view = LayoutInflater.from(getContext()).inflate(R.layout.undoview_notificaciones, parent, false);
-            TextView texto=(TextView) view.findViewById(R.id.textoUndo);
-            texto.setTypeface(CargarDatos.getTypeface(getContext(),CargarDatos.ROBOTO_REGULAR));
 
-        }
-        return view;
-    }
-
-    @NonNull
-    @Override
-    public View getUndoClickView(@NonNull View view) {
-        return view.findViewById(R.id.undoImage);
-    }
 }
