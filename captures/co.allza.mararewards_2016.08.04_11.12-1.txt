@@ -1,0 +1,43 @@
+Applications Memory Usage (kB):
+Uptime: 36097597 Realtime: 38079627
+
+** MEMINFO in pid 2904 [co.allza.mararewards] **
+                   Pss  Private  Private  Swapped     Heap     Heap     Heap
+                 Total    Dirty    Clean    Dirty     Size    Alloc     Free
+                ------   ------   ------   ------   ------   ------   ------
+  Native Heap        0        0        0        0    22739    22739    21292
+  Dalvik Heap    87625    87544        0       84    87709    87352      357
+ Dalvik Other      764      756        0        4                           
+        Stack      336      336        0        0                           
+       Ashmem       13        0        0        0                           
+    Other dev        5        0        4        0                           
+     .so mmap     2497      248      856     2844                           
+    .apk mmap      664        0      464        0                           
+    .ttf mmap       52        0        0        0                           
+    .dex mmap     5932        0     5928        0                           
+    code mmap     1723        0      452        0                           
+   image mmap     1427      992       52      416                           
+   Other mmap       55        4       40        0                           
+      Unknown    18966    18916        0     2124                           
+        TOTAL   120059   108796     7796     5472   110448   110091    21649
+ 
+ Objects
+               Views:      138         ViewRootImpl:        2
+         AppContexts:        5           Activities:        2
+              Assets:        9        AssetManagers:        9
+       Local Binders:       15        Proxy Binders:       22
+    Death Recipients:        1
+     OpenSSL Sockets:        0
+ 
+ SQL
+         MEMORY_USED:        0
+  PAGECACHE_OVERFLOW:        0          MALLOC_SIZE:        0
+ 
+ 
+ Asset Allocations
+    zip:/data/app/co.allza.mararewards-1/base.apk:/assets/fonts/Roboto-Medium.ttf: 159K
+    zip:/data/app/co.allza.mararewards-1/base.apk:/assets/fonts/Roboto-Regular.ttf: 159K
+    zip:/data/app/co.allza.mararewards-1/base.apk:/assets/fonts/Rubik-Light.ttf: 116K
+    zip:/data/app/co.allza.mararewards-1/base.apk:/assets/fonts/Rubik-Regular.ttf: 117K
+    zip:/data/app/co.allza.mararewards-1/base.apk:/assets/fonts/Rubik-Medium.ttf: 118K
+    zip:/data/app/co.allza.mararewards-1/base.apk:/assets/fonts/Rubik-Bold.ttf: 117K
