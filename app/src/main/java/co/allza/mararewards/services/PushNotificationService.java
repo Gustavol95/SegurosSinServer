@@ -38,20 +38,18 @@ import io.realm.Sort;
  */
 public class PushNotificationService extends FirebaseMessagingService
 {
-    String url="http://verdad.herokuapp.com/campaigns/conta?idcampaigns=";
-    int id;
+
     public PushNotificationService() {
         super();
     }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-                notificacionSimple(remoteMessage);
+
     }
 
     @Override
     public void onDeletedMessages() {
-        Log.e("Notification Service","onDeletedMEssages");
         super.onDeletedMessages();
     }
 
@@ -65,67 +63,6 @@ public class PushNotificationService extends FirebaseMessagingService
         super.onSendError(s, e);
     }
 
-    public void notificacionSimple(RemoteMessage remote) {
-        NotificationManager mNotifyMgr= (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        SimpleDateFormat parserFormal= new SimpleDateFormat("dd MMM yyyy");
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.perfil_whitebg)
-                        .setContentTitle(remote.getData().get("title"))
-                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logoandroid))
-                        .setColor(4)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH)
-                        .setDefaults(Notification.DEFAULT_ALL)
-                        .setContentText(remote.getData().get("message"));
-        mBuilder.setAutoCancel(true);
-        Intent resultIntent = new Intent(this, SplashActivity.class);
-        resultIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-
-        if(Integer.parseInt(remote.getData().get("type"))==2){
-            id=Integer.parseInt(remote.getData().get("idcampaigns"));
-            resultIntent.putExtra("actualizar", true);
-            CargarDatos.notificationIsUp(remote.getData().get("title"),this,mNotifyMgr,true);
-            CargarDatos.clearArraySeguros();
-            RealmConfiguration config = new RealmConfiguration
-                    .Builder(this)
-                    .deleteRealmIfMigrationNeeded()
-                    .build();
-            Realm.setDefaultConfiguration(config);
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-            RealmResults<SeguroItem> segurosAnteriores = realm.where(SeguroItem.class).findAll();
-            segurosAnteriores.deleteAllFromRealm();
-            realm.commitTransaction();
-        }
-        else{
-             id=Integer.parseInt(remote.getData().get("idcampaigns"))+100;
-             CargarDatos.makePetition(PushNotificationService.this,url+(id-100));
-             CargarDatos.notificationIsUp(remote.getData().get("title"),this,mNotifyMgr,false);
-        }
-
-        resultIntent.putExtra("goTo",getInsurancePosition(id));
-        NotificacionItem item=new NotificacionItem(R.drawable.logoandroid,remote.getData().get("title"),remote.getData().get("message"),parserFormal.format(Calendar.getInstance().getTime()));
-        item.setId(id);
-        push(item);
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(resultPendingIntent);
-        mNotifyMgr.notify(id, mBuilder.build());
-
-    }
-
-    public void push(NotificacionItem item)
-    {
-        RealmConfiguration config = new RealmConfiguration
-                .Builder(this)
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm.setDefaultConfiguration(config);
-         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        realm.copyToRealmOrUpdate(item);
-        realm.commitTransaction();
-        realm.close();
-    }
 
     public int getInsurancePosition(int id)
     {

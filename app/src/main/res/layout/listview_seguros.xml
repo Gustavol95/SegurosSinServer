@@ -32,7 +32,7 @@
                 android:id="@+id/cardInfoIcono"
                 android:layout_width="@dimen/infoDimension"
                 android:layout_height="@dimen/infoDimension"
-                android:src="@drawable/information_outline_card"
+                android:src="@drawable/dots_vertical"
                 android:layout_alignParentRight="true"
                 android:layout_toLeftOf="@+id/cardPoliza"
                 android:layout_marginRight="@dimen/polizaMargin"

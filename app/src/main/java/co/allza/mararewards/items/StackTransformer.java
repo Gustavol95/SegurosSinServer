@@ -2,8 +2,6 @@ package co.allza.mararewards.items;
 
 import android.view.View;
 
-import co.allza.mararewards.interfaces.BaseTransformer;
-
 /**
  * Created by Tavo on 02/08/2016.
  */

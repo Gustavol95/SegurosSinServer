@@ -9,7 +9,7 @@ import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,7 +21,6 @@ import io.realm.Sort;
 import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.R;
 import co.allza.mararewards.activities.SplashActivity;
-import co.allza.mararewards.items.CustomerItem;
 import co.allza.mararewards.items.NotificacionItem;
 import co.allza.mararewards.items.SeguroItem;
 
@@ -72,17 +71,13 @@ public class SegurosService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Calendar calendar = Calendar.getInstance();
-        parserFecha = new SimpleDateFormat("dd/MMM/yyyy");
-        parserFormal = new SimpleDateFormat("dd MMM yyyy");
+        parserFecha = new SimpleDateFormat("dd/MM/yyyy");
+        parserFormal = new SimpleDateFormat("dd MM yyyy");
         fechaActual = calendar.getTime();
         Realm realm = CargarDatos.getRealm(this);
         ArrayList<SeguroItem> items = new ArrayList<>();
-        CustomerItem cliente = realm.where(CustomerItem.class)
-                .findFirst();
 
-        if (cliente != null) {
             RealmResults<SeguroItem> result = realm.where(SeguroItem.class)
-                    .equalTo("customer_id", cliente.getId())
                     .findAll();
             result.sort("id", Sort.DESCENDING);
             for (int i = 0; i < result.size(); i++) {
@@ -111,7 +106,7 @@ public class SegurosService extends Service {
                     }
                 }
             }
-        }
+
         realm.close();
         realm=null;
         CargarDatos.getNotificacionesFromDatabase(this);
@@ -180,7 +175,7 @@ public class SegurosService extends Service {
         mBuilder.setContentIntent(resultPendingIntent);
         int mNotificationId = id;
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
-        CargarDatos.notificationIsUp(seguroTemporal.getRefname(),this,mNotifyMgr,false);
+
     }
 
     public void notifExpiro(int id) {
@@ -210,6 +205,6 @@ public class SegurosService extends Service {
         mBuilder.setContentIntent(resultPendingIntent);
         int mNotificationId = id;
         mNotifyMgr.notify(mNotificationId, mBuilder.build());
-        CargarDatos.notificationIsUp(seguroTemporal.getRefname(),this,mNotifyMgr,false);
+
     }
 }

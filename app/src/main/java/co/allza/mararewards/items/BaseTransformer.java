@@ -1,4 +1,4 @@
-package co.allza.mararewards.interfaces;
+package co.allza.mararewards.items;
 
 import android.support.v4.view.ViewPager;
 import android.view.View;

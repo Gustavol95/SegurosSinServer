@@ -6,6 +6,8 @@
     <string name="borrarNotif">Borrar notificaciones</string>
     <string name="cerrarSesion">Cerrar Sesión</string>
     <string name="callToAction">Quiero contratar un seguro</string>
+    <string name="editarS">Editar</string>
+    <string name="borrarS">Borrar</string>
 
     <string name="alpha_Splash">Settings</string>
     <string name="textViewLogin">QUIERO ADQUIRIR UN SEGURO</string>

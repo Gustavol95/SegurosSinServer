@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
+
+    >
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linearSeguros"
     android:layout_width="match_parent"
@@ -45,12 +53,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <view xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipe"
-        class="co.allza.mararewards.items.CustomSwipeToRefresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/aver">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/linearContenido"
@@ -58,7 +60,8 @@
             android:layout_height="match_parent"
             android:clickable="true"
             android:fitsSystemWindows="false"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_below="@+id/aver">
 
             <TextView
                 android:id="@+id/tituloSeguroActual"
@@ -92,21 +95,24 @@
                 android:layout_marginTop="@dimen/buttonLoginPaddingTopBottom"
                 android:paddingTop="@dimen/buttonLoginPaddingTopBottom" />
 
-            <Button
-                android:id="@+id/botonCallToAction"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/textViewAdquirirPaddingTop"
-                android:background="@drawable/button_radius"
-                android:text="@string/botonCalltoAction"
-                android:textAlignment="center"
-                android:textColor="@color/rectanguloSplash"
-                android:textSize="15sp" />
+
 
 
         </LinearLayout>
 
 
-    </view>
-</RelativeLayout>
 
+</RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:rippleColor="@android:color/black"
+        android:background="@color/backGroundAlphaNegro"
+        android:src="@drawable/plus"
+
+        />
+
+</android.support.design.widget.CoordinatorLayout>

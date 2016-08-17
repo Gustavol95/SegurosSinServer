@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
+import android.support.v7.widget.PopupMenu;
 import android.telephony.PhoneNumberUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,14 +19,16 @@ import java.util.Calendar;
 import java.util.Date;
 import co.allza.mararewards.CargarDatos;
 import co.allza.mararewards.R;
-import co.allza.mararewards.interfaces.DialogCallback;
-import co.allza.mararewards.interfaces.VolleyCallback;
+import co.allza.mararewards.interfaces.OnInfoClicked;
 import co.allza.mararewards.items.SeguroItem;
 /**
  * Created by Tavo on 17/06/2016.
  */
-public class SegurosPagerAdapter extends PagerAdapter implements VolleyCallback {
+public class SegurosPagerAdapter extends PagerAdapter  implements PopupMenu.OnMenuItemClickListener {
     Context context;
+
+
+
     LayoutInflater inflater;
     ArrayList<SeguroItem> pages = new ArrayList<>();
     TextView poliza,aseguradora,seguro,beneficiario,renovacion,emergencia;
@@ -33,7 +37,9 @@ public class SegurosPagerAdapter extends PagerAdapter implements VolleyCallback 
     Date fechaActual;
     Date fechaSeguro;
     SimpleDateFormat parserFecha;
-    DialogCallback callback;
+    int pos;
+    OnInfoClicked onInfoClicked;
+
 
     public SegurosPagerAdapter(Context context, ArrayList<SeguroItem> list) {
         this.context=context;
@@ -57,6 +63,7 @@ public class SegurosPagerAdapter extends PagerAdapter implements VolleyCallback 
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
+        onInfoClicked=CargarDatos.getOnInfoClicked();
         View row = inflater.inflate(R.layout.listview_seguros, container, false);
         poliza=(TextView)row.findViewById(R.id.cardPoliza);
         aseguradora=(TextView)row.findViewById(R.id.cardAseguradora);
@@ -90,16 +97,19 @@ public class SegurosPagerAdapter extends PagerAdapter implements VolleyCallback 
         beneficiario.setTypeface(CargarDatos.getTypeface(context,CargarDatos.RUBIK_REGULAR));
         renovacion.setTypeface(CargarDatos.getTypeface(context,CargarDatos.RUBIK_REGULAR));
         emergencia.setTypeface(CargarDatos.getTypeface(context,CargarDatos.RUBIK_MEDIUM));
-
         info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               callback=CargarDatos.getDialogCallback();
-                callback.onDialogPetition(position);
+                PopupMenu popup = new PopupMenu(CargarDatos.getContext(), info);
 
+                // This activity implements OnMenuItemClickListener
+                popup.setOnMenuItemClickListener(SegurosPagerAdapter.this);
+                popup.inflate(R.menu.menu_info);
+                popup.show();
             }
         });
-        final int pos=position;
+
+         pos=position;
         emergencia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,11 +142,27 @@ public class SegurosPagerAdapter extends PagerAdapter implements VolleyCallback 
                 renovacionIcono.setImageResource(R.drawable.history_vencido);
                 emergenciaIcono.setImageResource(R.drawable.ring_vencido);
 
+
+
                 return row;
             }
         } catch (ParseException e) {  e.printStackTrace();        }
 
         return row;
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.editarSeg:
+                onInfoClicked.editarSeguro(pos);
+                return true;
+            case R.id.borrarSeg:
+                onInfoClicked.borrarSeguro(pos);
+                return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -149,18 +175,5 @@ public class SegurosPagerAdapter extends PagerAdapter implements VolleyCallback 
         return pages;
     }
 
-    @Override
-    public void onSuccess(SegurosPagerAdapter result) {
 
-    }
-
-    @Override
-    public void onFailure(String error) {
-
-    }
-
-    @Override
-    public void onTokenReceived(String token) {
-
-    }
 }
