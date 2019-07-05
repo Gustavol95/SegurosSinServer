@@ -46,10 +46,6 @@ public class SplashActivity extends Activity  {
         }
     }
 
-
-
-
-
     @Override
     protected void onStop() {
         super.onStop();
