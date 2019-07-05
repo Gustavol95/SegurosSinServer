@@ -533,7 +533,7 @@ public class SegurosActivity extends AppCompatActivity implements  View.OnClickL
                                                         .findAll();
                                                 adapterNotif.remove(adapterNotif.getItem(position));
                                                 realm.beginTransaction();
-                                                borrarNotif.deleteAllFromRealm();
+                                               // borrarNotif.deleteAllFromRealm();
                                                 realm.commitTransaction();
                                             }
                                             adapter.notifyDataSetChanged();

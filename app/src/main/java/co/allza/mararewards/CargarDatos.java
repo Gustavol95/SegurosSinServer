@@ -84,7 +84,7 @@ public class CargarDatos {
                 .equalTo("id",seguro.getId())
                 .findAll();
         realm.beginTransaction();
-        result.deleteAllFromRealm();
+        //result.deleteAllFromRealm();
         realm.commitTransaction();
         realm.close();
         realm=null;
